@@ -22,6 +22,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.github.slamdev.babyroutinetracker.auth.AuthenticationViewModel
 import com.github.slamdev.babyroutinetracker.invitation.InvitationViewModel
+import com.github.slamdev.babyroutinetracker.sleep.SleepTrackingCard
 import com.google.firebase.auth.FirebaseUser
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -84,21 +85,40 @@ fun DashboardScreen(
             
             Spacer(modifier = Modifier.height(16.dp))
             
-            // Feature cards placeholders
-            Text(
-                text = "Dashboard Coming Soon!",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
-            )
-            
-            Text(
-                text = "You are successfully signed in. The main dashboard with activity tracking features will be implemented in the next phases of development.",
-                fontSize = 16.sp,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                lineHeight = 22.sp
-            )
+            // Activity tracking section - only show when there's a selected baby
+            if (invitationState.selectedBabyId.isNotEmpty()) {
+                val selectedBaby = invitationState.babies.find { it.id == invitationState.selectedBabyId }
+                selectedBaby?.let { baby ->
+                    Text(
+                        text = "${baby.name}'s Activities",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    
+                    // Sleep tracking card
+                    SleepTrackingCard(
+                        babyId = baby.id,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            } else {
+                // No baby selected - show guidance
+                Text(
+                    text = "Create or Join a Baby Profile",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                
+                Text(
+                    text = "To start tracking your baby's activities, create a new baby profile or join an existing one using an invitation code.",
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                    lineHeight = 22.sp
+                )
+            }
             
             // Baby Profile Management Section
             Card(
@@ -167,26 +187,23 @@ fun DashboardScreen(
             
             Spacer(modifier = Modifier.weight(1f))
             
-            // Feature preview cards
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                FeatureCard(
-                    title = "Sleep",
-                    description = "Track sleep patterns",
-                    modifier = Modifier.weight(1f)
-                )
-                FeatureCard(
-                    title = "Feeding",
-                    description = "Log feeding times",
-                    modifier = Modifier.weight(1f)
-                )
-                FeatureCard(
-                    title = "Diapers",
-                    description = "Record changes",
-                    modifier = Modifier.weight(1f)
-                )
+            // Feature status cards - show coming soon for other features
+            if (invitationState.selectedBabyId.isNotEmpty()) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    FeatureCard(
+                        title = "Feeding",
+                        description = "Coming soon",
+                        modifier = Modifier.weight(1f)
+                    )
+                    FeatureCard(
+                        title = "Diapers",
+                        description = "Coming soon",
+                        modifier = Modifier.weight(1f)
+                    )
+                }
             }
         }
     }
