@@ -9,7 +9,11 @@ import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.ktx.toObject
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import java.util.Calendar
 import java.util.UUID
@@ -218,6 +222,57 @@ class InvitationService {
         } catch (e: Exception) {
             Log.e(TAG, "Failed to get baby profiles for current user", e)
             Result.failure(e)
+        }
+    }
+
+    /**
+     * Get real-time updates for user's baby profiles
+     * Returns a Flow that emits updated baby lists whenever changes occur
+     */
+    fun getUserBabiesFlow(): Flow<Result<List<Baby>>> = callbackFlow {
+        val currentUser = auth.currentUser
+        if (currentUser == null) {
+            trySend(Result.failure(Exception("User not authenticated")))
+            close()
+            return@callbackFlow
+        }
+
+        Log.d(TAG, "Setting up real-time listener for user babies: ${currentUser.uid}")
+        
+        val listenerRegistration = firestore.collection(BABIES_COLLECTION)
+            .whereArrayContains("parentIds", currentUser.uid)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    Log.e(TAG, "Error listening to baby profiles", error)
+                    trySend(Result.failure(error))
+                    return@addSnapshotListener
+                }
+
+                if (snapshot != null) {
+                    try {
+                        val babies = snapshot.documents.mapNotNull { document ->
+                            try {
+                                document.toObject<Baby>()
+                            } catch (e: Exception) {
+                                Log.w(TAG, "Failed to parse baby document: ${document.id}", e)
+                                null
+                            }
+                        }
+                        Log.d(TAG, "Real-time update: ${babies.size} baby profiles for current user")
+                        trySend(Result.success(babies))
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error processing baby profiles snapshot", e)
+                        trySend(Result.failure(e))
+                    }
+                } else {
+                    Log.d(TAG, "Received null snapshot for baby profiles")
+                    trySend(Result.success(emptyList()))
+                }
+            }
+
+        awaitClose { 
+            Log.d(TAG, "Removing real-time listener for user babies")
+            listenerRegistration.remove() 
         }
     }
 

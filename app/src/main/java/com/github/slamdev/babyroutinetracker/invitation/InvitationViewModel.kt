@@ -9,6 +9,7 @@ import com.google.firebase.Timestamp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 data class InvitationUiState(
@@ -31,29 +32,40 @@ class InvitationViewModel : ViewModel() {
     val uiState: StateFlow<InvitationUiState> = _uiState.asStateFlow()
 
     init {
-        loadUserBabies()
+        observeUserBabies()
     }
 
     /**
-     * Load all babies for the current user
+     * Observe real-time updates for user's baby profiles
      */
-    private fun loadUserBabies() {
+    private fun observeUserBabies() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
             
-            invitationService.getUserBabies()
-                .onSuccess { babies ->
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        babies = babies,
-                        selectedBabyId = babies.firstOrNull()?.id ?: ""
-                    )
-                }
-                .onFailure { error ->
+            invitationService.getUserBabiesFlow()
+                .catch { error ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         errorMessage = error.message
                     )
+                }
+                .collect { result ->
+                    result.onSuccess { babies ->
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                            babies = babies,
+                            selectedBabyId = if (_uiState.value.selectedBabyId.isEmpty()) {
+                                babies.firstOrNull()?.id ?: ""
+                            } else {
+                                _uiState.value.selectedBabyId
+                            }
+                        )
+                    }.onFailure { error ->
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                            errorMessage = error.message
+                        )
+                    }
                 }
         }
     }
@@ -76,8 +88,7 @@ class InvitationViewModel : ViewModel() {
                         baby = baby,
                         successMessage = "Baby profile created successfully!"
                     )
-                    // Reload babies list
-                    loadUserBabies()
+                    // Real-time listener will automatically update the babies list
                 }
                 .onFailure { error ->
                     _uiState.value = _uiState.value.copy(
@@ -149,8 +160,7 @@ class InvitationViewModel : ViewModel() {
                         baby = baby,
                         successMessage = "Successfully joined ${baby.name}'s profile!"
                     )
-                    // Reload babies list
-                    loadUserBabies()
+                    // Real-time listener will automatically update the babies list
                 }
                 .onFailure { error ->
                     _uiState.value = _uiState.value.copy(
