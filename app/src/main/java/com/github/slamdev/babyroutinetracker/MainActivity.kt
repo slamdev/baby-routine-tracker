@@ -3,28 +3,27 @@ package com.github.slamdev.babyroutinetracker
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.github.slamdev.babyroutinetracker.auth.AuthViewModel
-import com.github.slamdev.babyroutinetracker.ui.screens.DashboardScreen
-import com.github.slamdev.babyroutinetracker.ui.screens.SignInScreen
-import com.github.slamdev.babyroutinetracker.ui.theme.BabyRoutineTrackerTheme
+import androidx.compose.ui.tooling.preview.Preview
+import com.github.slamdev.babyroutinetracker.ui.theme.BabyroutinetrackerTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContent {
-            BabyRoutineTrackerTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    BabyRoutineTrackerApp()
+            BabyroutinetrackerTheme {
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    Greeting(
+                        name = "Android",
+                        modifier = Modifier.padding(innerPadding)
+                    )
                 }
             }
         }
@@ -32,17 +31,17 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun BabyRoutineTrackerApp() {
-    val context = LocalContext.current
-    val authViewModel: AuthViewModel = viewModel(
-        factory = AuthViewModel.Factory(context)
+fun Greeting(name: String, modifier: Modifier = Modifier) {
+    Text(
+        text = "Hello $name!",
+        modifier = modifier
     )
-    
-    val authState by authViewModel.authState.collectAsState()
-    
-    if (authState.user != null) {
-        DashboardScreen(authViewModel = authViewModel)
-    } else {
-        SignInScreen(authViewModel = authViewModel)
+}
+
+@Preview(showBackground = true)
+@Composable
+fun GreetingPreview() {
+    BabyroutinetrackerTheme {
+        Greeting("Android")
     }
 }
