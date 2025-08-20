@@ -1,5 +1,6 @@
 package com.github.slamdev.babyroutinetracker.dashboard
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -10,11 +11,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.github.slamdev.babyroutinetracker.auth.AuthenticationViewModel
 import com.google.firebase.auth.FirebaseUser
 
@@ -128,29 +133,47 @@ private fun WelcomeCard(
         )
     ) {
         Column(
-            modifier = Modifier.padding(20.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // User avatar placeholder
+            // User profile picture or avatar
             Box(
                 modifier = Modifier
-                    .size(60.dp)
+                    .size(80.dp)
                     .clip(CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Card(
-                    modifier = Modifier.fillMaxSize(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primary
+                if (user?.photoUrl != null) {
+                    // Load Google profile picture
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(user.photoUrl)
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = "Profile Picture",
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(CircleShape),
+                        contentScale = ContentScale.Crop,
+                        fallback = null,
+                        error = null
                     )
-                ) {
+                } else {
+                    // Fallback avatar with user's initial
                     Box(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(
+                                MaterialTheme.colorScheme.primary,
+                                CircleShape
+                            ),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = user?.displayName?.firstOrNull()?.toString() ?: "U",
-                            fontSize = 24.sp,
+                            text = user?.displayName?.firstOrNull()?.toString()?.uppercase() ?: "U",
+                            fontSize = 32.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White
                         )
@@ -158,20 +181,25 @@ private fun WelcomeCard(
                 }
             }
             
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             
+            // Welcome message
             Text(
                 text = "Welcome ${user?.displayName ?: "User"}!",
-                fontSize = 20.sp,
+                fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSecondaryContainer
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                textAlign = TextAlign.Center
             )
             
+            // Email address
             if (user?.email != null) {
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = user.email!!,
                     fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
+                    color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f),
+                    textAlign = TextAlign.Center
                 )
             }
         }
