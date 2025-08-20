@@ -52,12 +52,12 @@ This document outlines the specific acceptance criteria and high-level technical
   * Use a ViewModel to manage the state of the ongoing sleep timer.  
   * Implement the logic to create and save a new sleep document in Firestore upon completion.
 
-**User Story:** As a parent, I want to log a feeding, specifying whether it was breast milk or formula, and record the duration (for breastfeeding) or the amount (for bottle-feeding).
+**User Story:** As a parent, I want to log a feeding, specifying whether it was breast milk or bottle, and record the duration (for breastfeeding) or the amount (for bottle-feeding).
 
 * **Acceptance Criteria:**  
   * Tapping a "Log Feeding" button opens a form or dialog.  
-  * The user can select the feeding type (e.g., "Breast Milk," "Formula").  
-  * Conditional UI appears: a timer for "Breast Milk" or a numeric input for "Formula" (in ml/oz).  
+  * The user can select the feeding type (e.g., "Breast Milk," "Bottle").  
+  * Conditional UI appears: a timer for "Breast Milk" or a numeric input for "Bottle" (in ml/oz).  
   * The saved event accurately reflects all the selected details.  
 * **Technical Tasks:**  
   * Create a reusable composable for the feeding log form.  
@@ -231,3 +231,180 @@ This document outlines the specific acceptance criteria and high-level technical
   * Implement a date range picker component.  
   * Modify the Firestore queries to be dynamic, accepting start and end dates as parameters.  
   * Update the ViewModel to refetch and re-process data whenever the selected date range changes.
+
+### **Baby Profile Management**
+
+**User Story:** As a new parent, I want to create my baby's profile with their name, and birthdate so I can personalize the app experience.
+
+* **Acceptance Criteria:**  
+  * After authentication, new users are prompted to create a baby profile.  
+  * The profile creation form includes fields for baby's name and birthdate.  
+  * The baby's age is automatically calculated and displayed based on the birthdate.  
+  * Profile creation is required before accessing other app features.  
+* **Technical Tasks:**  
+  * Design and implement baby profile creation UI using Jetpack Compose.  
+  * Create Firestore document structure for baby profiles.  
+  * Build age calculation logic based on birthdate.  
+  * Add profile validation and error handling.
+
+**User Story:** As a parent, I want to edit my baby's information if I made a mistake.
+
+* **Acceptance Criteria:**  
+  * There is an "Edit Profile" option accessible from the baby profile or settings screen.  
+  * Users can modify any field in the baby profile (name, birthdate).  
+  * Changes are saved instantly and synchronized across all devices.  
+  * Users receive confirmation when changes are successfully saved.  
+* **Technical Tasks:**  
+  * Create edit profile UI with pre-populated fields.  
+  * Implement real-time validation for profile updates.  
+  * Use Firestore transactions to ensure atomic updates.  
+  * Add loading states and error handling for profile updates.
+
+**User Story:** As a parent, I want to see my baby's age calculated automatically based on their birthdate so I can track their development stages.
+
+* **Acceptance Criteria:**  
+  * Baby's age is displayed prominently in the profile and dashboard.  
+  * Age calculation shows appropriate units (days for newborns, weeks/months as appropriate).  
+  * Age updates automatically and is always current.  
+  * Development milestone hints are shown based on age ranges.  
+* **Technical Tasks:**  
+  * Implement precise age calculation algorithm accounting for leap years.  
+  * Create age formatting logic for different time periods.  
+  * Design age display component for consistent presentation.  
+  * Add development milestone data and display logic.
+
+### **User Onboarding & Tutorial**
+
+**User Story:** As a new parent, I want step-by-step guidance on setting up my baby's profile and inviting my partner.
+
+* **Acceptance Criteria:**  
+  * Profile setup includes helpful tips and explanations for each field.  
+  * Partner invitation process is clearly explained with visual guidance.  
+  * Users receive feedback on successful completion of each step.  
+  * Setup progress is saved if users need to pause and resume later.  
+* **Technical Tasks:**  
+  * Create progressive setup flow with clear steps and progress indicators.  
+  * Implement contextual help for each setup stage.  
+  * Add setup state persistence and resume functionality.  
+  * Build step validation and guided error correction.
+
+### **Data Management & Export**
+
+**User Story:** As a privacy-focused user, I want to delete all our data and close our account if we decide to stop using the app.
+
+* **Acceptance Criteria:**  
+  * Account deletion option is clearly available in settings.  
+  * Users are warned about data loss and asked for confirmation.  
+  * All user data, baby profiles, and activity logs are permanently deleted.  
+  * Users receive final confirmation of successful account closure.  
+* **Technical Tasks:**  
+  * Implement secure account deletion with multi-step confirmation.  
+  * Create data cleanup service for Firestore and Firebase Storage.  
+  * Add audit logging for deletion operations.  
+  * Ensure GDPR compliance for data deletion requests.
+
+### **Smart Notifications & Reminders**
+
+**User Story:** As a busy parent, I want optional reminders for feeding times based on our baby's usual schedule.
+
+* **Acceptance Criteria:**  
+  * App analyzes feeding patterns to suggest optimal reminder times.  
+  * Users can enable/disable feeding reminders and customize frequency.  
+  * Reminders are intelligent and adapt to changing patterns.  
+  * Notifications include snooze and dismiss options.  
+* **Technical Tasks:**  
+  * Rely on Gemini AI for pattern analysis algorithm for feeding schedules.  
+  * Create intelligent notification scheduling with WorkManager.  
+  * Build notification customization UI with frequency settings.  
+  * Add notification interaction handling (snooze, dismiss, quick log).  
+  * Implement adaptive scheduling based on user responses.
+
+**User Story:** As a partner, I want to be notified when my spouse logs an important activity so I'm aware of what's happening.
+
+* **Acceptance Criteria:**  
+  * Users can choose to receive notifications when partner logs activities.  
+  * Notifications specify the activity type and basic details.  
+  * Users can customize which activities trigger partner notifications.  
+  * Notifications respect quiet hours and user preferences.  
+* **Technical Tasks:**  
+  * Implement real-time activity notifications using Firebase Cloud Messaging.  
+  * Create partner notification preferences and settings UI.  
+  * Build activity event listeners and notification triggers.  
+  * Add quiet hours scheduling and notification filtering.  
+  * Implement notification batching to avoid spam.
+
+### **Offline Support & Sync**
+
+**User Story:** As a parent with unreliable internet, I want to continue logging activities even when offline so I don't miss recording important events.
+
+* **Acceptance Criteria:**  
+  * All core logging functions work without internet connection.  
+  * Offline activities are stored locally and queued for sync.  
+  * UI clearly indicates offline status with appropriate messaging.  
+  * Recent data remains accessible for viewing when offline.  
+* **Technical Tasks:**  
+  * Implement Room database for offline data storage.  
+  * Create sync queue management system for pending operations.  
+  * Build offline detection and UI state management.  
+  * Implement local caching strategy for recent activities.  
+  * Add offline data validation and storage optimization.
+
+**User Story:** As a user, I want to see a clear indicator when the app is offline so I know my data isn't syncing yet.
+
+* **Acceptance Criteria:**  
+  * Prominent offline indicator appears when network is unavailable.  
+  * Indicator shows number of pending items waiting to sync.  
+  * Online status restoration is clearly communicated to users.  
+  * Sync progress is visible during online restoration.  
+* **Technical Tasks:**  
+  * Implement network connectivity monitoring with ConnectivityManager.  
+  * Create offline status UI components and indicators.  
+  * Build sync progress tracking and display.  
+  * Add retry mechanisms for failed sync operations.  
+  * Implement connection restoration handling and notifications.
+
+### **App Settings & Preferences**
+
+**User Story:** As a parent, I want to set default feeding amounts and types to speed up logging routine activities.
+
+* **Acceptance Criteria:**  
+  * Default feeding preferences can be set in app settings.  
+  * Logging screens pre-populate with user's default values.  
+  * Multiple default profiles can be created for different feeding types.  
+  * Defaults can be quickly overridden during individual logging sessions.  
+* **Technical Tasks:**  
+  * Create feeding preferences data model and storage.  
+  * Implement settings UI for managing default values.  
+  * Build default value injection in logging forms.  
+  * Add quick override functionality in logging interface.  
+  * Create preference validation and reasonable limits.
+
+### **Error Handling & User Feedback**
+
+**User Story:** As a user, I want clear, helpful error messages when something goes wrong so I know how to fix the issue.
+
+* **Acceptance Criteria:**  
+  * Error messages are user-friendly and avoid technical jargon.  
+  * Messages include specific actions users can take to resolve issues.  
+  * Critical errors are distinguished from minor warnings.  
+  * Error reporting includes context about what the user was trying to do.  
+* **Technical Tasks:**  
+  * Implement centralized error handling and messaging system.  
+  * Create error message repository with context-aware responses.  
+  * Build error classification system (critical, warning, info).  
+  * Add automatic error context collection and logging.  
+  * Implement user-friendly error display components.
+
+**User Story:** As a parent, I want the app to recover gracefully from errors without losing the activity I was logging.
+
+* **Acceptance Criteria:**  
+  * Activity logging data is preserved during error conditions.  
+  * Users can resume logging from where they left off after error recovery.  
+  * Draft activities are automatically saved and recoverable.  
+  * Error recovery options are clearly presented to users.  
+* **Technical Tasks:**  
+  * Implement automatic draft saving for in-progress activities.  
+  * Create error recovery workflows and UI.  
+  * Build data persistence for interrupted operations.  
+  * Add transaction rollback and data integrity protection.  
+  * Implement graceful degradation strategies for various error types.
