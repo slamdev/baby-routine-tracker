@@ -21,16 +21,22 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.github.slamdev.babyroutinetracker.auth.AuthenticationViewModel
+import com.github.slamdev.babyroutinetracker.invitation.InvitationViewModel
 import com.google.firebase.auth.FirebaseUser
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
     onSignOut: () -> Unit,
+    onNavigateToInvitePartner: () -> Unit,
+    onNavigateToJoinInvitation: () -> Unit,
+    onNavigateToCreateBaby: () -> Unit,
     modifier: Modifier = Modifier,
-    authViewModel: AuthenticationViewModel = viewModel()
+    authViewModel: AuthenticationViewModel = viewModel(),
+    invitationViewModel: InvitationViewModel = viewModel()
 ) {
     val uiState by authViewModel.uiState.collectAsState()
+    val invitationState by invitationViewModel.uiState.collectAsState()
 
     // Navigate back to sign-in if user signs out
     LaunchedEffect(uiState.isSignedIn) {
@@ -93,6 +99,71 @@ fun DashboardScreen(
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                 lineHeight = 22.sp
             )
+            
+            // Baby Profile Management Section
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer
+                )
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(
+                        text = "Baby Profile Management",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onTertiaryContainer
+                    )
+                    
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        OutlinedButton(
+                            onClick = onNavigateToCreateBaby,
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(40.dp)
+                        ) {
+                            Text(
+                                text = "Create Baby Profile",
+                                maxLines = 1,
+                                fontSize = 12.sp,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                        
+                        OutlinedButton(
+                            onClick = onNavigateToJoinInvitation,
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(40.dp)
+                        ) {
+                            Text(
+                                text = "Join Profile",
+                                maxLines = 1,
+                                fontSize = 12.sp,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+                    
+                    // Only show invite partner button if there are baby profiles
+                    if (invitationState.babies.isNotEmpty()) {
+                        Button(
+                            onClick = onNavigateToInvitePartner,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("Invite Partner")
+                        }
+                    }
+                }
+            }
             
             Spacer(modifier = Modifier.weight(1f))
             

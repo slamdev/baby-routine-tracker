@@ -1,5 +1,6 @@
 package com.github.slamdev.babyroutinetracker.auth
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -27,6 +28,10 @@ class AuthenticationViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
+    
+    companion object {
+        private const val TAG = "AuthenticationViewModel"
+    }
 
     init {
         // Check if user is already signed in
@@ -58,12 +63,15 @@ class AuthenticationViewModel : ViewModel() {
                     user = user,
                     errorMessage = null
                 )
+                Log.i(TAG, "Google Sign-In successful for user: ${user?.email}")
             } catch (e: ApiException) {
+                Log.w(TAG, "Google Sign-In failed with API exception", e)
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     errorMessage = "Google Sign-In failed: ${e.message}"
                 )
             } catch (e: Exception) {
+                Log.e(TAG, "Authentication failed with unexpected error", e)
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     errorMessage = "Authentication failed: ${e.message}"
@@ -79,6 +87,7 @@ class AuthenticationViewModel : ViewModel() {
             user = null,
             errorMessage = null
         )
+        Log.i(TAG, "User signed out successfully")
     }
 
     fun clearError() {

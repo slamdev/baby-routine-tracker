@@ -14,6 +14,9 @@ import androidx.navigation.compose.rememberNavController
 import com.github.slamdev.babyroutinetracker.auth.AuthenticationViewModel
 import com.github.slamdev.babyroutinetracker.auth.SignInScreen
 import com.github.slamdev.babyroutinetracker.dashboard.DashboardScreen
+import com.github.slamdev.babyroutinetracker.invitation.InvitePartnerScreen
+import com.github.slamdev.babyroutinetracker.invitation.JoinInvitationScreen
+import com.github.slamdev.babyroutinetracker.invitation.CreateBabyProfileScreen
 import com.github.slamdev.babyroutinetracker.ui.theme.BabyroutinetrackerTheme
 
 class MainActivity : ComponentActivity() {
@@ -64,7 +67,50 @@ fun BabyRoutineTrackerApp() {
                         launchSingleTop = true
                     }
                 },
+                onNavigateToInvitePartner = {
+                    navController.navigate("invite_partner")
+                },
+                onNavigateToJoinInvitation = {
+                    navController.navigate("join_invitation")
+                },
+                onNavigateToCreateBaby = {
+                    navController.navigate("create_baby")
+                },
                 authViewModel = authViewModel
+            )
+        }
+        
+        composable("invite_partner") {
+            InvitePartnerScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+        
+        composable("join_invitation") {
+            JoinInvitationScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onJoinSuccess = {
+                    navController.navigate("dashboard") {
+                        popUpTo("join_invitation") { inclusive = true }
+                    }
+                }
+            )
+        }
+        
+        composable("create_baby") {
+            CreateBabyProfileScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onCreateSuccess = {
+                    navController.navigate("dashboard") {
+                        popUpTo("create_baby") { inclusive = true }
+                    }
+                }
             )
         }
     }
