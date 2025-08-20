@@ -34,7 +34,7 @@ fun SignInScreen(
     // Configure Google Sign-In
     val gso = remember {
         GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken("123456789000-zyxwvutsrqponmlkjihgfedcba654321.apps.googleusercontent.com") // Web client ID from Firebase
+            .requestIdToken("346075310302-u7fa0u2fv5rvol8umsu4u8ngst79g6u6.apps.googleusercontent.com") // Web client ID from Firebase
             .requestEmail()
             .build()
     }
