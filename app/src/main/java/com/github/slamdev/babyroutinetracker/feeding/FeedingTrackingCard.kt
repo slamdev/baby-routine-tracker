@@ -121,6 +121,17 @@ fun FeedingTrackingCard(
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                         )
                     }
+                    
+                    // Show notes if available for bottle feeding
+                    if (lastFeeding.feedingType == "bottle" && lastFeeding.notes.isNotBlank()) {
+                        Text(
+                            text = "\"${lastFeeding.notes}\"",
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                            textAlign = TextAlign.Center,
+                            fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
+                        )
+                    }
                 }
                 else -> {
                     Text(

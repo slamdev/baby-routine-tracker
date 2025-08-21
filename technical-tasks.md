@@ -80,15 +80,18 @@ This document outlines the specific acceptance criteria and high-level technical
   * Create real-time synchronization for diaper activities across devices.  
   * Add diaper tracking card to the main dashboard.
 
-**User Story:** As a parent, I want to be able to add a short, optional note to any activity (sleep, feeding, or diaper) to remember important details.
+**User Story:** As a parent, I want to be able to add a short, optional note to bottle feeding and diaper activities to remember important details.
 
 * **Acceptance Criteria:**  
-  * Each activity logging screen/dialog contains an optional text input field for notes.  
-  * Any text entered in this field is saved with the corresponding activity log.  
-  * The note is visible when viewing the details of that past activity.  
+  * Bottle feeding logging dialog contains an optional text input field for notes.  
+  * Diaper/poop logging dialog contains an optional text input field for notes.  
+  * Notes are NOT required or available for sleep tracking and breast milk feeding.  
+  * Any text entered in note fields is saved with the corresponding activity log.  
+  * The note is visible when viewing the details of past bottle feeding and diaper activities.  
 * **Technical Tasks:**  
-  * Add a note field to all activity data models in Firestore.  
-  * Include a TextField composable in each logging UI.
+  * Add a note field to activity data models in Firestore (already implemented).  
+  * Include a TextField composable in bottle feeding and poop logging UI (already implemented).  
+  * Display notes in activity history for bottle feeding and diaper activities (already implemented).
 
 **User Story:** As a parent, I should be able to adjust start and stop time of the activities during and after logging them in case I forgot to press start or stop buttons.
 
