@@ -139,8 +139,13 @@ fun FeedingTrackingCard(
                         }
                         
                         lastFeeding.endTime?.let { endTime ->
+                            val timeText = if (lastFeeding.feedingType == "bottle") {
+                                "at ${formatTime(endTime.toDate())}"  // Instant activity
+                            } else {
+                                "Ended at ${formatTime(endTime.toDate())}"  // Duration activity
+                            }
                             Text(
-                                text = "Ended at ${formatTime(endTime.toDate())}",
+                                text = timeText,
                                 fontSize = 12.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                             )

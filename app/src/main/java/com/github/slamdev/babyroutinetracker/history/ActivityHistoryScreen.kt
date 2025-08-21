@@ -180,20 +180,26 @@ private fun ActivityHistoryItem(
                 )
                 
                 // Time information
-                val startTime = formatTime(activity.startTime.toDate())
                 val timeInfo = if (activity.endTime != null) {
-                    val endTime = formatTime(activity.endTime.toDate())
-                    val duration = activity.getDurationMinutes()
-                    if (duration != null) {
-                        val hours = duration / 60
-                        val minutes = duration % 60
-                        val durationText = if (hours > 0) "${hours}h ${minutes}m" else "${minutes}m"
-                        "$startTime - $endTime ($durationText)"
+                    if (activity.isInstantActivity()) {
+                        // For instant activities (bottle feeding, diaper), show single timestamp
+                        "at ${formatTime(activity.startTime.toDate())}"
                     } else {
-                        "$startTime - $endTime"
+                        // For duration activities (sleep, breast feeding), show start-end with duration
+                        val startTime = formatTime(activity.startTime.toDate())
+                        val endTime = formatTime(activity.endTime.toDate())
+                        val duration = activity.getDurationMinutes()
+                        if (duration != null) {
+                            val hours = duration / 60
+                            val minutes = duration % 60
+                            val durationText = if (hours > 0) "${hours}h ${minutes}m" else "${minutes}m"
+                            "$startTime - $endTime ($durationText)"
+                        } else {
+                            "$startTime - $endTime"
+                        }
                     }
                 } else {
-                    "Started at $startTime (ongoing)"
+                    "Started at ${formatTime(activity.startTime.toDate())} (ongoing)"
                 }
                 
                 Text(
