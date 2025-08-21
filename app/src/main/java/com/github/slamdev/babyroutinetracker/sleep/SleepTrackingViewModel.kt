@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.slamdev.babyroutinetracker.model.Activity
 import com.github.slamdev.babyroutinetracker.model.ActivityType
+import com.github.slamdev.babyroutinetracker.model.OptionalUiState
 import com.github.slamdev.babyroutinetracker.service.ActivityService
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.Job
@@ -19,7 +20,11 @@ data class SleepTrackingUiState(
     val ongoingSleep: Activity? = null,
     val lastSleep: Activity? = null,
     val currentElapsedTime: Long = 0L, // in seconds
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val ongoingSleepError: String? = null,
+    val lastSleepError: String? = null,
+    val isLoadingOngoingSleep: Boolean = false,
+    val isLoadingLastSleep: Boolean = false
 )
 
 class SleepTrackingViewModel : ViewModel() {
@@ -50,15 +55,41 @@ class SleepTrackingViewModel : ViewModel() {
         // Start listening to ongoing sleep activity
         viewModelScope.launch {
             activityService.getOngoingActivityFlow(babyId, ActivityType.SLEEP)
-                .collect { ongoingSleep ->
-                    Log.d(TAG, "Ongoing sleep activity updated: ${if (ongoingSleep != null) "active" else "none"}")
-                    _uiState.value = _uiState.value.copy(ongoingSleep = ongoingSleep)
-                    
-                    // Start or stop timer based on ongoing activity
-                    if (ongoingSleep != null) {
-                        startTimer(ongoingSleep.startTime)
-                    } else {
-                        stopTimer()
+                .collect { ongoingSleepState ->
+                    when (ongoingSleepState) {
+                        is OptionalUiState.Loading -> {
+                            _uiState.value = _uiState.value.copy(
+                                isLoadingOngoingSleep = true,
+                                ongoingSleepError = null
+                            )
+                        }
+                        is OptionalUiState.Success -> {
+                            Log.d(TAG, "Ongoing sleep activity updated: active")
+                            _uiState.value = _uiState.value.copy(
+                                isLoadingOngoingSleep = false,
+                                ongoingSleep = ongoingSleepState.data,
+                                ongoingSleepError = null
+                            )
+                            startTimer(ongoingSleepState.data.startTime)
+                        }
+                        is OptionalUiState.Empty -> {
+                            Log.d(TAG, "No ongoing sleep activity")
+                            _uiState.value = _uiState.value.copy(
+                                isLoadingOngoingSleep = false,
+                                ongoingSleep = null,
+                                ongoingSleepError = null
+                            )
+                            stopTimer()
+                        }
+                        is OptionalUiState.Error -> {
+                            Log.e(TAG, "Error getting ongoing sleep activity", ongoingSleepState.exception)
+                            _uiState.value = _uiState.value.copy(
+                                isLoadingOngoingSleep = false,
+                                ongoingSleep = null,
+                                ongoingSleepError = ongoingSleepState.message
+                            )
+                            stopTimer()
+                        }
                     }
                 }
         }
@@ -66,9 +97,39 @@ class SleepTrackingViewModel : ViewModel() {
         // Start listening to last sleep activity
         viewModelScope.launch {
             activityService.getLastActivityFlow(babyId, ActivityType.SLEEP)
-                .collect { lastSleep ->
-                    Log.d(TAG, "Last sleep activity updated: ${lastSleep?.let { "found" } ?: "none"}")
-                    _uiState.value = _uiState.value.copy(lastSleep = lastSleep)
+                .collect { lastSleepState ->
+                    when (lastSleepState) {
+                        is OptionalUiState.Loading -> {
+                            _uiState.value = _uiState.value.copy(
+                                isLoadingLastSleep = true,
+                                lastSleepError = null
+                            )
+                        }
+                        is OptionalUiState.Success -> {
+                            Log.d(TAG, "Last sleep activity updated: found")
+                            _uiState.value = _uiState.value.copy(
+                                isLoadingLastSleep = false,
+                                lastSleep = lastSleepState.data,
+                                lastSleepError = null
+                            )
+                        }
+                        is OptionalUiState.Empty -> {
+                            Log.d(TAG, "No last sleep activity found")
+                            _uiState.value = _uiState.value.copy(
+                                isLoadingLastSleep = false,
+                                lastSleep = null,
+                                lastSleepError = null
+                            )
+                        }
+                        is OptionalUiState.Error -> {
+                            Log.e(TAG, "Error getting last sleep activity", lastSleepState.exception)
+                            _uiState.value = _uiState.value.copy(
+                                isLoadingLastSleep = false,
+                                lastSleep = null,
+                                lastSleepError = lastSleepState.message
+                            )
+                        }
+                    }
                 }
         }
     }
@@ -199,6 +260,20 @@ class SleepTrackingViewModel : ViewModel() {
      */
     fun clearError() {
         _uiState.value = _uiState.value.copy(errorMessage = null)
+    }
+
+    /**
+     * Clear ongoing sleep error
+     */
+    fun clearOngoingSleepError() {
+        _uiState.value = _uiState.value.copy(ongoingSleepError = null)
+    }
+
+    /**
+     * Clear last sleep error
+     */
+    fun clearLastSleepError() {
+        _uiState.value = _uiState.value.copy(lastSleepError = null)
     }
 
     /**

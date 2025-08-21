@@ -158,6 +158,221 @@ batch.update(
 
 **NEVER** silently swallow exceptions - this makes debugging impossible.
 
+### UI State Management for Error Handling
+
+The app uses a comprehensive error handling system with standardized UI states:
+
+#### UiState Pattern
+```kotlin
+// Core state types
+sealed class UiState<out T> {
+    object Loading : UiState<Nothing>()
+    data class Success<T>(val data: T) : UiState<T>()
+    data class Error(val exception: Throwable, val message: String) : UiState<Nothing>()
+}
+
+// For optional data (might be empty)
+sealed class OptionalUiState<out T> {
+    object Loading : OptionalUiState<Nothing>()
+    object Empty : OptionalUiState<Nothing>()
+    data class Success<T>(val data: T) : OptionalUiState<T>()
+    data class Error(val exception: Throwable, val message: String) : OptionalUiState<Nothing>()
+}
+```
+
+### Service Layer Error Handling
+
+#### ✅ **DO**: Real-time Flow error handling
+```kotlin
+fun getActivityFlow(babyId: String, type: ActivityType): Flow<OptionalUiState<Activity>> = callbackFlow {
+    // Emit loading state initially
+    trySend(OptionalUiState.Loading)
+    
+    val listenerRegistration = firestore.collection("activities")
+        .addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                Log.e(TAG, "Error listening to activities", error)
+                
+                // Provide user-friendly error messages based on error type
+                val userMessage = when {
+                    error.message?.contains("PERMISSION_DENIED") == true -> 
+                        "You don't have permission to view this data"
+                    error.message?.contains("UNAVAILABLE") == true -> 
+                        "Unable to connect to server. Check your internet connection"
+                    error.message?.contains("FAILED_PRECONDITION") == true ->
+                        "Database is being set up. Please try again in a few minutes"
+                    else -> "Unable to load activity data"
+                }
+                
+                trySend(OptionalUiState.Error(error, userMessage))
+                return@addSnapshotListener
+            }
+            
+            // Process successful data
+            if (snapshot != null) {
+                try {
+                    val activity = snapshot.documents.firstOrNull()?.toObject<Activity>()
+                    if (activity != null) {
+                        trySend(OptionalUiState.Success(activity))
+                    } else {
+                        trySend(OptionalUiState.Empty)
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error processing snapshot", e)
+                    trySend(OptionalUiState.Error(e, "Failed to process activity data"))
+                }
+            }
+        }
+    
+    awaitClose { listenerRegistration.remove() }
+}
+```
+
+### ViewModel Error State Management
+
+#### Comprehensive UI State
+```kotlin
+data class TrackingUiState(
+    // Action-level loading and errors
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null,
+    
+    // Data-specific loading and errors  
+    val isLoadingOngoingActivity: Boolean = false,
+    val ongoingActivityError: String? = null,
+    val ongoingActivity: Activity? = null,
+    
+    val isLoadingLastActivity: Boolean = false,
+    val lastActivityError: String? = null,
+    val lastActivity: Activity? = null
+)
+```
+
+#### ViewModel Flow Handling
+```kotlin
+class TrackingViewModel : ViewModel() {
+    fun initialize(babyId: String) {
+        viewModelScope.launch {
+            activityService.getActivityFlow(babyId, ActivityType.SLEEP)
+                .collect { activityState ->
+                    when (activityState) {
+                        is OptionalUiState.Loading -> {
+                            _uiState.value = _uiState.value.copy(
+                                isLoadingOngoingActivity = true,
+                                ongoingActivityError = null
+                            )
+                        }
+                        is OptionalUiState.Success -> {
+                            _uiState.value = _uiState.value.copy(
+                                isLoadingOngoingActivity = false,
+                                ongoingActivity = activityState.data,
+                                ongoingActivityError = null
+                            )
+                        }
+                        is OptionalUiState.Empty -> {
+                            _uiState.value = _uiState.value.copy(
+                                isLoadingOngoingActivity = false,
+                                ongoingActivity = null,
+                                ongoingActivityError = null
+                            )
+                        }
+                        is OptionalUiState.Error -> {
+                            Log.e(TAG, "Error getting activity", activityState.exception)
+                            _uiState.value = _uiState.value.copy(
+                                isLoadingOngoingActivity = false,
+                                ongoingActivity = null,
+                                ongoingActivityError = activityState.message
+                            )
+                        }
+                    }
+                }
+        }
+    }
+    
+    // Error clearing functions
+    fun clearOngoingActivityError() {
+        _uiState.value = _uiState.value.copy(ongoingActivityError = null)
+    }
+}
+```
+
+### UI Error Display Components
+
+#### Reusable Error Components
+```kotlin
+// For prominent error displays
+@Composable
+fun ErrorStateComponent(
+    errorMessage: String,
+    onRetry: (() -> Unit)? = null,
+    onDismiss: (() -> Unit)? = null
+) { /* Implementation in ErrorStateComponent.kt */ }
+
+// For compact inline errors
+@Composable  
+fun CompactErrorDisplay(
+    errorMessage: String,
+    onRetry: (() -> Unit)? = null,
+    onDismiss: (() -> Unit)? = null
+) { /* Implementation in ErrorStateComponent.kt */ }
+```
+
+#### UI Error Handling Pattern
+```kotlin
+@Composable
+fun TrackingCard(viewModel: TrackingViewModel) {
+    val uiState by viewModel.uiState.collectAsState()
+    
+    // Handle different states for each data source
+    when {
+        uiState.activityError != null -> {
+            CompactErrorDisplay(
+                errorMessage = uiState.activityError,
+                onDismiss = { viewModel.clearActivityError() }
+            )
+        }
+        uiState.isLoadingActivity -> {
+            Row {
+                CircularProgressIndicator(modifier = Modifier.size(16.dp))
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Loading...")
+            }
+        }
+        uiState.activity != null -> {
+            // Display data
+        }
+        else -> {
+            Text("No data available")
+        }
+    }
+}
+```
+
+### Smart Cast Prevention
+
+When using delegated properties in `when` expressions, create local variables to avoid smart cast issues:
+
+#### ❌ **DON'T**: Direct property access in when
+```kotlin
+when {
+    uiState.error != null -> {
+        // ❌ Smart cast to String is impossible
+        CompactErrorDisplay(errorMessage = uiState.error, onDismiss = {})
+    }
+}
+```
+
+#### ✅ **DO**: Local variable extraction
+```kotlin
+val errorMessage = uiState.error
+when {
+    errorMessage != null -> {
+        // ✅ Smart cast works with local variable
+        CompactErrorDisplay(errorMessage = errorMessage, onDismiss = {})
+    }
+}
+```
+
 #### ❌ **DON'T**: Silent exception handling
 ```kotlin
 // BAD - Exception is completely lost
@@ -213,29 +428,6 @@ class BabyService {
             Result.success(baby)
         } catch (e: Exception) {
             Log.e(TAG, "Failed to create baby: ${baby.name}", e)  // ✅ Error with context
-            Result.failure(e)
-        }
-    }
-    
-    suspend fun updateBaby(baby: Baby): Result<Baby> {
-        return try {
-            firestore.collection("babies")
-                .document(baby.id)
-                .set(baby)
-                .await()
-            Result.success(baby)
-        } catch (e: FirebaseFirestoreException) {
-            when (e.code) {
-                FirebaseFirestoreException.Code.PERMISSION_DENIED -> {
-                    Log.w(TAG, "Permission denied updating baby: ${baby.id}", e)  // ✅ Warning level
-                }
-                else -> {
-                    Log.e(TAG, "Firestore error updating baby: ${baby.id}", e)  // ✅ Error level
-                }
-            }
-            Result.failure(e)
-        } catch (e: Exception) {
-            Log.e(TAG, "Unexpected error updating baby: ${baby.id}", e)  // ✅ Catch-all with logging
             Result.failure(e)
         }
     }
@@ -361,14 +553,34 @@ class MyViewModel : ViewModel() {
 
 ## 🚨 Common Issues & Solutions
 
+### Firestore Index Errors
+- **Problem**: `FAILED_PRECONDITION: The query requires an index`
+- **Root Cause**: Queries with `whereEqualTo() + whereNotEqualTo() + orderBy()` need composite indexes
+- **Solution**: 
+  1. Click the URL in the error message to auto-create the index
+  2. Or manually create in Firebase Console: Firestore Database → Indexes
+  3. Required index pattern: `type (Ascending) + endTime (Ascending) + __name__ (Ascending)`
+- **Wait Time**: Index creation takes 5-15 minutes
+- **Documentation**: See `FIRESTORE_INDEX_SETUP.md` for detailed instructions
+
 ### Firebase Permission Errors
 - **Problem**: `PERMISSION_DENIED` during multi-user operations
 - **Solution**: Use `FieldValue.arrayUnion()` instead of reading + updating
 - **Security**: Ensure update rules allow user to add themselves to arrays
 
+### Smart Cast Compilation Errors
+- **Problem**: "Smart cast to 'String' is impossible, because 'property' is a delegated property"
+- **Solution**: Extract to local variable before `when` expression
+- **Example**: `val error = uiState.error; when { error != null -> { /* use error */ } }`
+
+### Flow Error Handling
+- **Problem**: Errors in Firebase listeners not visible to users
+- **Solution**: Use `OptionalUiState` pattern to emit proper error states
+- **Pattern**: Always emit Loading → Success/Empty/Error states in flows
+
 ### Icon Import Errors
-- **Problem**: Material icons not found (e.g., `ContentCopy`, `CalendarToday`)
-- **Solution**: Use available icons or text-only buttons
+- **Problem**: Material icons not found (e.g., `ContentCopy`, `CalendarToday`, `ErrorOutline`)
+- **Solution**: Use available icons like `Icons.Default.Warning` or text-only buttons
 - **Check**: Look at existing codebase for working icon imports
 
 ### Button Size Inconsistencies
@@ -396,11 +608,38 @@ class MyViewModel : ViewModel() {
 2. **Offline behavior** - App works without internet
 3. **Permission edge cases** - New users joining profiles
 4. **UI responsiveness** - Portrait/landscape/split-screen modes
+5. **Error scenarios** - Database connection issues, permission errors
+6. **Index creation** - Test app behavior before and after Firestore indexes exist
+
+### Error Scenario Testing
+
+// Test network errors
+1. Turn off wifi/data while using the app
+2. Verify error messages appear with "check your internet connection"
+3. Verify retry functionality works when connection restored
+
+// Test permission errors  
+1. Temporarily modify Firestore security rules to deny access
+2. Verify "permission denied" messages appear
+3. Restore rules and verify functionality returns
+
+// Test index errors
+1. Delete Firestore indexes temporarily
+2. Verify "database is being set up" messages appear
+3. Recreate indexes and verify data loads normally
+
+// Test UI error states
+1. Each tracking card should show loading indicators
+2. Error messages should be dismissible
+3. Errors should not crash the app
 
 ### Test Command Sequence
 ```bash
-# Compile
+# Compile and check for errors
 ./gradlew :app:compileDebugKotlin
+
+# Run full build to catch additional issues
+./gradlew :app:assembleDebug
 
 # If issues, check lints
 # (Use linting tools in IDE)
@@ -435,6 +674,61 @@ security: update Firestore rules for invitations
 9. **Update security rules** if needed
 10. **Document new patterns** in this guide
 
+## 🔄 Error Handling Architecture (Current Implementation)
+
+### Three-Layer Error Handling System
+
+Our app implements a comprehensive three-layer error handling system:
+
+#### Layer 1: Service Layer (Data Source)
+- **ActivityService** emits `OptionalUiState<T>` for real-time flows
+- **Error Categorization**: Network, permission, database setup, parsing errors
+- **User-Friendly Messages**: Convert technical errors to understandable text
+- **Proper Logging**: All exceptions logged with context [[memory:6766862]]
+
+#### Layer 2: ViewModel Layer (State Management)  
+- **Separate Error States**: Different errors for ongoing vs. last activity data
+- **Loading States**: Individual loading indicators for each data source
+- **Error Clearing**: Functions to dismiss specific error messages
+- **State Consistency**: Ensure UI state always reflects current data/error status
+
+#### Layer 3: UI Layer (User Experience)
+- **ErrorStateComponent**: Full-screen error displays with retry/dismiss actions
+- **CompactErrorDisplay**: Inline error messages for smaller UI areas
+- **Loading Indicators**: Consistent loading states across all tracking cards
+- **Smart Cast Safety**: Local variables to prevent Kotlin smart cast issues
+
+### Error Handling Checklist for New Features
+
+When implementing new features, ensure:
+
+- [ ] Service methods return `OptionalUiState<T>` for flows or `Result<T>` for operations
+- [ ] All exceptions are logged with context and appropriate severity level
+- [ ] User-friendly error messages for common error types (network, permissions, setup)
+- [ ] ViewModel handles all possible states (Loading, Success, Empty, Error)
+- [ ] UI displays loading indicators while data is being fetched
+- [ ] Error messages are dismissible and don't break the user flow
+- [ ] Local variables used in `when` expressions to prevent smart cast issues
+
+### Common Error Types & Messages
+
+```kotlin
+// Database setup issues (Firestore indexes)
+"Database is being set up. Please try again in a few minutes"
+
+// Network connectivity
+"Unable to connect to server. Please check your internet connection"
+
+// Permission issues
+"You don't have permission to view this baby's activities"
+
+// Authentication issues  
+"Please sign in to view activities"
+
+// Data processing errors
+"Failed to process [activity type] data"
+```
+
 ## 🔄 Future Updates
 
 When adding new entities or features:
@@ -442,6 +736,8 @@ When adding new entities or features:
 2. Update this guide with new patterns discovered
 3. Maintain consistency with existing code structure
 4. Always consider multi-user collaboration implications
+5. **Implement proper error handling** using the three-layer system above
+6. **Test error scenarios** as part of development workflow
 
 ---
 

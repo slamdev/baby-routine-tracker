@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.slamdev.babyroutinetracker.model.Activity
 import com.github.slamdev.babyroutinetracker.model.ActivityType
+import com.github.slamdev.babyroutinetracker.model.OptionalUiState
 import com.github.slamdev.babyroutinetracker.service.ActivityService
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.Job
@@ -19,7 +20,11 @@ data class FeedingTrackingUiState(
     val ongoingBreastFeeding: Activity? = null,
     val lastFeeding: Activity? = null,
     val currentElapsedTime: Long = 0L, // in seconds
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val ongoingFeedingError: String? = null,
+    val lastFeedingError: String? = null,
+    val isLoadingOngoingFeeding: Boolean = false,
+    val isLoadingLastFeeding: Boolean = false
 )
 
 class FeedingTrackingViewModel : ViewModel() {
@@ -50,17 +55,49 @@ class FeedingTrackingViewModel : ViewModel() {
         // Start listening to ongoing breast milk feeding activity
         viewModelScope.launch {
             activityService.getOngoingActivityFlow(babyId, ActivityType.FEEDING)
-                .collect { ongoingFeeding ->
-                    // Only track ongoing breast milk feeding sessions
-                    val ongoingBreastFeeding = ongoingFeeding?.takeIf { it.feedingType == "breast_milk" }
-                    Log.d(TAG, "Ongoing breast feeding activity updated: ${if (ongoingBreastFeeding != null) "active" else "none"}")
-                    _uiState.value = _uiState.value.copy(ongoingBreastFeeding = ongoingBreastFeeding)
-                    
-                    // Start or stop timer based on ongoing activity
-                    if (ongoingBreastFeeding != null) {
-                        startTimer(ongoingBreastFeeding.startTime)
-                    } else {
-                        stopTimer()
+                .collect { ongoingFeedingState ->
+                    when (ongoingFeedingState) {
+                        is OptionalUiState.Loading -> {
+                            _uiState.value = _uiState.value.copy(
+                                isLoadingOngoingFeeding = true,
+                                ongoingFeedingError = null
+                            )
+                        }
+                        is OptionalUiState.Success -> {
+                            // Only track ongoing breast milk feeding sessions
+                            val ongoingBreastFeeding = ongoingFeedingState.data.takeIf { it.feedingType == "breast_milk" }
+                            Log.d(TAG, "Ongoing breast feeding activity updated: ${if (ongoingBreastFeeding != null) "active" else "none"}")
+                            _uiState.value = _uiState.value.copy(
+                                isLoadingOngoingFeeding = false,
+                                ongoingBreastFeeding = ongoingBreastFeeding,
+                                ongoingFeedingError = null
+                            )
+                            
+                            // Start or stop timer based on ongoing activity
+                            if (ongoingBreastFeeding != null) {
+                                startTimer(ongoingBreastFeeding.startTime)
+                            } else {
+                                stopTimer()
+                            }
+                        }
+                        is OptionalUiState.Empty -> {
+                            Log.d(TAG, "No ongoing breast feeding activity")
+                            _uiState.value = _uiState.value.copy(
+                                isLoadingOngoingFeeding = false,
+                                ongoingBreastFeeding = null,
+                                ongoingFeedingError = null
+                            )
+                            stopTimer()
+                        }
+                        is OptionalUiState.Error -> {
+                            Log.e(TAG, "Error getting ongoing feeding activity", ongoingFeedingState.exception)
+                            _uiState.value = _uiState.value.copy(
+                                isLoadingOngoingFeeding = false,
+                                ongoingBreastFeeding = null,
+                                ongoingFeedingError = ongoingFeedingState.message
+                            )
+                            stopTimer()
+                        }
                     }
                 }
         }
@@ -68,9 +105,39 @@ class FeedingTrackingViewModel : ViewModel() {
         // Start listening to last feeding activity
         viewModelScope.launch {
             activityService.getLastActivityFlow(babyId, ActivityType.FEEDING)
-                .collect { lastFeeding ->
-                    Log.d(TAG, "Last feeding activity updated: ${lastFeeding?.let { "found" } ?: "none"}")
-                    _uiState.value = _uiState.value.copy(lastFeeding = lastFeeding)
+                .collect { lastFeedingState ->
+                    when (lastFeedingState) {
+                        is OptionalUiState.Loading -> {
+                            _uiState.value = _uiState.value.copy(
+                                isLoadingLastFeeding = true,
+                                lastFeedingError = null
+                            )
+                        }
+                        is OptionalUiState.Success -> {
+                            Log.d(TAG, "Last feeding activity updated: found")
+                            _uiState.value = _uiState.value.copy(
+                                isLoadingLastFeeding = false,
+                                lastFeeding = lastFeedingState.data,
+                                lastFeedingError = null
+                            )
+                        }
+                        is OptionalUiState.Empty -> {
+                            Log.d(TAG, "No last feeding activity found")
+                            _uiState.value = _uiState.value.copy(
+                                isLoadingLastFeeding = false,
+                                lastFeeding = null,
+                                lastFeedingError = null
+                            )
+                        }
+                        is OptionalUiState.Error -> {
+                            Log.e(TAG, "Error getting last feeding activity", lastFeedingState.exception)
+                            _uiState.value = _uiState.value.copy(
+                                isLoadingLastFeeding = false,
+                                lastFeeding = null,
+                                lastFeedingError = lastFeedingState.message
+                            )
+                        }
+                    }
                 }
         }
     }
@@ -259,6 +326,20 @@ class FeedingTrackingViewModel : ViewModel() {
      */
     fun clearError() {
         _uiState.value = _uiState.value.copy(errorMessage = null)
+    }
+
+    /**
+     * Clear ongoing feeding error
+     */
+    fun clearOngoingFeedingError() {
+        _uiState.value = _uiState.value.copy(ongoingFeedingError = null)
+    }
+
+    /**
+     * Clear last feeding error
+     */
+    fun clearLastFeedingError() {
+        _uiState.value = _uiState.value.copy(lastFeedingError = null)
     }
 
     override fun onCleared() {

@@ -3,6 +3,7 @@ package com.github.slamdev.babyroutinetracker.service
 import android.util.Log
 import com.github.slamdev.babyroutinetracker.model.Activity
 import com.github.slamdev.babyroutinetracker.model.ActivityType
+import com.github.slamdev.babyroutinetracker.model.OptionalUiState
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -198,16 +199,20 @@ class ActivityService {
     /**
      * Get real-time updates for ongoing activities of a specific type for a baby
      */
-    fun getOngoingActivityFlow(babyId: String, type: ActivityType): Flow<Activity?> = callbackFlow {
+    fun getOngoingActivityFlow(babyId: String, type: ActivityType): Flow<OptionalUiState<Activity>> = callbackFlow {
         val currentUser = auth.currentUser
         if (currentUser == null) {
-            Log.e(TAG, "Failed to get ongoing activity flow - user not authenticated")
-            trySend(null)
+            val error = Exception("User not authenticated")
+            Log.e(TAG, "Failed to get ongoing activity flow - user not authenticated", error)
+            trySend(OptionalUiState.Error(error, "Please sign in to view activities"))
             close()
             return@callbackFlow
         }
 
         Log.d(TAG, "Setting up real-time listener for ongoing ${type.displayName} activity: $babyId")
+        
+        // Emit loading state initially
+        trySend(OptionalUiState.Loading)
         
         val listenerRegistration = firestore.collection(BABIES_COLLECTION)
             .document(babyId)
@@ -217,7 +222,16 @@ class ActivityService {
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     Log.e(TAG, "Error listening to ongoing ${type.displayName} activity", error)
-                    trySend(null)
+                    val userMessage = when {
+                        error.message?.contains("PERMISSION_DENIED") == true -> 
+                            "You don't have permission to view this baby's activities"
+                        error.message?.contains("UNAVAILABLE") == true -> 
+                            "Unable to connect to server. Please check your internet connection"
+                        error.message?.contains("index") == true ->
+                            "Database configuration issue. Please contact support"
+                        else -> "Unable to load ${type.displayName.lowercase()} activities"
+                    }
+                    trySend(OptionalUiState.Error(error, userMessage))
                     return@addSnapshotListener
                 }
 
@@ -238,14 +252,19 @@ class ActivityService {
                         
                         val activity = ongoingActivities.firstOrNull()
                         Log.d(TAG, "Real-time update for ongoing ${type.displayName}: ${if (activity != null) "active" else "none"}")
-                        trySend(activity)
+                        
+                        if (activity != null) {
+                            trySend(OptionalUiState.Success(activity))
+                        } else {
+                            trySend(OptionalUiState.Empty)
+                        }
                     } catch (e: Exception) {
                         Log.e(TAG, "Error processing ongoing ${type.displayName} activity snapshot", e)
-                        trySend(null)
+                        trySend(OptionalUiState.Error(e, "Failed to process ${type.displayName.lowercase()} data"))
                     }
                 } else {
                     Log.d(TAG, "Received null snapshot for ongoing ${type.displayName} activity")
-                    trySend(null)
+                    trySend(OptionalUiState.Empty)
                 }
             }
 
@@ -258,16 +277,20 @@ class ActivityService {
     /**
      * Get real-time updates for the most recent COMPLETED activity of a specific type for a baby
      */
-    fun getLastActivityFlow(babyId: String, type: ActivityType): Flow<Activity?> = callbackFlow {
+    fun getLastActivityFlow(babyId: String, type: ActivityType): Flow<OptionalUiState<Activity>> = callbackFlow {
         val currentUser = auth.currentUser
         if (currentUser == null) {
-            Log.e(TAG, "Failed to get last activity flow - user not authenticated")
-            trySend(null)
+            val error = Exception("User not authenticated")
+            Log.e(TAG, "Failed to get last activity flow - user not authenticated", error)
+            trySend(OptionalUiState.Error(error, "Please sign in to view activities"))
             close()
             return@callbackFlow
         }
 
         Log.d(TAG, "Setting up real-time listener for last completed ${type.displayName} activity: $babyId")
+        
+        // Emit loading state initially
+        trySend(OptionalUiState.Loading)
         
         val listenerRegistration = firestore.collection(BABIES_COLLECTION)
             .document(babyId)
@@ -279,7 +302,16 @@ class ActivityService {
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     Log.e(TAG, "Error listening to last ${type.displayName} activity", error)
-                    trySend(null)
+                    val userMessage = when {
+                        error.message?.contains("PERMISSION_DENIED") == true -> 
+                            "You don't have permission to view this baby's activities"
+                        error.message?.contains("UNAVAILABLE") == true -> 
+                            "Unable to connect to server. Please check your internet connection"
+                        error.message?.contains("index") == true || error.message?.contains("FAILED_PRECONDITION") == true ->
+                            "Database is being set up. Please try again in a few minutes"
+                        else -> "Unable to load last ${type.displayName.lowercase()} activity"
+                    }
+                    trySend(OptionalUiState.Error(error, userMessage))
                     return@addSnapshotListener
                 }
 
@@ -295,14 +327,19 @@ class ActivityService {
                         }
                         
                         Log.d(TAG, "Real-time update for last completed ${type.displayName}: ${if (activity != null) "found" else "none"}")
-                        trySend(activity)
+                        
+                        if (activity != null) {
+                            trySend(OptionalUiState.Success(activity))
+                        } else {
+                            trySend(OptionalUiState.Empty)
+                        }
                     } catch (e: Exception) {
                         Log.e(TAG, "Error processing last ${type.displayName} activity snapshot", e)
-                        trySend(null)
+                        trySend(OptionalUiState.Error(e, "Failed to process ${type.displayName.lowercase()} data"))
                     }
                 } else {
                     Log.d(TAG, "Received null snapshot for last ${type.displayName} activity")
-                    trySend(null)
+                    trySend(OptionalUiState.Empty)
                 }
             }
 

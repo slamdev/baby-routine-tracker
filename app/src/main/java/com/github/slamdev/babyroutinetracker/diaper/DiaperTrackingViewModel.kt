@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.slamdev.babyroutinetracker.model.Activity
 import com.github.slamdev.babyroutinetracker.model.ActivityType
+import com.github.slamdev.babyroutinetracker.model.OptionalUiState
 import com.github.slamdev.babyroutinetracker.service.ActivityService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +16,9 @@ data class DiaperTrackingUiState(
     val isLoading: Boolean = false,
     val lastDiaper: Activity? = null,
     val errorMessage: String? = null,
-    val successMessage: String? = null
+    val successMessage: String? = null,
+    val lastDiaperError: String? = null,
+    val isLoadingLastDiaper: Boolean = false
 )
 
 class DiaperTrackingViewModel : ViewModel() {
@@ -45,9 +48,39 @@ class DiaperTrackingViewModel : ViewModel() {
         // Start listening to last diaper activity
         viewModelScope.launch {
             activityService.getLastActivityFlow(babyId, ActivityType.DIAPER)
-                .collect { lastDiaper ->
-                    Log.d(TAG, "Last diaper activity updated: ${lastDiaper?.let { "found" } ?: "none"}")
-                    _uiState.value = _uiState.value.copy(lastDiaper = lastDiaper)
+                .collect { lastDiaperState ->
+                    when (lastDiaperState) {
+                        is OptionalUiState.Loading -> {
+                            _uiState.value = _uiState.value.copy(
+                                isLoadingLastDiaper = true,
+                                lastDiaperError = null
+                            )
+                        }
+                        is OptionalUiState.Success -> {
+                            Log.d(TAG, "Last diaper activity updated: found")
+                            _uiState.value = _uiState.value.copy(
+                                isLoadingLastDiaper = false,
+                                lastDiaper = lastDiaperState.data,
+                                lastDiaperError = null
+                            )
+                        }
+                        is OptionalUiState.Empty -> {
+                            Log.d(TAG, "No last diaper activity found")
+                            _uiState.value = _uiState.value.copy(
+                                isLoadingLastDiaper = false,
+                                lastDiaper = null,
+                                lastDiaperError = null
+                            )
+                        }
+                        is OptionalUiState.Error -> {
+                            Log.e(TAG, "Error getting last diaper activity", lastDiaperState.exception)
+                            _uiState.value = _uiState.value.copy(
+                                isLoadingLastDiaper = false,
+                                lastDiaper = null,
+                                lastDiaperError = lastDiaperState.message
+                            )
+                        }
+                    }
                 }
         }
     }
@@ -108,6 +141,13 @@ class DiaperTrackingViewModel : ViewModel() {
      */
     fun clearSuccess() {
         _uiState.value = _uiState.value.copy(successMessage = null)
+    }
+
+    /**
+     * Clear last diaper error
+     */
+    fun clearLastDiaperError() {
+        _uiState.value = _uiState.value.copy(lastDiaperError = null)
     }
 
     override fun onCleared() {

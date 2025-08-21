@@ -16,6 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.github.slamdev.babyroutinetracker.ui.components.CompactErrorDisplay
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -79,68 +80,130 @@ fun SleepTrackingCard(
                 )
             }
             
-            // Current status and timer
+            // Current status and timer with error handling
+            val ongoingSleepError = uiState.ongoingSleepError
             val ongoingSleep = uiState.ongoingSleep
-            if (ongoingSleep != null) {
-                // Ongoing sleep status
-                Text(
-                    text = "Sleep in progress",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-                
-                // Timer display
-                Text(
-                    text = viewModel.formatElapsedTime(uiState.currentElapsedTime),
-                    fontSize = 32.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    textAlign = TextAlign.Center
-                )
-                
-                // Start time
-                Text(
-                    text = "Started at ${formatTime(ongoingSleep.startTime.toDate())}",
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
-                )
-                
-            } else {
-                // No ongoing sleep
-                Text(
-                    text = "Not sleeping",
-                    fontSize = 16.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
-                )
-                
-                // Show last sleep if available
-                uiState.lastSleep?.let { lastSleep ->
-                    if (lastSleep.endTime != null) {
-                        val duration = lastSleep.getDurationMinutes()
-                        val durationText = if (duration != null) {
-                            val hours = duration / 60
-                            val minutes = duration % 60
-                            if (hours > 0) {
-                                "${hours}h ${minutes}m"
-                            } else {
-                                "${minutes}m"
-                            }
-                        } else {
-                            "Unknown duration"
-                        }
-                        
-                        Text(
-                            text = "Last sleep: $durationText",
-                            fontSize = 14.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
+            when {
+                ongoingSleepError != null -> {
+                    CompactErrorDisplay(
+                        errorMessage = ongoingSleepError,
+                        onDismiss = { viewModel.clearOngoingSleepError() },
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    )
+                }
+                uiState.isLoadingOngoingSleep -> {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(16.dp),
+                            strokeWidth = 2.dp
                         )
-                        
+                        Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Ended at ${formatTime(lastSleep.endTime.toDate())}",
-                            fontSize = 12.sp,
+                            text = "Loading sleep status...",
+                            fontSize = 14.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                         )
+                    }
+                }
+                ongoingSleep != null -> {
+                    // Ongoing sleep status
+                    Text(
+                        text = "Sleep in progress",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                    
+                    // Timer display
+                    Text(
+                        text = viewModel.formatElapsedTime(uiState.currentElapsedTime),
+                        fontSize = 32.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        textAlign = TextAlign.Center
+                    )
+                    
+                    // Start time
+                    Text(
+                        text = "Started at ${formatTime(ongoingSleep.startTime.toDate())}",
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                    )
+                }
+                else -> {
+                    // No ongoing sleep
+                    Text(
+                        text = "Not sleeping",
+                        fontSize = 16.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                    )
+                    
+                    // Show last sleep with error handling
+                    val lastSleepError = uiState.lastSleepError
+                    val lastSleep = uiState.lastSleep
+                    when {
+                        lastSleepError != null -> {
+                            CompactErrorDisplay(
+                                errorMessage = lastSleepError,
+                                onDismiss = { viewModel.clearLastSleepError() },
+                                modifier = Modifier.padding(vertical = 4.dp)
+                            )
+                        }
+                        uiState.isLoadingLastSleep -> {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(16.dp),
+                                    strokeWidth = 2.dp
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = "Loading last sleep...",
+                                    fontSize = 12.sp,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                                )
+                            }
+                        }
+                        lastSleep != null && lastSleep.endTime != null -> {
+                            val duration = lastSleep.getDurationMinutes()
+                            val durationText = if (duration != null) {
+                                val hours = duration / 60
+                                val minutes = duration % 60
+                                if (hours > 0) {
+                                    "${hours}h ${minutes}m"
+                                } else {
+                                    "${minutes}m"
+                                }
+                            } else {
+                                "Unknown duration"
+                            }
+                            
+                            Text(
+                                text = "Last sleep: $durationText",
+                                fontSize = 14.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
+                            )
+                            
+                            lastSleep.endTime?.let { endTime ->
+                                Text(
+                                    text = "Ended at ${formatTime(endTime.toDate())}",
+                                    fontSize = 12.sp,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                                )
+                            }
+                        }
+                        else -> {
+                            Text(
+                                text = "No recent sleep",
+                                fontSize = 14.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                            )
+                        }
                     }
                 }
             }

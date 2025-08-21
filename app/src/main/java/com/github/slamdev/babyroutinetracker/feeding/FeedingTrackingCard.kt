@@ -15,6 +15,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.github.slamdev.babyroutinetracker.ui.components.CompactErrorDisplay
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -63,34 +64,72 @@ fun FeedingTrackingCard(
                 textAlign = TextAlign.Center
             )
             
-            // Last feeding info
+            // Last feeding info with error handling
+            val lastFeedingError = uiState.lastFeedingError
             val lastFeeding = uiState.lastFeeding
-            if (lastFeeding != null && lastFeeding.endTime != null) {
-                // Format feeding details
-                val feedingDetails = when (lastFeeding.feedingType) {
-                    "breast_milk" -> {
-                        val duration = lastFeeding.getDurationMinutes() ?: 0
-                        "Breast milk - ${duration}min"
-                    }
-                    "bottle" -> {
-                        val amount = lastFeeding.amount.toInt()
-                        "Bottle - ${amount}ml"
-                    }
-                    else -> "Feeding completed"
+            when {
+                lastFeedingError != null -> {
+                    CompactErrorDisplay(
+                        errorMessage = lastFeedingError,
+                        onDismiss = { viewModel.clearLastFeedingError() },
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    )
                 }
-                
-                Text(
-                    text = "Last feeding: $feedingDetails",
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
-                    textAlign = TextAlign.Center
-                )
-                
-                Text(
-                    text = "Ended at ${formatTime(lastFeeding.endTime.toDate())}",
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-                )
+                uiState.isLoadingLastFeeding -> {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(16.dp),
+                            strokeWidth = 2.dp
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Loading last feeding...",
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                        )
+                    }
+                }
+                lastFeeding != null && lastFeeding.endTime != null -> {
+                    // Format feeding details
+                    val feedingDetails = when (lastFeeding.feedingType) {
+                        "breast_milk" -> {
+                            val duration = lastFeeding.getDurationMinutes() ?: 0
+                            "Breast milk - ${duration}min"
+                        }
+                        "bottle" -> {
+                            val amount = lastFeeding.amount.toInt()
+                            "Bottle - ${amount}ml"
+                        }
+                        else -> "Feeding completed"
+                    }
+                    
+                    Text(
+                        text = "Last feeding: $feedingDetails",
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
+                        textAlign = TextAlign.Center
+                    )
+                    
+                    lastFeeding.endTime?.let { endTime ->
+                        Text(
+                            text = "Ended at ${formatTime(endTime.toDate())}",
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                        )
+                    }
+                }
+                else -> {
+                    Text(
+                        text = "No recent feeding",
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
             
             // Breast milk feeding section
@@ -98,6 +137,7 @@ fun FeedingTrackingCard(
                 uiState = uiState,
                 onStartBreastFeeding = { viewModel.startBreastMilkFeeding() },
                 onStopBreastFeeding = { viewModel.endBreastMilkFeeding() },
+                onClearOngoingError = { viewModel.clearOngoingFeedingError() },
                 formatElapsedTime = { viewModel.formatElapsedTime(it) }
             )
             
@@ -154,6 +194,7 @@ private fun BreastMilkFeedingSection(
     uiState: FeedingTrackingUiState,
     onStartBreastFeeding: () -> Unit,
     onStopBreastFeeding: () -> Unit,
+    onClearOngoingError: () -> Unit,
     formatElapsedTime: (Long) -> String
 ) {
     val ongoingBreastFeeding = uiState.ongoingBreastFeeding
@@ -170,7 +211,30 @@ private fun BreastMilkFeedingSection(
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         
-        if (isOngoing) {
+        // Show ongoing feeding error if present
+        val ongoingFeedingError = uiState.ongoingFeedingError
+        if (ongoingFeedingError != null) {
+            CompactErrorDisplay(
+                errorMessage = ongoingFeedingError,
+                onDismiss = onClearOngoingError,
+                modifier = Modifier.padding(vertical = 4.dp)
+            )
+        } else if (uiState.isLoadingOngoingFeeding) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(16.dp),
+                    strokeWidth = 2.dp
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Loading...",
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                )
+            }
+        } else if (isOngoing) {
             // Timer display
             Text(
                 text = formatElapsedTime(uiState.currentElapsedTime),

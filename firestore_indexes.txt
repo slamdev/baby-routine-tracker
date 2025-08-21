@@ -1,0 +1,61 @@
+Firestore Indexes Configuration for Baby Routine Tracker
+=======================================================
+
+IMPORTANT: These indexes need to be created in the Firebase Console under Firestore Database > Indexes
+
+Required Composite Indexes:
+===========================
+
+Collection Group: activities
+Index 1: For getLastActivityFlow and getLastActivity queries
+- Field: type (Ascending)
+- Field: endTime (Ascending)  
+- Field: __name__ (Ascending)
+
+This index supports queries that:
+- Filter by activity type (whereEqualTo("type", type.name))
+- Filter by completed activities (whereNotEqualTo("endTime", null))
+- Order by end time descending (orderBy("endTime", Query.Direction.DESCENDING))
+
+Instructions for creating indexes:
+==================================
+
+Option 1: Use the provided error URL
+1. Click the URL from the error message in the logs
+2. This will automatically create the index with the correct configuration
+
+Option 2: Manual creation in Firebase Console
+1. Open Firebase Console (https://console.firebase.google.com/)
+2. Navigate to your Baby Routine Tracker project
+3. Go to Firestore Database > Indexes
+4. Click "Add Index"
+5. Set Collection Group ID: activities
+6. Add fields in this exact order:
+   - type: Ascending
+   - endTime: Ascending
+   - __name__: Ascending
+7. Click "Create"
+
+Note: Index creation can take several minutes to complete. The app will work normally once the index is built.
+
+Current Query Patterns:
+======================
+
+1. Get ongoing activities:
+   - whereEqualTo("type", type.name)
+   - whereEqualTo("endTime", null)
+   ✅ No index needed (simple equality filters)
+
+2. Get last completed activity:
+   - whereEqualTo("type", type.name) 
+   - whereNotEqualTo("endTime", null)
+   - orderBy("endTime", Query.Direction.DESCENDING)
+   ❌ Requires composite index (this is the failing query)
+
+Performance Considerations:
+==========================
+- The composite index will improve query performance significantly
+- Consider adding single-field indexes on frequently queried fields like:
+  - type (ascending)
+  - loggedBy (ascending)
+  - createdAt (ascending)

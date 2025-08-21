@@ -13,6 +13,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.github.slamdev.babyroutinetracker.ui.components.CompactErrorDisplay
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -68,39 +69,68 @@ fun DiaperTrackingCard(
                 textAlign = TextAlign.Center
             )
             
-            // Last diaper change info
+            // Last diaper change info with error handling
+            val lastDiaperError = uiState.lastDiaperError
             val lastDiaper = uiState.lastDiaper
-            if (lastDiaper != null) {
-                Text(
-                    text = "Last poop logged",
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
-                    textAlign = TextAlign.Center
-                )
-                
-                Text(
-                    text = "at ${formatTime(lastDiaper.startTime.toDate())}",
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-                )
-                
-                // Show notes if available
-                if (lastDiaper.notes.isNotBlank()) {
-                    Text(
-                        text = "\"${lastDiaper.notes}\"",
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                        textAlign = TextAlign.Center,
-                        fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
+            when {
+                lastDiaperError != null -> {
+                    CompactErrorDisplay(
+                        errorMessage = lastDiaperError,
+                        onDismiss = { viewModel.clearLastDiaperError() },
+                        modifier = Modifier.padding(vertical = 4.dp)
                     )
                 }
-            } else {
-                Text(
-                    text = "No poops logged yet",
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                    textAlign = TextAlign.Center
-                )
+                uiState.isLoadingLastDiaper -> {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(16.dp),
+                            strokeWidth = 2.dp
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Loading last diaper...",
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                        )
+                    }
+                }
+                lastDiaper != null -> {
+                    Text(
+                        text = "Last poop logged",
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
+                        textAlign = TextAlign.Center
+                    )
+                    
+                    Text(
+                        text = "at ${formatTime(lastDiaper.startTime.toDate())}",
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                    )
+                    
+                    // Show notes if available
+                    if (lastDiaper.notes.isNotBlank()) {
+                        Text(
+                            text = "\"${lastDiaper.notes}\"",
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                            textAlign = TextAlign.Center,
+                            fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
+                        )
+                    }
+                }
+                else -> {
+                    Text(
+                        text = "No poops logged yet",
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
             
             // Action button
