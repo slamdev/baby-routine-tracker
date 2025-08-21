@@ -3,7 +3,6 @@ package com.github.slamdev.babyroutinetracker.feeding
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -14,6 +13,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.github.slamdev.babyroutinetracker.ui.components.ActivityCard
+import com.github.slamdev.babyroutinetracker.ui.components.ActivityCardState
+import com.github.slamdev.babyroutinetracker.ui.components.bottleFeedingActivityConfig
 import com.github.slamdev.babyroutinetracker.ui.components.EditActivityDialog
 import com.github.slamdev.babyroutinetracker.ui.components.TimeUtils
 import java.text.SimpleDateFormat
@@ -34,134 +36,37 @@ fun BottleFeedingCard(
         viewModel.initialize(babyId)
     }
     
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            // Header
-            Text(
-                text = "🍼 Bottle",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
-                textAlign = TextAlign.Center
-            )
-
-            // Action button
-            Button(
-                onClick = { showBottleFeedingDialog = true },
-                modifier = Modifier
-                    .fillMaxWidth(0.8f)
-                    .aspectRatio(1f),
-                enabled = !uiState.isLoading
-            ) {
-                if (uiState.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        strokeWidth = 3.dp,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                } else {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Log Bottle",
-                        modifier = Modifier.size(32.dp)
-                    )
-                }
-            }
-            
-            // Last bottle feeding info (only show bottle feedings)
-            val lastFeeding = uiState.lastFeeding?.takeIf { it.feedingType == "bottle" }
-            when {
-                uiState.isLoadingLastFeeding -> {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(16.dp),
-                        strokeWidth = 2.dp
-                    )
-                }
-                lastFeeding != null && lastFeeding.endTime != null -> {
-                    val amount = lastFeeding.amount.toInt()
-                    
-                    // Calculate time ago
-                    val timeAgo = TimeUtils.formatTimeAgo(
-                        TimeUtils.getRelevantTimestamp(
-                            lastFeeding.startTime.toDate(),
-                            lastFeeding.endTime?.toDate()
-                        )
-                    )
-                    
-                    // Last feeding info (clickable for editing)
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier
-                            .clickable { showEditLastActivityDialog = true }
-                            .padding(4.dp)
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "Last fed: ${amount}ml",
-                                fontSize = 14.sp,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Icon(
-                                imageVector = Icons.Default.Edit,
-                                contentDescription = "Edit last feeding",
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                                modifier = Modifier.size(12.dp)
-                            )
-                        }
-                        
-                        Text(
-                            text = timeAgo,
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-                        )
-                        
-                        lastFeeding.endTime?.let { endTime ->
-                            Text(
-                                text = "at ${formatTime(endTime.toDate())}",
-                                fontSize = 12.sp,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-                            )
-                        }
-                        
-                        // Show notes if available
-                        if (lastFeeding.notes.isNotBlank()) {
-                            Text(
-                                text = "\"${lastFeeding.notes}\"",
-                                fontSize = 12.sp,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                                textAlign = TextAlign.Center,
-                                fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
-                            )
-                        }
-                    }
-                }
-                else -> {
-                    Text(
-                        text = "No recent feeding",
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
-        }
-    }
+    // Activity card state
+    val cardState = ActivityCardState(
+        isLoading = uiState.isLoading,
+        isOngoing = false, // Bottle feeding is immediate activity
+        errorMessage = uiState.errorMessage,
+        successMessage = uiState.successMessage,
+        isLoadingContent = uiState.isLoadingLastFeeding,
+        contentError = uiState.lastFeedingError
+    )
     
+    ActivityCard(
+        config = bottleFeedingActivityConfig(),
+        state = cardState,
+        modifier = modifier,
+        onPrimaryAction = { showBottleFeedingDialog = true },
+        onContentClick = { 
+            // Only show edit dialog for bottle feedings
+            uiState.lastFeeding?.takeIf { 
+                it.feedingType == "bottle" 
+            }?.let { showEditLastActivityDialog = true }
+        },
+        onDismissError = { 
+            uiState.lastFeedingError?.let { viewModel.clearLastFeedingError() }
+            uiState.errorMessage?.let { viewModel.clearError() }
+        },
+        onDismissSuccess = {
+            uiState.successMessage?.let { viewModel.clearSuccessMessage() }
+        }
+    ) {
+        BottleFeedingContent(uiState = uiState)
+    }
     // Bottle feeding input dialog
     if (showBottleFeedingDialog) {
         BottleFeedingDialog(
@@ -194,6 +99,84 @@ fun BottleFeedingCard(
                     viewModel.updateInstantActivityTime(activity, newTime)
                     showEditLastActivityDialog = false
                 }
+            )
+        }
+    }
+}
+
+@Composable
+private fun BottleFeedingContent(
+    uiState: FeedingTrackingUiState
+) {
+    // Show last bottle feeding
+    val lastFeeding = uiState.lastFeeding?.takeIf { it.feedingType == "bottle" }
+    when {
+        lastFeeding != null && lastFeeding.endTime != null -> {
+            val amount = lastFeeding.amount.toInt()
+            
+            // Calculate time ago
+            val timeAgo = TimeUtils.formatTimeAgo(
+                TimeUtils.getRelevantTimestamp(
+                    lastFeeding.startTime.toDate(),
+                    lastFeeding.endTime?.toDate()
+                )
+            )
+            
+            // Last feeding info
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(8.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Last fed ${amount}ml",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Edit last feeding",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                        modifier = Modifier.size(12.dp)
+                    )
+                }
+                
+                Text(
+                    text = timeAgo,
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                )
+                
+                lastFeeding.endTime?.let { endTime ->
+                    Text(
+                        text = "at ${formatTime(endTime.toDate())}",
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                    )
+                }
+                
+                // Show notes if available
+                if (lastFeeding.notes.isNotBlank()) {
+                    Text(
+                        text = "\"${lastFeeding.notes}\"",
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                        textAlign = TextAlign.Center,
+                        fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
+                    )
+                }
+            }
+        }
+        else -> {
+            Text(
+                text = "No recent feeding",
+                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
             )
         }
     }

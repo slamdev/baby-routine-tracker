@@ -3,9 +3,7 @@ package com.github.slamdev.babyroutinetracker.feeding
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,6 +13,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.github.slamdev.babyroutinetracker.ui.components.ActivityCard
+import com.github.slamdev.babyroutinetracker.ui.components.ActivityCardState
+import com.github.slamdev.babyroutinetracker.ui.components.breastFeedingActivityConfig
 import com.github.slamdev.babyroutinetracker.ui.components.CompactErrorDisplay
 import com.github.slamdev.babyroutinetracker.ui.components.TimePickerDialog
 import com.github.slamdev.babyroutinetracker.ui.components.EditActivityDialog
@@ -37,92 +38,126 @@ fun BreastFeedingCard(
         viewModel.initialize(babyId)
     }
     
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = if (uiState.ongoingBreastFeeding != null) {
-                MaterialTheme.colorScheme.primaryContainer
-            } else {
-                MaterialTheme.colorScheme.surfaceVariant
-            }
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    // Activity card state
+    val cardState = ActivityCardState(
+        isLoading = uiState.isLoading,
+        isOngoing = uiState.ongoingBreastFeeding != null,
+        errorMessage = uiState.errorMessage,
+        currentElapsedTime = uiState.currentElapsedTime,
+        isLoadingContent = uiState.isLoadingLastFeeding || uiState.isLoadingOngoingFeeding,
+        contentError = uiState.lastFeedingError ?: uiState.ongoingFeedingError
+    )
+    
+    ActivityCard(
+        config = breastFeedingActivityConfig(),
+        state = cardState,
+        modifier = modifier,
+        onPrimaryAction = { viewModel.startBreastMilkFeeding() },
+        onAlternateAction = { viewModel.endBreastMilkFeeding() },
+        onContentClick = { 
+            // Only show edit dialog for completed breast feedings
+            uiState.lastFeeding?.takeIf { 
+                it.feedingType == "breast_milk" && it.endTime != null 
+            }?.let { showEditLastActivityDialog = true }
+        },
+        onDismissError = { 
+            uiState.lastFeedingError?.let { viewModel.clearLastFeedingError() }
+            uiState.ongoingFeedingError?.let { viewModel.clearOngoingFeedingError() }
+            uiState.errorMessage?.let { viewModel.clearError() }
+        }
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            // Header
-            Text(
-                text = "🤱 Boob",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
-                textAlign = TextAlign.Center
-            )
-
-            // Action button
-            val ongoingBreastFeeding = uiState.ongoingBreastFeeding
-            val isOngoing = ongoingBreastFeeding != null
-            Button(
-                onClick = {
-                    if (isOngoing) {
-                        viewModel.endBreastMilkFeeding()
-                    } else {
-                        viewModel.startBreastMilkFeeding()
-                    }
+        BreastFeedingContent(
+            uiState = uiState,
+            onEditStartTime = { showTimePickerDialog = true }
+        )
+    }
+    // Time picker dialog for editing breast feeding start time
+    if (showTimePickerDialog) {
+        uiState.ongoingBreastFeeding?.let { ongoingFeeding ->
+            TimePickerDialog(
+                title = "Edit Feeding Start Time",
+                initialTime = ongoingFeeding.startTime.toDate(),
+                onTimeSelected = { newTime ->
+                    viewModel.updateStartTime(newTime)
+                    showTimePickerDialog = false
                 },
-                enabled = !uiState.isLoading,
-                modifier = Modifier
-                    .fillMaxWidth(0.8f)
-                    .aspectRatio(1f),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = if (isOngoing) {
-                        MaterialTheme.colorScheme.error
-                    } else {
-                        MaterialTheme.colorScheme.primary
-                    }
-                )
-            ) {
-                if (uiState.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        strokeWidth = 3.dp,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                } else {
-                    Icon(
-                        imageVector = if (isOngoing) Icons.Default.Check else Icons.Default.PlayArrow,
-                        contentDescription = if (isOngoing) "Stop Feeding" else "Start Feeding",
-                        modifier = Modifier.size(32.dp)
-                    )
+                onDismiss = { showTimePickerDialog = false }
+            )
+        }
+    }
+    
+    // Edit dialog for last completed feeding activity
+    if (showEditLastActivityDialog) {
+        val lastFeeding = uiState.lastFeeding?.takeIf { it.feedingType == "breast_milk" }
+        lastFeeding?.let { lastFeedingActivity ->
+            EditActivityDialog(
+                activity = lastFeedingActivity,
+                onDismiss = {
+                    showEditLastActivityDialog = false
+                },
+                onSaveTimeChanges = { activity, newStartTime, newEndTime ->
+                    viewModel.updateCompletedActivityTimes(activity, newStartTime, newEndTime)
+                    showEditLastActivityDialog = false
+                },
+                onSaveNotesChanges = { activity, newNotes ->
+                    viewModel.updateCompletedActivityNotes(activity, newNotes)
+                    showEditLastActivityDialog = false
+                },
+                onSaveInstantTimeChange = { activity, newTime ->
+                    viewModel.updateInstantActivityTime(activity, newTime)
+                    showEditLastActivityDialog = false
                 }
+            )
+        }
+    }
+}
+
+@Composable
+private fun BreastFeedingContent(
+    uiState: FeedingTrackingUiState,
+    onEditStartTime: () -> Unit
+) {
+    val ongoingBreastFeeding = uiState.ongoingBreastFeeding
+    when {
+        ongoingBreastFeeding != null -> {
+            // Start time (clickable for editing)
+            Row(
+                modifier = Modifier
+                    .clickable { onEditStartTime() }
+                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = "Edit start time",
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f),
+                    modifier = Modifier.size(16.dp)
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = "Started at ${formatTime(ongoingBreastFeeding.startTime.toDate())}",
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                )
             }
-            
-            // Last breast feeding info (only show breast milk feedings)
+        }
+        else -> {
+            // Show last breast feeding
             val lastFeeding = uiState.lastFeeding?.takeIf { it.feedingType == "breast_milk" }
             when {
-                uiState.isLoadingLastFeeding -> {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(16.dp),
-                        strokeWidth = 2.dp
-                    )
-                }
                 lastFeeding != null && lastFeeding.endTime != null -> {
                     val duration = lastFeeding.getDurationMinutes()
                     val durationText = if (duration != null) {
                         val hours = duration / 60
                         val minutes = duration % 60
-                        if (hours > 0) {
-                            "${hours}h ${minutes}m"
-                        } else {
-                            "${minutes}m"
+                        when {
+                            hours > 0 && minutes > 0 -> "${hours}h ${minutes}m"
+                            hours > 0 -> "${hours}h"
+                            else -> "${minutes}m"
                         }
                     } else {
-                        "Unknown duration"
+                        "Duration unknown"
                     }
                     
                     // Calculate time ago
@@ -136,17 +171,17 @@ fun BreastFeedingCard(
                     // Last feeding info (clickable for editing)
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier
-                            .clickable { showEditLastActivityDialog = true }
-                            .padding(4.dp)
+                        modifier = Modifier.padding(8.dp)
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Last fed: $durationText",
+                                text = "Last fed $durationText",
                                 fontSize = 14.sp,
+                                fontWeight = FontWeight.Medium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
+                                textAlign = TextAlign.Center
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Icon(
@@ -175,81 +210,11 @@ fun BreastFeedingCard(
                 else -> {
                     Text(
                         text = "No recent feeding",
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                        textAlign = TextAlign.Center
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                     )
                 }
             }
-            
-            // Timer display for ongoing feeding
-            if (isOngoing && ongoingBreastFeeding != null) {
-                Text(
-                    text = viewModel.formatElapsedTime(uiState.currentElapsedTime),
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                
-                // Start time (clickable for editing)
-                Text(
-                    text = "Started at ${formatTime(ongoingBreastFeeding.startTime.toDate())}",
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                    modifier = Modifier.clickable { showTimePickerDialog = true }
-                )
-            }
-            
-            // Error display
-            uiState.ongoingFeedingError?.let { errorMessage ->
-                CompactErrorDisplay(
-                    errorMessage = errorMessage,
-                    onDismiss = { viewModel.clearOngoingFeedingError() },
-                    modifier = Modifier.padding(vertical = 4.dp)
-                )
-            }
-        }
-    }
-    
-    // Time picker dialog for editing breast feeding start time
-    if (showTimePickerDialog) {
-        uiState.ongoingBreastFeeding?.let { ongoingFeeding ->
-            TimePickerDialog(
-                title = "Edit Feeding Start Time",
-                initialTime = ongoingFeeding.startTime.toDate(),
-                onTimeSelected = { newTime ->
-                    viewModel.updateStartTime(newTime)
-                    showTimePickerDialog = false
-                },
-                onDismiss = {
-                    showTimePickerDialog = false
-                }
-            )
-        }
-    }
-    
-    // Edit dialog for last completed feeding activity
-    if (showEditLastActivityDialog) {
-        val lastFeeding = uiState.lastFeeding?.takeIf { it.feedingType == "breast_milk" }
-        lastFeeding?.let { lastFeedingActivity ->
-            EditActivityDialog(
-                activity = lastFeedingActivity,
-                onDismiss = {
-                    showEditLastActivityDialog = false
-                },
-                onSaveTimeChanges = { activity, newStartTime, newEndTime ->
-                    viewModel.updateCompletedActivityTimes(activity, newStartTime, newEndTime)
-                    showEditLastActivityDialog = false
-                },
-                onSaveNotesChanges = { activity, newNotes ->
-                    viewModel.updateCompletedActivityNotes(activity, newNotes)
-                    showEditLastActivityDialog = false
-                },
-                onSaveInstantTimeChange = { activity, newTime ->
-                    viewModel.updateInstantActivityTime(activity, newTime)
-                    showEditLastActivityDialog = false
-                }
-            )
         }
     }
 }

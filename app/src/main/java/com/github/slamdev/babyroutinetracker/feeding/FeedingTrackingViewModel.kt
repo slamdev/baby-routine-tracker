@@ -22,6 +22,7 @@ data class FeedingTrackingUiState(
     val lastFeeding: Activity? = null,
     val currentElapsedTime: Long = 0L, // in seconds
     val errorMessage: String? = null,
+    val successMessage: String? = null,
     val ongoingFeedingError: String? = null,
     val lastFeedingError: String? = null,
     val isLoadingOngoingFeeding: Boolean = false,
@@ -521,6 +522,13 @@ class FeedingTrackingViewModel : ViewModel() {
      */
     fun clearLastFeedingError() {
         _uiState.value = _uiState.value.copy(lastFeedingError = null)
+    }
+    
+    /**
+     * Clear success message
+     */
+    fun clearSuccessMessage() {
+        _uiState.value = _uiState.value.copy(successMessage = null)
     }
 
     override fun onCleared() {
