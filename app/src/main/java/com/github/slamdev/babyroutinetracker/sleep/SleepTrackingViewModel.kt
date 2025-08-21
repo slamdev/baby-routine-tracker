@@ -142,7 +142,7 @@ class SleepTrackingViewModel : ViewModel() {
                 
                 result.fold(
                     onSuccess = { activity ->
-                        Log.i(TAG, "Sleep session ended successfully: ${activity.id}, duration: ${activity.durationMinutes} minutes")
+                        Log.i(TAG, "Sleep session ended successfully: ${activity.id}, duration: ${activity.getDurationMinutes()} minutes")
                         _uiState.value = _uiState.value.copy(isLoading = false)
                     },
                     onFailure = { exception ->

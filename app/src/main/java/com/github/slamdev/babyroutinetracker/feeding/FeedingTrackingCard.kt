@@ -69,7 +69,7 @@ fun FeedingTrackingCard(
                 // Format feeding details
                 val feedingDetails = when (lastFeeding.feedingType) {
                     "breast_milk" -> {
-                        val duration = lastFeeding.durationMinutes ?: 0
+                        val duration = lastFeeding.getDurationMinutes() ?: 0
                         "Breast milk - ${duration}min"
                     }
                     "bottle" -> {

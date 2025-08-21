@@ -117,7 +117,7 @@ fun SleepTrackingCard(
                 // Show last sleep if available
                 uiState.lastSleep?.let { lastSleep ->
                     if (lastSleep.endTime != null) {
-                        val duration = lastSleep.durationMinutes
+                        val duration = lastSleep.getDurationMinutes()
                         val durationText = if (duration != null) {
                             val hours = duration / 60
                             val minutes = duration % 60

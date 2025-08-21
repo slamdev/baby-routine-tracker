@@ -1,6 +1,7 @@
 package com.github.slamdev.babyroutinetracker.model
 
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.Exclude
 
 data class Activity(
     val id: String = "",
@@ -18,15 +19,15 @@ data class Activity(
     val amount: Double = 0.0,      // ml, for bottle feeding
     
     // Diaper-specific fields
-    val diaperType: String = "",   // "wet", "dirty", "both"
+    val diaperType: String = "",   // "poop" for adjusted requirement
 ) {
-    val isOngoing: Boolean
-        get() = endTime == null
+    @Exclude
+    fun isOngoing(): Boolean = endTime == null
     
-    val durationMinutes: Long?
-        get() = endTime?.let { end ->
-            ((end.seconds - startTime.seconds) / 60)
-        }
+    @Exclude
+    fun getDurationMinutes(): Long? = endTime?.let { end ->
+        ((end.seconds - startTime.seconds) / 60)
+    }
 }
 
 enum class ActivityType(val displayName: String) {

@@ -144,7 +144,7 @@ class FeedingTrackingViewModel : ViewModel() {
                 
                 result.fold(
                     onSuccess = { activity ->
-                        Log.i(TAG, "Breast milk feeding ended successfully: ${activity.id}, duration: ${activity.durationMinutes} minutes")
+                        Log.i(TAG, "Breast milk feeding ended successfully: ${activity.id}, duration: ${activity.getDurationMinutes()} minutes")
                         _uiState.value = _uiState.value.copy(isLoading = false)
                     },
                     onFailure = { exception ->
