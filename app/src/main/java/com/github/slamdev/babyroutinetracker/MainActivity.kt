@@ -16,6 +16,7 @@ import androidx.navigation.navArgument
 import com.github.slamdev.babyroutinetracker.auth.AuthenticationViewModel
 import com.github.slamdev.babyroutinetracker.auth.SignInScreen
 import com.github.slamdev.babyroutinetracker.dashboard.DashboardScreen
+import com.github.slamdev.babyroutinetracker.main.MainTabScreen
 import com.github.slamdev.babyroutinetracker.invitation.InvitePartnerScreen
 import com.github.slamdev.babyroutinetracker.invitation.JoinInvitationScreen
 import com.github.slamdev.babyroutinetracker.invitation.CreateBabyProfileScreen
@@ -62,7 +63,7 @@ fun BabyRoutineTrackerApp() {
         }
         
         composable("dashboard") {
-            DashboardScreen(
+            MainTabScreen(
                 onSignOut = {
                     navController.navigate("signin") {
                         // Clear the back stack so user can't navigate back to dashboard
@@ -78,9 +79,6 @@ fun BabyRoutineTrackerApp() {
                 },
                 onNavigateToCreateBaby = {
                     navController.navigate("create_baby")
-                },
-                onNavigateToHistory = { babyId ->
-                    navController.navigate("history/$babyId")
                 },
                 authViewModel = authViewModel
             )

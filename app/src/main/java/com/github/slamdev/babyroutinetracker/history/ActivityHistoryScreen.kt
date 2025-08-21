@@ -30,15 +30,11 @@ fun ActivityHistoryScreen(
     modifier: Modifier = Modifier,
     viewModel: ActivityHistoryViewModel = viewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-    var selectedActivity by remember { mutableStateOf<Activity?>(null) }
-    var showEditDialog by remember { mutableStateOf(false) }
-    
     // Initialize the ViewModel for this baby
     LaunchedEffect(babyId) {
         viewModel.initialize(babyId)
     }
-    
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -51,67 +47,89 @@ fun ActivityHistoryScreen(
             )
         }
     ) { paddingValues ->
-        Box(
+        ActivityHistoryContent(
+            babyId = babyId,
             modifier = modifier
                 .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            when {
-                uiState.isLoading -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
+                .padding(paddingValues),
+            viewModel = viewModel
+        )
+    }
+}
+
+@Composable
+fun ActivityHistoryContent(
+    babyId: String,
+    modifier: Modifier = Modifier,
+    viewModel: ActivityHistoryViewModel = viewModel()
+) {
+    val uiState by viewModel.uiState.collectAsState()
+    var selectedActivity by remember { mutableStateOf<Activity?>(null) }
+    var showEditDialog by remember { mutableStateOf(false) }
+    
+    // Initialize the ViewModel for this baby
+    LaunchedEffect(babyId) {
+        viewModel.initialize(babyId)
+    }
+
+    Box(
+        modifier = modifier.fillMaxSize()
+    ) {
+        when {
+            uiState.isLoading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            CircularProgressIndicator()
-                            Spacer(modifier = Modifier.height(16.dp))
-                            Text("Loading activities...")
-                        }
+                        CircularProgressIndicator()
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text("Loading activities...")
                     }
                 }
-                uiState.errorMessage != null -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        val errorMessage = uiState.errorMessage
-                        if (errorMessage != null) {
-                            CompactErrorDisplay(
-                                errorMessage = errorMessage,
-                                onDismiss = { viewModel.clearError() }
-                            )
-                        }
-                    }
-                }
-                uiState.activities.isEmpty() -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "No activities found",
-                            fontSize = 16.sp,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+            }
+            uiState.errorMessage != null -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    val errorMessage = uiState.errorMessage
+                    if (errorMessage != null) {
+                        CompactErrorDisplay(
+                            errorMessage = errorMessage,
+                            onDismiss = { viewModel.clearError() }
                         )
                     }
                 }
-                else -> {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(uiState.activities) { activity ->
-                            ActivityHistoryItem(
-                                activity = activity,
-                                onEditActivity = {
-                                    selectedActivity = activity
-                                    showEditDialog = true
-                                }
-                            )
-                        }
+            }
+            uiState.activities.isEmpty() -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "No activities found",
+                        fontSize = 16.sp,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    )
+                }
+            }
+            else -> {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(uiState.activities) { activity ->
+                        ActivityHistoryItem(
+                            activity = activity,
+                            onEditActivity = {
+                                selectedActivity = activity
+                                showEditDialog = true
+                            }
+                        )
                     }
                 }
             }

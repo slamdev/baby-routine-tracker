@@ -142,6 +142,33 @@ This document outlines the specific acceptance criteria and high-level technical
   * Ensure real-time onSnapshot listeners are correctly attached and managed within the lifecycle of the dashboard screen.  
   * The ViewModel must properly handle incoming data from listeners and update the UI state.
 
+**User Story:** As a parent, I want to swipe left from the main dashboard to access the activity history instead of having a button, making navigation more intuitive and saving screen space.
+
+* **Acceptance Criteria:**  
+  * The main dashboard supports horizontal swipe gestures. ✅ IMPLEMENTED  
+  * Swiping left from the dashboard navigates to the activity history screen. ✅ IMPLEMENTED  
+  * Swiping right from the history screen navigates back to the dashboard. ✅ IMPLEMENTED  
+  * The swipe navigation feels smooth and responsive. ✅ IMPLEMENTED  
+  * The "View Activity History" button is removed from the main dashboard. ✅ IMPLEMENTED  
+* **Technical Tasks:**  
+  * Implement HorizontalPager with Jetpack Compose to create swipeable screens. ✅ COMPLETED  
+  * Create a container composable that manages the pager state and screen transitions. ✅ COMPLETED  
+  * Remove the history button from the dashboard and integrate history as a pager page. ✅ COMPLETED  
+  * Add page indicators or other visual cues to show available screens. ✅ COMPLETED
+
+**User Story:** As a parent, I want to swipe to different screens (History, Data Visualization, AI Sleep Plans) for a modern mobile app experience.
+
+* **Acceptance Criteria:**  
+  * The app supports horizontal swipe navigation between main dashboard, history, data visualization, and AI sleep plans. ✅ IMPLEMENTED  
+  * Data Visualization and AI Sleep Plans screens show "Coming Soon" placeholder content until implemented. ✅ IMPLEMENTED  
+  * Smooth transitions between screens with proper state management. ✅ IMPLEMENTED  
+  * Visual indicators show current screen position and available screens. ✅ IMPLEMENTED  
+* **Technical Tasks:**  
+  * Extend HorizontalPager to support 4 screens: Dashboard, History, Data Visualization, AI Sleep Plans. ✅ COMPLETED  
+  * Create placeholder screens for Data Visualization and AI Sleep Plans. ✅ COMPLETED  
+  * Implement proper state management to maintain screen state during swipes. ✅ COMPLETED  
+  * Add visual indicators (dots or tabs) to show current position. ✅ COMPLETED
+
 ### **UI/UX & Responsiveness**
 
 **User Story:** As a user, I want the app to automatically switch between light and dark mode based on my phone's system settings.

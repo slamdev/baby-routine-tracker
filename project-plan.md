@@ -39,7 +39,13 @@ This document outlines the project plan for a personal Android application desig
   * Space-efficient dashboard layout that prioritizes activity tracking content.
   * Personal title bar showing baby's name instead of app name for contextual awareness.
   * Streamlined interface removing redundant headers to focus on activity tracking.
-  * Consolidated baby profile management in the profile menu for cleaner organization.  
+  * Consolidated baby profile management in the profile menu for cleaner organization.
+  * **NEW: Swipe Navigation** - Horizontal swipe navigation between screens for modern mobile UX:
+    * Main Dashboard (center) - Activity tracking with sleep, feeding, and diaper cards
+    * Activity History (swipe left) - Complete history of all logged activities
+    * Data Visualization (swipe right) - Charts and trends (coming soon)
+    * AI Sleep Plans (swipe further right) - AI-powered sleep suggestions (coming soon)
+  * Visual page indicators with labels showing current screen and available navigation options.  
 * **AI-Powered Sleep Routine Builder:**  
   * Integration with the Google Gemini API.  
   * The app will send sleep data and baby age to the Gemini API.  

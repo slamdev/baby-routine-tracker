@@ -51,6 +51,9 @@ dependencies {
     implementation libs.androidx.navigation.compose
     implementation libs.androidx.lifecycle.viewmodel.compose
     
+    // Compose Foundation for HorizontalPager
+    implementation "androidx.compose.foundation:foundation"
+    
     // Firebase
     implementation platform(libs.firebase.bom)
     implementation libs.firebase.auth

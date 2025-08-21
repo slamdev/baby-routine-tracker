@@ -41,6 +41,8 @@ Here is a list of user stories broken down by feature for a developer to follow.
 * **As a parent,** I want to open the app and immediately see when the baby last slept, ate, and had a diaper change on a single dashboard screen.  
 * **As a parent,** I want to see a live timer for an ongoing sleep or feeding session so I know how long it has been.  
 * **As a parent,** I want the dashboard to update in real-time when my partner logs a new activity on their device.
+* **As a parent,** I want to swipe left from the main dashboard to access the activity history instead of having a button, making navigation more intuitive and saving screen space.
+* **As a parent,** I want to swipe to different screens (History, Data Visualization, AI Sleep Plans) for a modern mobile app experience.
 
 ### **UI/UX & Responsiveness**
 
@@ -55,12 +57,14 @@ Here is a list of user stories broken down by feature for a developer to follow.
 
 ### **AI Sleep Routine Builder**
 
+* **As a new parent,** I want to swipe to the AI Sleep Plans screen from the main dashboard for easy access to sleep routine suggestions.
 * **As a new parent,** I want to get suggestions for a sleep routine based on my baby's actual sleep data and age so I can get help establishing a healthy schedule.  
 * **As a parent,** I want to see the AI-suggested nap times and bedtime clearly presented within the app.  
 * **As a parent,** I want to build the sleep plan using AI suggestions and my own customizations.
 
 ### **Data Visualization**
 
+* **As a parent,** I want to swipe right from the main dashboard to access data visualization instead of having a button, providing seamless navigation to view charts and trends.
 * **As a parent,** I want to view a chart showing the total hours my baby slept each day over the last week so I can spot trends.  
 * **As a parent,** I want to see a graph of how many feedings my baby has had each day to ensure they are eating consistently.  
 * **As a parent,** I want to be able to filter the historical data by a specific date range (e.g., this week, last month) to analyze different periods.

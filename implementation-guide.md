@@ -83,6 +83,12 @@ The app follows modern Android design patterns with a clean, user-friendly inter
   - Follows Material Design 3 guidelines
   - Saves valuable screen space for main content
 
+#### Swipe Navigation Pattern
+- **NEW UX**: Horizontal swipe navigation between main screens
+- **IMPLEMENTATION**: Use HorizontalPager from Compose for smooth transitions
+- **SCREENS**: Dashboard (main) → History (left swipe) → Data Visualization → AI Sleep Plans
+- **INDICATORS**: Visual dots or tabs to show current position and available screens
+
 #### Profile Icon Implementation Example
 ```kotlin
 @Composable
