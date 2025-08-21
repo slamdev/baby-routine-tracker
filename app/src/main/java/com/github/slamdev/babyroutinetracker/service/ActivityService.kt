@@ -168,7 +168,7 @@ class ActivityService {
     }
 
     /**
-     * Get the most recent activity of a specific type for a baby
+     * Get the most recent COMPLETED activity of a specific type for a baby
      */
     suspend fun getLastActivity(babyId: String, type: ActivityType): Activity? {
         return try {
@@ -182,7 +182,8 @@ class ActivityService {
                 .document(babyId)
                 .collection(ACTIVITIES_SUBCOLLECTION)
                 .whereEqualTo("type", type.name)
-                .orderBy("startTime", Query.Direction.DESCENDING)
+                .whereNotEqualTo("endTime", null)  // Only get completed activities
+                .orderBy("endTime", Query.Direction.DESCENDING)  // Order by end time for completed activities
                 .limit(1)
                 .get()
                 .await()
@@ -255,7 +256,7 @@ class ActivityService {
     }
 
     /**
-     * Get real-time updates for the most recent activity of a specific type for a baby
+     * Get real-time updates for the most recent COMPLETED activity of a specific type for a baby
      */
     fun getLastActivityFlow(babyId: String, type: ActivityType): Flow<Activity?> = callbackFlow {
         val currentUser = auth.currentUser
@@ -266,13 +267,14 @@ class ActivityService {
             return@callbackFlow
         }
 
-        Log.d(TAG, "Setting up real-time listener for last ${type.displayName} activity: $babyId")
+        Log.d(TAG, "Setting up real-time listener for last completed ${type.displayName} activity: $babyId")
         
         val listenerRegistration = firestore.collection(BABIES_COLLECTION)
             .document(babyId)
             .collection(ACTIVITIES_SUBCOLLECTION)
             .whereEqualTo("type", type.name)
-            .orderBy("startTime", Query.Direction.DESCENDING)
+            .whereNotEqualTo("endTime", null)  // Only get completed activities
+            .orderBy("endTime", Query.Direction.DESCENDING)  // Order by end time for completed activities
             .limit(1)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
@@ -292,7 +294,7 @@ class ActivityService {
                             }
                         }
                         
-                        Log.d(TAG, "Real-time update for last ${type.displayName}: ${if (activity != null) "found" else "none"}")
+                        Log.d(TAG, "Real-time update for last completed ${type.displayName}: ${if (activity != null) "found" else "none"}")
                         trySend(activity)
                     } catch (e: Exception) {
                         Log.e(TAG, "Error processing last ${type.displayName} activity snapshot", e)
