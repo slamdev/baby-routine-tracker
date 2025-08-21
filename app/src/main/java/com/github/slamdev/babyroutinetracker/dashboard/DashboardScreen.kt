@@ -20,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -103,47 +102,47 @@ fun DashboardContent(
     if (invitationState.selectedBabyId.isNotEmpty()) {
         val selectedBaby = invitationState.babies.find { it.id == invitationState.selectedBabyId }
         selectedBaby?.let { baby ->
-            // Get screen configuration for responsive sizing
-            val configuration = LocalConfiguration.current
-            val screenHeight = configuration.screenHeightDp.dp
-            
-            // Calculate card height based on screen size
-            // Leave space for top bar (64dp), padding (48dp), and navigation hint (40dp)
-            val availableHeight = screenHeight - 152.dp
-            val cardHeight = (availableHeight / 2).coerceAtLeast(140.dp)
-            
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                modifier = modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                userScrollEnabled = false // Disable scrolling since all cards should fit
-            ) {
-                item {
-                    SleepTrackingCard(
-                        babyId = baby.id,
-                        modifier = Modifier.height(cardHeight)
-                    )
-                }
-                item {
-                    DiaperTrackingCard(
-                        babyId = baby.id,
-                        modifier = Modifier.height(cardHeight)
-                    )
-                }
-                item {
-                    BottleFeedingCard(
-                        babyId = baby.id,
-                        modifier = Modifier.height(cardHeight)
-                    )
-                }
-                item {
-                    BreastFeedingCard(
-                        babyId = baby.id,
-                        modifier = Modifier.height(cardHeight)
-                    )
+            // Use constraints of the available space (already accounting for Scaffold paddings)
+            BoxWithConstraints(modifier = modifier.fillMaxSize()) {
+                // We apply 16.dp vertical padding top & bottom and a single vertical spacing between the two rows.
+                val verticalPadding = 32.dp // 16 top + 16 bottom
+                val verticalSpacing = 12.dp
+                val rawHeightPerCard = (maxHeight - verticalPadding - verticalSpacing) / 2
+                val cardHeight = rawHeightPerCard.coerceAtLeast(140.dp)
+
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    userScrollEnabled = false // Disable scrolling; cards are sized to fit
+                ) {
+                    item {
+                        SleepTrackingCard(
+                            babyId = baby.id,
+                            modifier = Modifier.height(cardHeight)
+                        )
+                    }
+                    item {
+                        DiaperTrackingCard(
+                            babyId = baby.id,
+                            modifier = Modifier.height(cardHeight)
+                        )
+                    }
+                    item {
+                        BottleFeedingCard(
+                            babyId = baby.id,
+                            modifier = Modifier.height(cardHeight)
+                        )
+                    }
+                    item {
+                        BreastFeedingCard(
+                            babyId = baby.id,
+                            modifier = Modifier.height(cardHeight)
+                        )
+                    }
                 }
             }
         }

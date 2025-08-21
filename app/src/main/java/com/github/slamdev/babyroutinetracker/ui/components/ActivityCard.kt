@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import java.text.SimpleDateFormat
@@ -105,9 +106,11 @@ fun ActivityCard(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Header
+            // Shared width modifier so title, action button and content align perfectly
+            val sharedWidthModifier = Modifier.fillMaxWidth(0.9f)
+            // Header (full single line)
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = sharedWidthModifier,
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -116,7 +119,10 @@ fun ActivityCard(
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
 
@@ -152,8 +158,7 @@ fun ActivityCard(
                     }
                 },
                 enabled = !state.isLoading,
-                modifier = Modifier
-                    .fillMaxWidth(0.8f)
+                modifier = sharedWidthModifier
                     .aspectRatio(1f),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = buttonColor
@@ -176,13 +181,17 @@ fun ActivityCard(
 
             // Timer for ongoing activities
             if (!config.isImmediateActivity && state.isOngoing && state.currentElapsedTime > 0) {
-                Text(
-                    text = formatElapsedTime(state.currentElapsedTime),
-                    fontSize = 32.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    textAlign = TextAlign.Center
-                )
+                // Align timer with same width as button/title for visual consistency
+                Box(modifier = sharedWidthModifier) {
+                    Text(
+                        text = formatElapsedTime(state.currentElapsedTime),
+                        fontSize = 32.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
 
             // Content area with error handling
@@ -319,7 +328,8 @@ private fun ActivityCardContentDisplay(
                     Text(
                         text = startTimeText,
                         fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f),
+                        maxLines = 1
                     )
                 }
             }
@@ -334,16 +344,18 @@ private fun ActivityCardContentDisplay(
                 // Main activity description with edit icon
                 content.lastActivityText?.let { activityText ->
                     Row(
-                        verticalAlignment = Alignment.CenterVertically
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
                     ) {
                         Text(
                             text = activityText,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Medium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
-                            textAlign = TextAlign.Center
+                            maxLines = 1
                         )
-                        Spacer(modifier = Modifier.width(4.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
                         Icon(
                             imageVector = Icons.Default.Edit,
                             contentDescription = "Edit last activity",
@@ -359,7 +371,9 @@ private fun ActivityCardContentDisplay(
                         text = timeAgo,
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        maxLines = 1,
+                        overflow = TextOverflow.Clip
                     )
                 }
                 
@@ -374,7 +388,9 @@ private fun ActivityCardContentDisplay(
                         text = timeText,
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        maxLines = 1,
+                        overflow = TextOverflow.Clip
                     )
                 }
                 
@@ -386,7 +402,9 @@ private fun ActivityCardContentDisplay(
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                             textAlign = TextAlign.Center,
-                            fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
+                            fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
                 }
@@ -399,7 +417,9 @@ private fun ActivityCardContentDisplay(
                 text = content.noActivityText,
                 fontSize = 14.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }
