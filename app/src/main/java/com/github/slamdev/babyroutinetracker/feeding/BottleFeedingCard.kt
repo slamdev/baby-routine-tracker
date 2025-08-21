@@ -49,7 +49,7 @@ fun BottleFeedingCard(
         ) {
             // Header
             Text(
-                text = "🍼 Bottle Feeding",
+                text = "🍼 Bottle",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
@@ -138,11 +138,8 @@ fun BottleFeedingCard(
                 } else {
                     Icon(
                         imageVector = Icons.Default.Add,
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp)
+                        contentDescription = "Log Bottle",
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Log Bottle")
                 }
             }
         }

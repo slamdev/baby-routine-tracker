@@ -287,13 +287,6 @@ fun SleepTrackingCard(
                         Icon(
                             imageVector = Icons.Default.PlayArrow,
                             contentDescription = "Start Sleep",
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Start Sleep",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium
                         )
                     }
                 }

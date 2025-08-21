@@ -66,7 +66,7 @@ fun DiaperTrackingCard(
         ) {
             // Header
             Text(
-                text = "💩 Diaper",
+                text = "💩 Poop",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
@@ -183,13 +183,6 @@ fun DiaperTrackingCard(
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = "Log Poop",
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "Log Poop",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium
                     )
                 }
             }

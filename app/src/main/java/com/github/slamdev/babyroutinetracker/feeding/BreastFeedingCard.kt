@@ -56,7 +56,7 @@ fun BreastFeedingCard(
         ) {
             // Header
             Text(
-                text = "🤱 Breast Feeding",
+                text = "🤱 Boob",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
@@ -254,11 +254,8 @@ private fun BreastMilkFeedingSection(
                 } else {
                     Icon(
                         imageVector = Icons.Default.PlayArrow,
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp)
+                        contentDescription = "Start Feeding",
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Start Feeding")
                 }
             }
         }

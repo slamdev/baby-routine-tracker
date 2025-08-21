@@ -128,7 +128,7 @@ fun DashboardContent(
                     )
                 }
                 item {
-                    BreastFeedingCard(
+                    DiaperTrackingCard(
                         babyId = baby.id,
                         modifier = Modifier.height(cardHeight)
                     )
@@ -140,7 +140,7 @@ fun DashboardContent(
                     )
                 }
                 item {
-                    DiaperTrackingCard(
+                    BreastFeedingCard(
                         babyId = baby.id,
                         modifier = Modifier.height(cardHeight)
                     )
