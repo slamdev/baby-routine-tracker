@@ -173,6 +173,35 @@ This document outlines the specific acceptance criteria and high-level technical
   * Ensure the resizeableActivity flag is set to true in the AndroidManifest.xml.  
   * Build the UI with flexible and responsive components that do not rely on fixed dimensions.
 
+**User Story:** As a user, I want to see a clean, modern interface with a profile icon in the top-right corner like modern Android apps, rather than a large welcome card taking up screen space.
+
+* **Acceptance Criteria:**  
+  * The main dashboard displays a compact profile icon (avatar or initials) in the top-right corner of the app bar.  
+  * The welcome card that previously showed user's name and profile picture is removed from the main content area.  
+  * The profile icon shows the user's Google profile picture if available, or their initials as a fallback.  
+  * The icon maintains the modern Android app design pattern.  
+* **Technical Tasks:**  
+  * Remove the WelcomeCard component from the DashboardScreen.  
+  * Create a ProfileIcon composable that displays the user's avatar in a compact circular format.  
+  * Integrate the ProfileIcon into the TopAppBar actions.  
+  * Implement proper image loading with Coil for Google profile pictures.  
+  * Add fallback display logic for users without profile pictures (showing initials).
+
+**User Story:** As a user, I want to tap the profile icon to see my account information and access the sign-out option in a dropdown menu.
+
+* **Acceptance Criteria:**  
+  * Tapping the profile icon opens a dropdown menu.  
+  * The dropdown menu displays the user's display name and email address.  
+  * The dropdown menu includes a "Sign Out" option with an appropriate icon.  
+  * Tapping outside the dropdown menu dismisses it.  
+  * The sign-out functionality works as expected.  
+* **Technical Tasks:**  
+  * Implement a DropdownMenu that appears when the ProfileIcon is tapped.  
+  * Add user information display within the dropdown (name and email).  
+  * Include a sign-out menu item with proper icon and functionality.  
+  * Handle dropdown state management (show/hide).  
+  * Ensure proper spacing and styling following Material Design guidelines.
+
 ### **Data Visualization**
 
 **User Story:** As a parent, I want to view a chart showing the total hours my baby slept each day over the last week so I can spot trends.

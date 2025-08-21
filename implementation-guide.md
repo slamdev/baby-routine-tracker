@@ -70,6 +70,51 @@ Always apply security rules that follow this pattern:
 
 ## 🎨 UI Guidelines
 
+### Modern Android App Design Pattern
+
+The app follows modern Android design patterns with a clean, user-friendly interface:
+
+#### Profile Icon in TopAppBar
+- **UPDATED UX**: Removed the large welcome card from the main dashboard
+- **NEW PATTERN**: Added compact profile icon in top-right corner of the app bar
+- **Implementation**: 
+  - `ProfileIcon` composable displays user's Google profile picture or initials
+  - Dropdown menu on tap shows user info and sign-out option
+  - Follows Material Design 3 guidelines
+  - Saves valuable screen space for main content
+
+#### Profile Icon Implementation Example
+```kotlin
+@Composable
+private fun ProfileIcon(
+    user: FirebaseUser?,
+    onSignOut: () -> Unit
+) {
+    var showDropdownMenu by remember { mutableStateOf(false) }
+    
+    Box {
+        // Circular profile image/avatar (40dp)
+        Box(
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .clickable { showDropdownMenu = true }
+        ) {
+            // Google profile image or initials fallback
+        }
+        
+        // Dropdown menu with user info and sign out
+        DropdownMenu(
+            expanded = showDropdownMenu,
+            onDismissRequest = { showDropdownMenu = false }
+        ) {
+            // User display name and email
+            // Sign out option with icon
+        }
+    }
+}
+```
+
 ### Button Consistency
 When creating buttons that should have equal sizes:
 ```kotlin

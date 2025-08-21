@@ -47,6 +47,8 @@ Here is a list of user stories broken down by feature for a developer to follow.
 * **As a user,** I want the app to automatically switch between light and dark mode based on my phone's system settings.  
 * **As a user,** I want the app to display correctly and be fully usable when I rotate my phone to landscape mode.  
 * **As a user,** I want to be able to use the app in split-screen mode alongside another app (like a messaging app or browser) without the layout breaking.
+* **As a user,** I want to see a clean, modern interface with a profile icon in the top-right corner like modern Android apps, rather than a large welcome card taking up screen space.
+* **As a user,** I want to tap the profile icon to see my account information and access the sign-out option in a dropdown menu.
 
 ### **AI Sleep Routine Builder**
 

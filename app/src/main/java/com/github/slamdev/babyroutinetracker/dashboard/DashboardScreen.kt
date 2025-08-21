@@ -1,12 +1,14 @@
 package com.github.slamdev.babyroutinetracker.dashboard
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -61,14 +63,11 @@ fun DashboardScreen(
                     )
                 },
                 actions = {
-                    IconButton(
-                        onClick = { authViewModel.signOut() }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.ExitToApp,
-                            contentDescription = "Sign Out"
-                        )
-                    }
+                    // Profile icon
+                    ProfileIcon(
+                        user = uiState.user,
+                        onSignOut = { authViewModel.signOut() }
+                    )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -86,11 +85,6 @@ fun DashboardScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            // Welcome message
-            WelcomeCard(user = uiState.user)
-            
-            Spacer(modifier = Modifier.height(16.dp))
-            
             // Activity tracking section - only show when there's a selected baby
             if (invitationState.selectedBabyId.isNotEmpty()) {
                 val selectedBaby = invitationState.babies.find { it.id == invitationState.selectedBabyId }
@@ -235,86 +229,113 @@ fun DashboardScreen(
 }
 
 @Composable
-private fun WelcomeCard(
+private fun ProfileIcon(
     user: FirebaseUser?,
+    onSignOut: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer
-        )
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+    var showDropdownMenu by remember { mutableStateOf(false) }
+    
+    Box {
+        // Profile icon/avatar
+        Box(
+            modifier = modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .clickable { showDropdownMenu = true },
+            contentAlignment = Alignment.Center
         ) {
-            // User profile picture or avatar
-            Box(
-                modifier = Modifier
-                    .size(80.dp)
-                    .clip(CircleShape),
-                contentAlignment = Alignment.Center
-            ) {
-                if (user?.photoUrl != null) {
-                    // Load Google profile picture
-                    AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(user.photoUrl)
-                            .crossfade(true)
-                            .build(),
-                        contentDescription = "Profile Picture",
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Crop,
-                        fallback = null,
-                        error = null
-                    )
-                } else {
-                    // Fallback avatar with user's initial
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(
-                                MaterialTheme.colorScheme.primary,
-                                CircleShape
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
+            if (user?.photoUrl != null) {
+                // Load Google profile picture
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(user.photoUrl)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = "Profile Picture",
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop,
+                    fallback = null,
+                    error = null
+                )
+            } else {
+                // Fallback avatar with user's initial or person icon
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            MaterialTheme.colorScheme.primary,
+                            CircleShape
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (user?.displayName?.isNotEmpty() == true) {
                         Text(
-                            text = user?.displayName?.firstOrNull()?.toString()?.uppercase() ?: "U",
-                            fontSize = 32.sp,
+                            text = user.displayName!!.firstOrNull()?.toString()?.uppercase() ?: "U",
+                            fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = "Profile",
+                            tint = Color.White,
+                            modifier = Modifier.size(20.dp)
                         )
                     }
                 }
             }
-            
-            Spacer(modifier = Modifier.height(16.dp))
-            
-            // Welcome message
-            Text(
-                text = "Welcome ${user?.displayName ?: "User"}!",
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                textAlign = TextAlign.Center
-            )
-            
-            // Email address
-            if (user?.email != null) {
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = user.email!!,
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f),
-                    textAlign = TextAlign.Center
-                )
+        }
+        
+        // Dropdown menu
+        DropdownMenu(
+            expanded = showDropdownMenu,
+            onDismissRequest = { showDropdownMenu = false }
+        ) {
+            // User info
+            user?.let {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = it.displayName ?: "User",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
+                    if (it.email != null) {
+                        Text(
+                            text = it.email!!,
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                        )
+                    }
+                }
+                HorizontalDivider()
             }
+            
+            // Sign out option
+            DropdownMenuItem(
+                text = { 
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                            contentDescription = "Sign Out"
+                        )
+                        Text("Sign Out")
+                    }
+                },
+                onClick = {
+                    showDropdownMenu = false
+                    onSignOut()
+                }
+            )
         }
     }
 }
