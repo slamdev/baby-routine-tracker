@@ -16,7 +16,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.slamdev.babyroutinetracker.ui.components.ActivityCard
 import com.github.slamdev.babyroutinetracker.ui.components.ActivityCardState
 import com.github.slamdev.babyroutinetracker.ui.components.breastFeedingActivityConfig
-import com.github.slamdev.babyroutinetracker.ui.components.CompactErrorDisplay
+import com.github.slamdev.babyroutinetracker.ui.components.breastFeedingActivityContent
 import com.github.slamdev.babyroutinetracker.ui.components.TimePickerDialog
 import com.github.slamdev.babyroutinetracker.ui.components.EditActivityDialog
 import com.github.slamdev.babyroutinetracker.ui.components.TimeUtils
@@ -48,9 +48,55 @@ fun BreastFeedingCard(
         contentError = uiState.lastFeedingError ?: uiState.ongoingFeedingError
     )
     
+    // Prepare content based on current state
+    val ongoingBreastFeeding = uiState.ongoingBreastFeeding
+    val lastFeeding = uiState.lastFeeding?.takeIf { it.feedingType == "breast_milk" }
+    
+    val cardContent = when {
+        ongoingBreastFeeding != null -> {
+            breastFeedingActivityContent(
+                ongoingFeeding = ongoingBreastFeeding,
+                ongoingStartTime = ongoingBreastFeeding.startTime.toDate(),
+                onEditStartTime = { showTimePickerDialog = true }
+            )
+        }
+        lastFeeding != null && lastFeeding.endTime != null -> {
+            val duration = lastFeeding.getDurationMinutes()
+            val durationText = if (duration != null) {
+                val hours = duration / 60
+                val minutes = duration % 60
+                when {
+                    hours > 0 && minutes > 0 -> "${hours}h ${minutes}m"
+                    hours > 0 -> "${hours}h"
+                    else -> "${minutes}m"
+                }
+            } else {
+                "Duration unknown"
+            }
+            
+            val timeAgo = TimeUtils.formatTimeAgo(
+                TimeUtils.getRelevantTimestamp(
+                    lastFeeding.startTime.toDate(),
+                    lastFeeding.endTime?.toDate()
+                )
+            )
+            
+            breastFeedingActivityContent(
+                lastFeeding = lastFeeding,
+                lastFeedingText = "Last fed $durationText",
+                timeAgo = timeAgo,
+                endTime = lastFeeding.endTime.toDate()
+            )
+        }
+        else -> {
+            breastFeedingActivityContent() // Empty content
+        }
+    }
+    
     ActivityCard(
         config = breastFeedingActivityConfig(),
         state = cardState,
+        content = cardContent,
         modifier = modifier,
         onPrimaryAction = { viewModel.startBreastMilkFeeding() },
         onAlternateAction = { viewModel.endBreastMilkFeeding() },
@@ -65,12 +111,7 @@ fun BreastFeedingCard(
             uiState.ongoingFeedingError?.let { viewModel.clearOngoingFeedingError() }
             uiState.errorMessage?.let { viewModel.clearError() }
         }
-    ) {
-        BreastFeedingContent(
-            uiState = uiState,
-            onEditStartTime = { showTimePickerDialog = true }
-        )
-    }
+    )
     // Time picker dialog for editing breast feeding start time
     if (showTimePickerDialog) {
         uiState.ongoingBreastFeeding?.let { ongoingFeeding ->
@@ -108,113 +149,6 @@ fun BreastFeedingCard(
                     showEditLastActivityDialog = false
                 }
             )
-        }
-    }
-}
-
-@Composable
-private fun BreastFeedingContent(
-    uiState: FeedingTrackingUiState,
-    onEditStartTime: () -> Unit
-) {
-    val ongoingBreastFeeding = uiState.ongoingBreastFeeding
-    when {
-        ongoingBreastFeeding != null -> {
-            // Start time (clickable for editing)
-            Row(
-                modifier = Modifier
-                    .clickable { onEditStartTime() }
-                    .padding(horizontal = 8.dp, vertical = 4.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Edit,
-                    contentDescription = "Edit start time",
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f),
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    text = "Started at ${formatTime(ongoingBreastFeeding.startTime.toDate())}",
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
-                )
-            }
-        }
-        else -> {
-            // Show last breast feeding
-            val lastFeeding = uiState.lastFeeding?.takeIf { it.feedingType == "breast_milk" }
-            when {
-                lastFeeding != null && lastFeeding.endTime != null -> {
-                    val duration = lastFeeding.getDurationMinutes()
-                    val durationText = if (duration != null) {
-                        val hours = duration / 60
-                        val minutes = duration % 60
-                        when {
-                            hours > 0 && minutes > 0 -> "${hours}h ${minutes}m"
-                            hours > 0 -> "${hours}h"
-                            else -> "${minutes}m"
-                        }
-                    } else {
-                        "Duration unknown"
-                    }
-                    
-                    // Calculate time ago
-                    val timeAgo = TimeUtils.formatTimeAgo(
-                        TimeUtils.getRelevantTimestamp(
-                            lastFeeding.startTime.toDate(),
-                            lastFeeding.endTime?.toDate()
-                        )
-                    )
-                    
-                    // Last feeding info (clickable for editing)
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.padding(8.dp)
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "Last fed $durationText",
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
-                                textAlign = TextAlign.Center
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Icon(
-                                imageVector = Icons.Default.Edit,
-                                contentDescription = "Edit last feeding",
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                                modifier = Modifier.size(12.dp)
-                            )
-                        }
-                        
-                        Text(
-                            text = timeAgo,
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-                        )
-                        
-                        lastFeeding.endTime?.let { endTime ->
-                            Text(
-                                text = "Ended at ${formatTime(endTime.toDate())}",
-                                fontSize = 12.sp,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-                            )
-                        }
-                    }
-                }
-                else -> {
-                    Text(
-                        text = "No recent feeding",
-                        fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-                    )
-                }
-            }
         }
     }
 }

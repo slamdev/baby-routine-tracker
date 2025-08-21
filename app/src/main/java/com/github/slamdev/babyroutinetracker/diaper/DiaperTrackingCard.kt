@@ -15,6 +15,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.slamdev.babyroutinetracker.ui.components.ActivityCard
 import com.github.slamdev.babyroutinetracker.ui.components.ActivityCardState
 import com.github.slamdev.babyroutinetracker.ui.components.diaperActivityConfig
+import com.github.slamdev.babyroutinetracker.ui.components.diaperActivityContent
 import com.github.slamdev.babyroutinetracker.ui.components.EditActivityDialog
 import com.github.slamdev.babyroutinetracker.ui.components.TimeUtils
 import java.text.SimpleDateFormat
@@ -45,9 +46,35 @@ fun DiaperTrackingCard(
         contentError = uiState.lastDiaperError
     )
     
+    // Prepare content based on current state
+    val lastDiaper = uiState.lastDiaper
+    
+    val cardContent = when {
+        lastDiaper != null -> {
+            val timeAgo = TimeUtils.formatTimeAgo(
+                TimeUtils.getRelevantTimestamp(
+                    lastDiaper.startTime.toDate(),
+                    lastDiaper.endTime?.toDate()
+                )
+            )
+            
+            diaperActivityContent(
+                lastDiaper = lastDiaper,
+                lastDiaperText = "Last poop logged",
+                timeAgo = timeAgo,
+                diaperTime = lastDiaper.startTime.toDate(),
+                notes = lastDiaper.notes
+            )
+        }
+        else -> {
+            diaperActivityContent() // Empty content
+        }
+    }
+    
     ActivityCard(
         config = diaperActivityConfig(),
         state = cardState,
+        content = cardContent,
         modifier = modifier,
         onPrimaryAction = { showPoopDialog = true },
         onContentClick = { 
@@ -60,9 +87,7 @@ fun DiaperTrackingCard(
         onDismissSuccess = {
             uiState.successMessage?.let { viewModel.clearSuccess() }
         }
-    ) {
-        DiaperContent(uiState = uiState)
-    }
+    )
 
     // Poop logging dialog
     if (showPoopDialog) {
@@ -95,80 +120,6 @@ fun DiaperTrackingCard(
                     viewModel.updateInstantActivityTime(activity, newTime)
                     showEditLastActivityDialog = false
                 }
-            )
-        }
-    }
-}
-
-@Composable
-private fun DiaperContent(
-    uiState: DiaperTrackingUiState
-) {
-    val lastDiaper = uiState.lastDiaper
-    when {
-        lastDiaper != null -> {
-            // Calculate time ago
-            val timeAgo = TimeUtils.formatTimeAgo(
-                TimeUtils.getRelevantTimestamp(
-                    lastDiaper.startTime.toDate(),
-                    lastDiaper.endTime?.toDate()
-                )
-            )
-            
-            // Last diaper info
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(8.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Last poop logged",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "Edit last diaper",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                        modifier = Modifier.size(12.dp)
-                    )
-                }
-                
-                Text(
-                    text = timeAgo,
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-                )
-                
-                Text(
-                    text = "at ${formatTime(lastDiaper.startTime.toDate())}",
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-                )
-                
-                // Show notes if available
-                if (lastDiaper.notes.isNotBlank()) {
-                    Text(
-                        text = "\"${lastDiaper.notes}\"",
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                        textAlign = TextAlign.Center,
-                        fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
-                    )
-                }
-            }
-        }
-        else -> {
-            Text(
-                text = "No poops logged yet",
-                fontSize = 14.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                textAlign = TextAlign.Center
             )
         }
     }

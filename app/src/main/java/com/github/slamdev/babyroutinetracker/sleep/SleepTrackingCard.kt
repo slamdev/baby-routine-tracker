@@ -16,6 +16,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.slamdev.babyroutinetracker.ui.components.ActivityCard
 import com.github.slamdev.babyroutinetracker.ui.components.ActivityCardState
 import com.github.slamdev.babyroutinetracker.ui.components.sleepActivityConfig
+import com.github.slamdev.babyroutinetracker.ui.components.sleepActivityContent
 import com.github.slamdev.babyroutinetracker.ui.components.TimePickerDialog
 import com.github.slamdev.babyroutinetracker.ui.components.EditActivityDialog
 import com.github.slamdev.babyroutinetracker.ui.components.TimeUtils
@@ -47,9 +48,55 @@ fun SleepTrackingCard(
         contentError = uiState.lastSleepError ?: uiState.ongoingSleepError
     )
     
+    // Prepare content based on current state
+    val ongoingSleep = uiState.ongoingSleep
+    val lastSleep = uiState.lastSleep
+    
+    val cardContent = when {
+        ongoingSleep != null -> {
+            sleepActivityContent(
+                ongoingSleep = ongoingSleep,
+                ongoingStartTime = ongoingSleep.startTime.toDate(),
+                onEditStartTime = { showTimePickerDialog = true }
+            )
+        }
+        lastSleep != null && lastSleep.endTime != null -> {
+            val duration = lastSleep.getDurationMinutes()
+            val durationText = if (duration != null) {
+                val hours = duration / 60
+                val minutes = duration % 60
+                when {
+                    hours > 0 && minutes > 0 -> "${hours}h ${minutes}m"
+                    hours > 0 -> "${hours}h"
+                    else -> "${minutes}m"
+                }
+            } else {
+                "Duration unknown"
+            }
+            
+            val timeAgo = TimeUtils.formatTimeAgo(
+                TimeUtils.getRelevantTimestamp(
+                    lastSleep.startTime.toDate(),
+                    lastSleep.endTime?.toDate()
+                )
+            )
+            
+            sleepActivityContent(
+                lastSleep = lastSleep,
+                lastSleepText = "Last slept $durationText",
+                timeAgo = timeAgo,
+                endTime = lastSleep.endTime.toDate()
+            )
+        }
+        else -> {
+            sleepActivityContent() // Empty content
+        }
+    }
+    
     ActivityCard(
         config = sleepActivityConfig(),
         state = cardState,
+        content = cardContent,
         modifier = modifier,
         onPrimaryAction = { viewModel.startSleep() },
         onAlternateAction = { viewModel.endSleep() },
@@ -61,12 +108,7 @@ fun SleepTrackingCard(
             uiState.ongoingSleepError?.let { viewModel.clearOngoingSleepError() }
             uiState.errorMessage?.let { viewModel.clearError() }
         }
-    ) {
-        SleepContent(
-            uiState = uiState,
-            onEditStartTime = { showTimePickerDialog = true }
-        )
-    }
+    )
     
     // Time picker dialog for editing ongoing sleep start time
     if (showTimePickerDialog) {
@@ -100,113 +142,6 @@ fun SleepTrackingCard(
                     showEditLastActivityDialog = false
                 }
             )
-        }
-    }
-}
-
-@Composable
-private fun SleepContent(
-    uiState: SleepTrackingUiState,
-    onEditStartTime: () -> Unit
-) {
-    val ongoingSleep = uiState.ongoingSleep
-    when {
-        ongoingSleep != null -> {
-            // Start time (clickable for editing)
-            Row(
-                modifier = Modifier
-                    .clickable { onEditStartTime() }
-                    .padding(horizontal = 8.dp, vertical = 4.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Edit,
-                    contentDescription = "Edit start time",
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f),
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    text = "Started at ${formatTime(ongoingSleep.startTime.toDate())}",
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
-                )
-            }
-        }
-        else -> {
-            // Show last sleep
-            val lastSleep = uiState.lastSleep
-            when {
-                lastSleep != null && lastSleep.endTime != null -> {
-                    val duration = lastSleep.getDurationMinutes()
-                    val durationText = if (duration != null) {
-                        val hours = duration / 60
-                        val minutes = duration % 60
-                        when {
-                            hours > 0 && minutes > 0 -> "${hours}h ${minutes}m"
-                            hours > 0 -> "${hours}h"
-                            else -> "${minutes}m"
-                        }
-                    } else {
-                        "Duration unknown"
-                    }
-                    
-                    // Calculate time ago
-                    val timeAgo = TimeUtils.formatTimeAgo(
-                        TimeUtils.getRelevantTimestamp(
-                            lastSleep.startTime.toDate(),
-                            lastSleep.endTime?.toDate()
-                        )
-                    )
-                    
-                    // Last sleep info (clickable for editing)
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.padding(8.dp)
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "Last slept $durationText",
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
-                                textAlign = TextAlign.Center
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Icon(
-                                imageVector = Icons.Default.Edit,
-                                contentDescription = "Edit last sleep",
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                                modifier = Modifier.size(12.dp)
-                            )
-                        }
-                        
-                        Text(
-                            text = timeAgo,
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-                        )
-                        
-                        lastSleep.endTime?.let { endTime ->
-                            Text(
-                                text = "Ended at ${formatTime(endTime.toDate())}",
-                                fontSize = 12.sp,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-                            )
-                        }
-                    }
-                }
-                else -> {
-                    Text(
-                        text = "No recent sleep",
-                        fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-                    )
-                }
-            }
         }
     }
 }

@@ -17,6 +17,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 /**
  * Activity configuration for the reusable activity card
@@ -28,6 +31,26 @@ data class ActivityCardConfig(
     val cardBackgroundColor: @Composable (Boolean) -> androidx.compose.ui.graphics.Color = { isOngoing ->
         if (isOngoing) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
     }
+)
+
+/**
+ * Content configuration for activity card body
+ */
+data class ActivityCardContent(
+    // For ongoing activities
+    val ongoingActivity: Any? = null, // Current ongoing activity (sleep, feeding)
+    val ongoingStartTime: java.util.Date? = null, // Start time for ongoing activity
+    val onEditStartTime: (() -> Unit)? = null,
+    
+    // For last activity display
+    val lastActivity: Any? = null, // Last completed activity
+    val lastActivityText: String? = null, // e.g., "Last slept 2h 30m", "Last fed 120ml", "Last poop logged"
+    val lastActivityTimeAgo: String? = null, // e.g., "2 hours ago"
+    val lastActivityTime: java.util.Date? = null, // End time for ongoing activities, start time for immediate activities
+    val lastActivityNotes: String? = null, // Optional notes to display
+    
+    // Fallback text when no activity exists
+    val noActivityText: String = "No recent activity"
 )
 
 /**
@@ -48,25 +71,25 @@ data class ActivityCardState(
  * 
  * @param config Configuration for the activity card
  * @param state Current state of the activity
+ * @param content Content configuration for the activity card body
  * @param modifier Modifier for the card
  * @param onPrimaryAction Primary action callback (start/log activity)
  * @param onAlternateAction Alternate action callback (stop activity), only used for ongoing activities
  * @param onContentClick Callback when content area is clicked (for editing)
  * @param onDismissError Callback to dismiss error messages
  * @param onDismissSuccess Callback to dismiss success messages
- * @param content Composable content to display in the card body
  */
 @Composable
 fun ActivityCard(
     config: ActivityCardConfig,
     state: ActivityCardState,
+    content: ActivityCardContent,
     modifier: Modifier = Modifier,
     onPrimaryAction: () -> Unit = {},
     onAlternateAction: () -> Unit = {},
     onContentClick: () -> Unit = {},
     onDismissError: () -> Unit = {},
-    onDismissSuccess: () -> Unit = {},
-    content: @Composable () -> Unit
+    onDismissSuccess: () -> Unit = {}
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -189,7 +212,10 @@ fun ActivityCard(
                             .fillMaxWidth()
                             .clickable { onContentClick() }
                     ) {
-                        content()
+                        ActivityCardContentDisplay(
+                            config = config,
+                            content = content
+                        )
                     }
                 }
             }
@@ -250,6 +276,126 @@ fun ActivityCard(
 }
 
 /**
+ * Display content for activity cards based on configuration
+ */
+@Composable
+private fun ActivityCardContentDisplay(
+    config: ActivityCardConfig,
+    content: ActivityCardContent
+) {
+    when {
+        // Ongoing activity state (for non-immediate activities)
+        !config.isImmediateActivity && content.ongoingActivity != null -> {
+            content.ongoingStartTime?.let { startTime ->
+                val startTimeText = "Started at ${formatTime(startTime)}"
+                Row(
+                    modifier = Modifier
+                        .let { modifier ->
+                            if (content.onEditStartTime != null) {
+                                modifier.clickable { content.onEditStartTime.invoke() }
+                            } else modifier
+                        }
+                        .padding(horizontal = 8.dp, vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    if (content.onEditStartTime != null) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Edit start time",
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f),
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                    }
+                    Text(
+                        text = startTimeText,
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                    )
+                }
+            }
+        }
+        
+        // Last activity state
+        content.lastActivity != null -> {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(8.dp)
+            ) {
+                // Main activity description with edit icon
+                content.lastActivityText?.let { activityText ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = activityText,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Edit last activity",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                            modifier = Modifier.size(12.dp)
+                        )
+                    }
+                }
+                
+                // Time ago
+                content.lastActivityTimeAgo?.let { timeAgo ->
+                    Text(
+                        text = timeAgo,
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                    )
+                }
+                
+                // Activity time
+                content.lastActivityTime?.let { activityTime ->
+                    val timeText = if (config.isImmediateActivity) {
+                        "at ${formatTime(activityTime)}"
+                    } else {
+                        "Ended at ${formatTime(activityTime)}"
+                    }
+                    Text(
+                        text = timeText,
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                    )
+                }
+                
+                // Notes if available
+                content.lastActivityNotes?.let { notes ->
+                    if (notes.isNotBlank()) {
+                        Text(
+                            text = "\"$notes\"",
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                            textAlign = TextAlign.Center,
+                            fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
+                        )
+                    }
+                }
+            }
+        }
+        
+        // No activity state
+        else -> {
+            Text(
+                text = content.noActivityText,
+                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+
+/**
  * Format elapsed time in seconds to a human-readable string
  */
 private fun formatElapsedTime(elapsedTimeSeconds: Long): String {
@@ -298,3 +444,91 @@ fun diaperActivityConfig(): ActivityCardConfig = ActivityCardConfig(
     icon = "💩",
     isImmediateActivity = true
 )
+
+// Content helper functions
+
+/**
+ * Helper function to create content for sleep activity
+ */
+fun sleepActivityContent(
+    ongoingSleep: Any? = null,
+    ongoingStartTime: Date? = null,
+    lastSleep: Any? = null,
+    lastSleepText: String? = null,
+    timeAgo: String? = null,
+    endTime: Date? = null,
+    onEditStartTime: (() -> Unit)? = null
+): ActivityCardContent = ActivityCardContent(
+    ongoingActivity = ongoingSleep,
+    ongoingStartTime = ongoingStartTime,
+    onEditStartTime = onEditStartTime,
+    lastActivity = lastSleep,
+    lastActivityText = lastSleepText,
+    lastActivityTimeAgo = timeAgo,
+    lastActivityTime = endTime,
+    noActivityText = "No recent sleep"
+)
+
+/**
+ * Helper function to create content for breast feeding activity
+ */
+fun breastFeedingActivityContent(
+    ongoingFeeding: Any? = null,
+    ongoingStartTime: Date? = null,
+    lastFeeding: Any? = null,
+    lastFeedingText: String? = null,
+    timeAgo: String? = null,
+    endTime: Date? = null,
+    onEditStartTime: (() -> Unit)? = null
+): ActivityCardContent = ActivityCardContent(
+    ongoingActivity = ongoingFeeding,
+    ongoingStartTime = ongoingStartTime,
+    onEditStartTime = onEditStartTime,
+    lastActivity = lastFeeding,
+    lastActivityText = lastFeedingText,
+    lastActivityTimeAgo = timeAgo,
+    lastActivityTime = endTime,
+    noActivityText = "No recent feeding"
+)
+
+/**
+ * Helper function to create content for bottle feeding activity
+ */
+fun bottleFeedingActivityContent(
+    lastFeeding: Any? = null,
+    lastFeedingText: String? = null,
+    timeAgo: String? = null,
+    feedingTime: Date? = null
+): ActivityCardContent = ActivityCardContent(
+    lastActivity = lastFeeding,
+    lastActivityText = lastFeedingText,
+    lastActivityTimeAgo = timeAgo,
+    lastActivityTime = feedingTime,
+    noActivityText = "No recent feeding"
+)
+
+/**
+ * Helper function to create content for diaper activity
+ */
+fun diaperActivityContent(
+    lastDiaper: Any? = null,
+    lastDiaperText: String? = null,
+    timeAgo: String? = null,
+    diaperTime: Date? = null,
+    notes: String? = null
+): ActivityCardContent = ActivityCardContent(
+    lastActivity = lastDiaper,
+    lastActivityText = lastDiaperText,
+    lastActivityTimeAgo = timeAgo,
+    lastActivityTime = diaperTime,
+    lastActivityNotes = notes,
+    noActivityText = "No poops logged yet"
+)
+
+/**
+ * Format a Date to display time in HH:mm format
+ */
+private fun formatTime(date: Date): String {
+    val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
+    return formatter.format(date)
+}
