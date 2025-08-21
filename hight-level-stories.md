@@ -49,6 +49,8 @@ Here is a list of user stories broken down by feature for a developer to follow.
 * **As a user,** I want to be able to use the app in split-screen mode alongside another app (like a messaging app or browser) without the layout breaking.
 * **As a user,** I want to see a clean, modern interface with a profile icon in the top-right corner like modern Android apps, rather than a large welcome card taking up screen space.
 * **As a user,** I want to tap the profile icon to see my account information and access the sign-out option in a dropdown menu.
+* **As a parent,** I want to see my baby's name in the title bar instead of the app name, making the interface more personal and context-aware.
+* **As a parent,** I want a streamlined dashboard without redundant headers, focusing on activity tracking content for better space efficiency.
 
 ### **AI Sleep Routine Builder**
 

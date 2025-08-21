@@ -57,8 +57,14 @@ fun DashboardScreen(
         topBar = {
             TopAppBar(
                 title = {
+                    // Show baby's name if one is selected, otherwise show app name
+                    val titleText = if (invitationState.selectedBabyId.isNotEmpty()) {
+                        invitationState.babies.find { it.id == invitationState.selectedBabyId }?.name ?: "Baby Routine Tracker"
+                    } else {
+                        "Baby Routine Tracker"
+                    }
                     Text(
-                        text = "Baby Routine Tracker",
+                        text = titleText,
                         fontWeight = FontWeight.Bold
                     )
                 },
@@ -89,13 +95,6 @@ fun DashboardScreen(
             if (invitationState.selectedBabyId.isNotEmpty()) {
                 val selectedBaby = invitationState.babies.find { it.id == invitationState.selectedBabyId }
                 selectedBaby?.let { baby ->
-                    Text(
-                        text = "${baby.name}'s Activities",
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    
                     // Activity tracking cards
                     SleepTrackingCard(
                         babyId = baby.id,

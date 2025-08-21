@@ -197,7 +197,30 @@ This document outlines the specific acceptance criteria and high-level technical
   * The sign-out functionality works as expected.  
 * **Technical Tasks:**  
   * Implement a DropdownMenu that appears when the ProfileIcon is tapped.  
-  * Add user information display within the dropdown (name and email).  
+  * Add user information display within the dropdown (name and email).
+
+**User Story:** As a parent, I want to see my baby's name in the title bar instead of the app name, making the interface more personal and context-aware.
+
+* **Acceptance Criteria:**  
+  * When a baby profile is selected, the title bar displays the baby's name instead of "Baby Routine Tracker". ✅ IMPLEMENTED
+  * When no baby profile is selected, the title bar falls back to showing "Baby Routine Tracker". ✅ IMPLEMENTED
+  * The title bar updates automatically when switching between baby profiles. ✅ IMPLEMENTED
+  * The baby's name is displayed with proper formatting and styling. ✅ IMPLEMENTED
+* **Technical Tasks:**  
+  * Modify the DashboardScreen TopAppBar title to dynamically show baby name when available. ✅ COMPLETED
+  * Implement conditional logic to show baby name or app name based on selection state. ✅ COMPLETED
+  * Ensure the title updates reactively when baby selection changes. ✅ COMPLETED
+
+**User Story:** As a parent, I want a streamlined dashboard without redundant headers, focusing on activity tracking content for better space efficiency.
+
+* **Acceptance Criteria:**  
+  * The "${baby.name}'s Activities" header is removed from the main dashboard content area. ✅ IMPLEMENTED
+  * Activity tracking cards are displayed directly without the intermediate header text. ✅ IMPLEMENTED
+  * The dashboard content has improved space efficiency with more room for activity cards. ✅ IMPLEMENTED
+  * The visual hierarchy remains clear without the redundant header. ✅ IMPLEMENTED
+* **Technical Tasks:**  
+  * Remove the "${baby.name}'s Activities" Text component from the DashboardScreen content area. ✅ COMPLETED
+  * Adjust spacing and layout to maintain visual balance after header removal. ✅ COMPLETED  
   * Include a sign-out menu item with proper icon and functionality.  
   * Handle dropdown state management (show/hide).  
   * Ensure proper spacing and styling following Material Design guidelines.

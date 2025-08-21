@@ -36,7 +36,9 @@ This document outlines the project plan for a personal Android application desig
   * Fully responsive layout for portrait, landscape, and split-screen modes.  
   * Clean, modern, and intuitive user interface built with Jetpack Compose.
   * Modern Android app design with compact profile icon in top-right corner instead of large welcome cards.
-  * Space-efficient dashboard layout that prioritizes activity tracking content.  
+  * Space-efficient dashboard layout that prioritizes activity tracking content.
+  * Personal title bar showing baby's name instead of app name for contextual awareness.
+  * Streamlined interface removing redundant headers to focus on activity tracking.  
 * **AI-Powered Sleep Routine Builder:**  
   * Integration with the Google Gemini API.  
   * The app will send sleep data and baby age to the Gemini API.  
