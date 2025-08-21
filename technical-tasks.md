@@ -220,7 +220,22 @@ This document outlines the specific acceptance criteria and high-level technical
   * The visual hierarchy remains clear without the redundant header. ✅ IMPLEMENTED
 * **Technical Tasks:**  
   * Remove the "${baby.name}'s Activities" Text component from the DashboardScreen content area. ✅ COMPLETED
-  * Adjust spacing and layout to maintain visual balance after header removal. ✅ COMPLETED  
+  * Adjust spacing and layout to maintain visual balance after header removal. ✅ COMPLETED
+
+**User Story:** As a parent, I want to access baby profile management options (create, join, invite) from the profile menu instead of cluttering the main dashboard, creating a cleaner and more organized interface.
+
+* **Acceptance Criteria:**  
+  * Baby profile management options are moved from the main dashboard to the profile icon dropdown menu. ✅ IMPLEMENTED
+  * The profile dropdown menu includes "Create Baby Profile", "Join Profile", and "Invite Partner" options. ✅ IMPLEMENTED
+  * Each menu item has appropriate icons for visual clarity. ✅ IMPLEMENTED
+  * The "Invite Partner" option only appears when baby profiles exist. ✅ IMPLEMENTED
+  * The Baby Profile Management card is removed from the main dashboard content area. ✅ IMPLEMENTED
+  * The main dashboard focuses on activity tracking when no baby is selected. ✅ IMPLEMENTED
+* **Technical Tasks:**  
+  * Update ProfileIcon function to accept navigation callbacks for baby profile management. ✅ COMPLETED
+  * Add baby profile management menu items to the profile dropdown. ✅ COMPLETED
+  * Remove the Baby Profile Management card from the main dashboard content. ✅ COMPLETED
+  * Update guidance text to direct users to the profile menu for baby profile options. ✅ COMPLETED  
   * Include a sign-out menu item with proper icon and functionality.  
   * Handle dropdown state management (show/hide).  
   * Ensure proper spacing and styling following Material Design guidelines.

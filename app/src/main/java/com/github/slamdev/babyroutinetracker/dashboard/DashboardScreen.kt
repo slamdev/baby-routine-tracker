@@ -8,7 +8,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,6 +28,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.github.slamdev.babyroutinetracker.auth.AuthenticationViewModel
 import com.github.slamdev.babyroutinetracker.invitation.InvitationViewModel
+import com.github.slamdev.babyroutinetracker.model.Baby
 import com.github.slamdev.babyroutinetracker.sleep.SleepTrackingCard
 import com.github.slamdev.babyroutinetracker.feeding.FeedingTrackingCard
 import com.github.slamdev.babyroutinetracker.diaper.DiaperTrackingCard
@@ -72,7 +75,11 @@ fun DashboardScreen(
                     // Profile icon
                     ProfileIcon(
                         user = uiState.user,
-                        onSignOut = { authViewModel.signOut() }
+                        onSignOut = { authViewModel.signOut() },
+                        babies = invitationState.babies,
+                        onNavigateToCreateBaby = onNavigateToCreateBaby,
+                        onNavigateToJoinInvitation = onNavigateToJoinInvitation,
+                        onNavigateToInvitePartner = onNavigateToInvitePartner
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -127,71 +134,14 @@ fun DashboardScreen(
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                     lineHeight = 22.sp
                 )
-            }
-            
-            // Baby Profile Management Section
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer
+                
+                Text(
+                    text = "Use the profile menu in the top-right corner to access baby profile options.",
+                    fontSize = 14.sp,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                    lineHeight = 20.sp
                 )
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    Text(
-                        text = "Baby Profile Management",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onTertiaryContainer
-                    )
-                    
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        OutlinedButton(
-                            onClick = onNavigateToCreateBaby,
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(40.dp)
-                        ) {
-                            Text(
-                                text = "Create Baby Profile",
-                                maxLines = 1,
-                                fontSize = 12.sp,
-                                textAlign = TextAlign.Center
-                            )
-                        }
-                        
-                        OutlinedButton(
-                            onClick = onNavigateToJoinInvitation,
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(40.dp)
-                        ) {
-                            Text(
-                                text = "Join Profile",
-                                maxLines = 1,
-                                fontSize = 12.sp,
-                                textAlign = TextAlign.Center
-                            )
-                        }
-                    }
-                    
-                    // Only show invite partner button if there are baby profiles
-                    if (invitationState.babies.isNotEmpty()) {
-                        Button(
-                            onClick = onNavigateToInvitePartner,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text("Invite Partner")
-                        }
-                    }
-                }
             }
             
             Spacer(modifier = Modifier.height(16.dp))
@@ -231,6 +181,10 @@ fun DashboardScreen(
 private fun ProfileIcon(
     user: FirebaseUser?,
     onSignOut: () -> Unit,
+    babies: List<Baby>,
+    onNavigateToCreateBaby: () -> Unit,
+    onNavigateToJoinInvitation: () -> Unit,
+    onNavigateToInvitePartner: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var showDropdownMenu by remember { mutableStateOf(false) }
@@ -315,6 +269,69 @@ private fun ProfileIcon(
                 }
                 HorizontalDivider()
             }
+            
+            // Baby Profile Management Options
+            DropdownMenuItem(
+                text = { 
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Create Baby Profile"
+                        )
+                        Text("Create Baby Profile")
+                    }
+                },
+                onClick = {
+                    showDropdownMenu = false
+                    onNavigateToCreateBaby()
+                }
+            )
+            
+            DropdownMenuItem(
+                text = { 
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = "Join Profile"
+                        )
+                        Text("Join Profile")
+                    }
+                },
+                onClick = {
+                    showDropdownMenu = false
+                    onNavigateToJoinInvitation()
+                }
+            )
+            
+            // Only show invite partner option if there are baby profiles
+            if (babies.isNotEmpty()) {
+                DropdownMenuItem(
+                    text = { 
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Share,
+                                contentDescription = "Invite Partner"
+                            )
+                            Text("Invite Partner")
+                        }
+                    },
+                    onClick = {
+                        showDropdownMenu = false
+                        onNavigateToInvitePartner()
+                    }
+                )
+            }
+            
+            HorizontalDivider()
             
             // Sign out option
             DropdownMenuItem(
