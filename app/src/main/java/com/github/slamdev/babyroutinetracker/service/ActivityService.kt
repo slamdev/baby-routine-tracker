@@ -436,6 +436,59 @@ class ActivityService {
     }
 
     /**
+     * Log a poop diaper change
+     */
+    suspend fun logPoop(
+        babyId: String,
+        notes: String = ""
+    ): Result<Activity> {
+        return try {
+            val currentUser = auth.currentUser
+            if (currentUser == null) {
+                val error = Exception("User not authenticated")
+                Log.e(TAG, "Failed to log poop - user not authenticated", error)
+                return Result.failure(error)
+            }
+
+            // Verify user has access to this baby
+            if (!hasAccessToBaby(babyId)) {
+                val error = Exception("No access to baby profile")
+                Log.e(TAG, "Failed to log poop - no access to baby: $babyId", error)
+                return Result.failure(error)
+            }
+
+            val activityId = UUID.randomUUID().toString()
+            val now = Timestamp.now()
+            
+            val activity = Activity(
+                id = activityId,
+                type = ActivityType.DIAPER,
+                babyId = babyId,
+                startTime = now,
+                endTime = now, // Diaper change is logged as completed instantly
+                notes = notes,
+                loggedBy = currentUser.uid,
+                createdAt = now,
+                updatedAt = now,
+                diaperType = "poop" // Updated for "poops only" requirement
+            )
+
+            firestore.collection(BABIES_COLLECTION)
+                .document(babyId)
+                .collection(ACTIVITIES_SUBCOLLECTION)
+                .document(activityId)
+                .set(activity)
+                .await()
+
+            Log.i(TAG, "Poop activity logged successfully for baby: $babyId")
+            Result.success(activity)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to log poop activity for baby: $babyId", e)
+            Result.failure(e)
+        }
+    }
+
+    /**
      * Check if current user has access to a baby profile
      */
     private suspend fun hasAccessToBaby(babyId: String): Boolean {

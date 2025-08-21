@@ -24,7 +24,7 @@ This document outlines the project plan for a personal Android application desig
 * **Activity Tracking:**  
   * **Sleep:** Log start and end times, duration, and notes.  
   * **Feedings:** Log start time, duration (for breastfeeding), amount (for bottle-feeding), type (breast milk, bottle), and notes.  
-  * **Diapers:** Log time, type (wet, dirty, or both), and notes.  
+  * **Diapers:** Log time for poop occurrences and notes.  
 * **Real-time Dashboard:**  
   * A main screen showing the most recent activity for each category (last sleep, last feeding, last diaper change).  
   * Timers for ongoing activities (e.g., current sleep session).  
@@ -109,7 +109,7 @@ babies/{babyId}/activities/{activityId}
   - amount: Number (ml, for bottle feeding)
   
   // Diaper-specific fields
-  - diaperType: String ("wet", "dirty", "both")
+  - diaperType: String ("poop")
 
 babies/{babyId}/sleepPlans/{planId}
   - name: String

@@ -67,15 +67,18 @@ This document outlines the specific acceptance criteria and high-level technical
   * Add service methods to support both ongoing breast milk sessions and completed bottle feedings.  
   * Implement real-time synchronization for ongoing breast milk feeding across devices.
 
-**User Story:** As a parent, I want to quickly log a diaper change, noting if it was wet, dirty, or both.
+**User Story:** As a parent, I want to quickly log a diaper change, noting when poops occur.
 
 * **Acceptance Criteria:**  
-  * Tapping a "Log Diaper" button presents clear options: "Wet," "Dirty," and "Both."  
-  * The user can select an option with a single tap.  
-  * The event is logged instantly with the correct type and timestamp.  
+  * Tapping a "Log Poop" button allows instant logging of poop occurrence.  
+  * Optional notes can be added for additional details (consistency, color, etc.).  
+  * The event is logged instantly with timestamp and any notes.  
+  * The dashboard shows the last poop occurrence time.  
 * **Technical Tasks:**  
-  * Design a simple and fast UI for logging diaper changes (e.g., a bottom sheet with buttons).  
-  * Implement the function to write the diaper event to Firestore.
+  * Design a simple and fast UI for logging poop occurrences (dialog with optional notes).  
+  * Implement the function to write the poop event to Firestore.  
+  * Create real-time synchronization for diaper activities across devices.  
+  * Add diaper tracking card to the main dashboard.
 
 **User Story:** As a parent, I want to be able to add a short, optional note to any activity (sleep, feeding, or diaper) to remember important details.
 

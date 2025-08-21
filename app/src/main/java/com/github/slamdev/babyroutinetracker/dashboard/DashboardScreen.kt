@@ -26,6 +26,7 @@ import com.github.slamdev.babyroutinetracker.auth.AuthenticationViewModel
 import com.github.slamdev.babyroutinetracker.invitation.InvitationViewModel
 import com.github.slamdev.babyroutinetracker.sleep.SleepTrackingCard
 import com.github.slamdev.babyroutinetracker.feeding.FeedingTrackingCard
+import com.github.slamdev.babyroutinetracker.diaper.DiaperTrackingCard
 import com.google.firebase.auth.FirebaseUser
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -107,6 +108,11 @@ fun DashboardScreen(
                     )
                     
                     FeedingTrackingCard(
+                        babyId = baby.id,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    
+                    DiaperTrackingCard(
                         babyId = baby.id,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -203,12 +209,12 @@ fun DashboardScreen(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     FeatureCard(
-                        title = "Diapers",
+                        title = "Data Visualization",
                         description = "Coming soon",
                         modifier = Modifier.weight(1f)
                     )
                     FeatureCard(
-                        title = "Data Visualization",
+                        title = "AI Sleep Plans",
                         description = "Coming soon",
                         modifier = Modifier.weight(1f)
                     )
