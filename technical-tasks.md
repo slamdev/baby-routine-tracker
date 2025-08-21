@@ -1,6 +1,58 @@
 ## **User Stories: Acceptance Criteria & Technical Tasks**
 
-This document outlines the specific acceptance criteria and high-level technical tasks for each user story defined for the Newborn Tracker App.
+This document outlines the specific acceptance criter### **Real-time Dashboard**
+
+**User Story:** As a parent, I want to open the app and immediately see when the baby last slept, ate, and had a diaper change on a single dashboard screen.
+
+* **Acceptance Criteria:**  
+  * The main dashboard shows the most recent activity for each of the 4 activity types: Sleep, Breast Feeding, Bottle Feeding, and Poop.
+  * The dashboard displays cards in a responsive 2x2 grid layout that fits the phone screen without requiring vertical scrolling.
+  * Cards automatically adapt their size based on screen dimensions (bigger on larger phones, smaller on compact phones).
+  * Each card shows relevant information like last activity time, duration, and notes where applicable.
+  * Real-time synchronization ensures the dashboard updates when the partner logs activities on their device.
+* **Technical Tasks:**  
+  * Split the existing FeedingTrackingCard into separate BreastFeedingCard and BottleFeedingCard components.
+  * Update the DashboardScreen layout from vertical Column to responsive 2x2 LazyVerticalGrid.
+  * Implement adaptive card sizing using dynamic height calculation based on screen size.
+  * Ensure all cards have consistent visual design and information display.
+  * Update navigation and state management to handle the separated feeding cards.
+
+**User Story:** As a parent, I want to see a live timer for an ongoing sleep or feeding session so I know how long it has been.
+
+* **Acceptance Criteria:**  
+  * When a sleep session is ongoing, the Sleep card displays a live timer showing elapsed time.
+  * When a breast feeding session is ongoing, the Breast Feeding card displays a live timer showing elapsed time.
+  * Timers update every second and are synchronized across devices.
+  * Timer displays in a clear, readable format (e.g., "15:23" for 15 minutes 23 seconds).
+* **Technical Tasks:**  
+  * Ensure timer functionality works correctly in the separated Sleep and Breast Feeding cards.
+  * Maintain real-time timer synchronization across devices for ongoing activities.
+
+**User Story:** As a parent, I want the dashboard to update in real-time when my partner logs a new activity on their device.
+
+* **Acceptance Criteria:**  
+  * Changes made by one parent appear on the other parent's dashboard within seconds.
+  * All 4 activity cards (Sleep, Breast Feeding, Bottle Feeding, Poop) reflect the latest data in real-time.
+  * No manual refresh is required to see partner's activity updates.
+* **Technical Tasks:**  
+  * Maintain Firebase Firestore real-time listeners for all 4 separated activity types.
+  * Ensure proper state management for the separated feeding cards.
+
+**User Story:** As a parent, I want to see 4 separate activity cards (Sleep, Breast Feeding, Bottle Feeding, Poop) displayed in a responsive grid layout that fits my phone screen without needing to scroll.
+
+* **Acceptance Criteria:**  
+  * Dashboard displays exactly 4 cards: Sleep (😴), Breast Feeding (🤱), Bottle Feeding (🍼), and Poop (💩). ✅ IMPLEMENTED
+  * Cards are arranged in a 2x2 grid layout that automatically fits within the visible screen area. ✅ IMPLEMENTED
+  * On larger screens, cards are bigger and more spacious; on smaller screens, cards are more compact but still usable. ✅ IMPLEMENTED
+  * No vertical scrolling is required to see all 4 activity cards. ✅ IMPLEMENTED
+  * Cards maintain consistent visual hierarchy and information display. ✅ IMPLEMENTED
+* **Technical Tasks:**  
+  * Create separate BreastFeedingCard component with breast milk feeding functionality. ✅ COMPLETED
+  * Create separate BottleFeedingCard component with bottle feeding functionality. ✅ COMPLETED
+  * Update DashboardContent composable to use LazyVerticalGrid with 2 columns. ✅ COMPLETED
+  * Implement dynamic card height based on screen size constraints. ✅ COMPLETED
+  * Test responsive layout on various Android screen sizes and orientations. ⏳ PENDING
+  * Update card spacing and padding for optimal grid layout appearance. ✅ COMPLETEDlevel technical tasks for each user story defined for the Newborn Tracker App.
 
 ### **Authentication & Setup**
 

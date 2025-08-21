@@ -83,11 +83,38 @@ The app follows modern Android design patterns with a clean, user-friendly inter
   - Follows Material Design 3 guidelines
   - Saves valuable screen space for main content
 
-#### Swipe Navigation Pattern
-- **NEW UX**: Horizontal swipe navigation between main screens
-- **IMPLEMENTATION**: Use HorizontalPager from Compose for smooth transitions
-- **SCREENS**: Dashboard (main) → History (left swipe) → Data Visualization → AI Sleep Plans
-- **INDICATORS**: Visual dots or tabs to show current position and available screens
+#### Dashboard Layout Pattern - **IMPLEMENTED**
+- **NEW UX**: 4 separate activity cards in a responsive 2x2 grid layout
+- **CARDS**: Sleep (😴), Breast Feeding (🤱), Bottle Feeding (🍼), Poop (💩)
+- **RESPONSIVE**: Cards adapt size based on screen dimensions - bigger on larger phones, more compact on smaller phones
+- **NO SCROLLING**: All 4 cards fit within the visible screen area without vertical scrolling
+- **IMPLEMENTATION**: 
+  - Use LazyVerticalGrid with 2 columns instead of vertical Column layout
+  - Dynamic card height calculation based on available screen space: `(screenHeight - 152.dp) / 2`
+  - Consistent visual design across all 4 cards
+  - Real-time synchronization for all activity types
+
+#### Separated Feeding Cards Pattern - **IMPLEMENTED**
+- **CHANGE**: Split previous combined FeedingTrackingCard into two separate cards
+- **BREAST FEEDING CARD**: 
+  - Displays ongoing breast feeding timer (if active) using `formatElapsedTime(uiState.currentElapsedTime)`
+  - Start/Stop breast feeding functionality  
+  - Last breast feeding session details (duration in minutes)
+  - Editable start time for ongoing sessions
+- **BOTTLE FEEDING CARD**:
+  - Quick log bottle feeding with amount and optional notes
+  - Last bottle feeding details with notes display (amount in ml)
+  - Instant activity logging (no ongoing timer)
+  - Dedicated BottleFeedingDialog for input
+
+#### Card Design Patterns
+- **Consistent Height**: All cards use dynamic height calculation for responsive design
+- **Visual Hierarchy**: 
+  - Title with emoji (18sp, bold, primary color)
+  - Last activity summary (14sp, clickable with edit icon)
+  - Action button (80% width, primary/error color based on state)
+- **Error Handling**: CompactErrorDisplay for user feedback
+- **Loading States**: CircularProgressIndicator with appropriate sizing
 
 #### Profile Icon Implementation Example
 ```kotlin

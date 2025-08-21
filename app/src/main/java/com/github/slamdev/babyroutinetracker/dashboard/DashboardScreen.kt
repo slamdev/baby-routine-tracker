@@ -3,6 +3,8 @@ package com.github.slamdev.babyroutinetracker.dashboard
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -18,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -31,7 +34,8 @@ import com.github.slamdev.babyroutinetracker.invitation.InvitationViewModel
 import com.github.slamdev.babyroutinetracker.invitation.InvitationUiState
 import com.github.slamdev.babyroutinetracker.model.Baby
 import com.github.slamdev.babyroutinetracker.sleep.SleepTrackingCard
-import com.github.slamdev.babyroutinetracker.feeding.FeedingTrackingCard
+import com.github.slamdev.babyroutinetracker.feeding.BreastFeedingCard
+import com.github.slamdev.babyroutinetracker.feeding.BottleFeedingCard
 import com.github.slamdev.babyroutinetracker.diaper.DiaperTrackingCard
 import com.github.slamdev.babyroutinetracker.ui.components.ProfileIcon
 import com.google.firebase.auth.FirebaseUser
@@ -95,35 +99,64 @@ fun DashboardContent(
     onNavigateToHistory: ((String) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier
-            .padding(24.dp)
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(24.dp)
-    ) {
-        // Activity tracking section - only show when there's a selected baby
-        if (invitationState.selectedBabyId.isNotEmpty()) {
-            val selectedBaby = invitationState.babies.find { it.id == invitationState.selectedBabyId }
-            selectedBaby?.let { baby ->
-                // Activity tracking cards
-                SleepTrackingCard(
-                    babyId = baby.id,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                
-                FeedingTrackingCard(
-                    babyId = baby.id,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                
-                DiaperTrackingCard(
-                    babyId = baby.id,
-                    modifier = Modifier.fillMaxWidth()
-                )
+    // Activity tracking section - only show when there's a selected baby
+    if (invitationState.selectedBabyId.isNotEmpty()) {
+        val selectedBaby = invitationState.babies.find { it.id == invitationState.selectedBabyId }
+        selectedBaby?.let { baby ->
+            // Get screen configuration for responsive sizing
+            val configuration = LocalConfiguration.current
+            val screenHeight = configuration.screenHeightDp.dp
+            
+            // Calculate card height based on screen size
+            // Leave space for top bar (64dp), padding (48dp), and navigation hint (40dp)
+            val availableHeight = screenHeight - 152.dp
+            val cardHeight = (availableHeight / 2).coerceAtLeast(140.dp)
+            
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                userScrollEnabled = false // Disable scrolling since all cards should fit
+            ) {
+                item {
+                    SleepTrackingCard(
+                        babyId = baby.id,
+                        modifier = Modifier.height(cardHeight)
+                    )
+                }
+                item {
+                    BreastFeedingCard(
+                        babyId = baby.id,
+                        modifier = Modifier.height(cardHeight)
+                    )
+                }
+                item {
+                    BottleFeedingCard(
+                        babyId = baby.id,
+                        modifier = Modifier.height(cardHeight)
+                    )
+                }
+                item {
+                    DiaperTrackingCard(
+                        babyId = baby.id,
+                        modifier = Modifier.height(cardHeight)
+                    )
+                }
             }
-        } else {
-            // No baby selected - show guidance
+        }
+    } else {
+        // No baby selected - show guidance (keep existing implementation)
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(24.dp)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(24.dp)
+        ) {
             Text(
                 text = "Create or Join a Baby Profile",
                 fontSize = 24.sp,
@@ -146,35 +179,35 @@ fun DashboardContent(
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
                 lineHeight = 20.sp
             )
-        }
-        
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        // History navigation and feature cards - only show when we have a navigation callback (old UI)
-        if (invitationState.selectedBabyId.isNotEmpty() && onNavigateToHistory != null) {
-            // History button (only in old DashboardScreen)
-            Button(
-                onClick = { onNavigateToHistory(invitationState.selectedBabyId) },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("View Activity History")
-            }
             
-            // Feature status cards - show coming soon for other features
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                FeatureCard(
-                    title = "Data Visualization",
-                    description = "Coming soon",
-                    modifier = Modifier.weight(1f)
-                )
-                FeatureCard(
-                    title = "AI Sleep Plans",
-                    description = "Coming soon",
-                    modifier = Modifier.weight(1f)
-                )
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            // History navigation and feature cards - only show when we have a navigation callback (old UI)
+            if (onNavigateToHistory != null) {
+                // History button (only in old DashboardScreen)
+                Button(
+                    onClick = { onNavigateToHistory(invitationState.selectedBabyId) },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("View Activity History")
+                }
+                
+                // Feature status cards - show coming soon for other features
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    FeatureCard(
+                        title = "Data Visualization",
+                        description = "Coming soon",
+                        modifier = Modifier.weight(1f)
+                    )
+                    FeatureCard(
+                        title = "AI Sleep Plans",
+                        description = "Coming soon",
+                        modifier = Modifier.weight(1f)
+                    )
+                }
             }
         }
     }

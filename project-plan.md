@@ -27,7 +27,13 @@ This document outlines the project plan for a personal Android application desig
   * **Diapers:** Log time for poop occurrences and notes.  
 * **Real-time Dashboard:**  
   * A main screen showing the most recent activity for each category (last sleep, last feeding, last diaper change).  
-  * Timers for ongoing activities (e.g., current sleep session).  
+  * **NEW: 4-Card Grid Layout** - Activities displayed as 4 separate, responsive cards in a 2x2 grid:
+    * Sleep (😴) - Start/stop sleep tracking with timer
+    * Breast Feeding (🤱) - Start/stop breast feeding with timer  
+    * Bottle Feeding (🍼) - Quick log bottle amount and notes
+    * Poop (💩) - Quick log diaper changes with notes
+  * **Responsive Design** - Cards automatically adapt size based on screen dimensions, ensuring all 4 cards fit without scrolling
+  * Timers for ongoing activities (e.g., current sleep session, ongoing breast feeding).  
   * At-a-glance view of the current day's routine.  
 * **Data Synchronization:**  
   * Real-time data updates between connected devices using Firebase Firestore.  
