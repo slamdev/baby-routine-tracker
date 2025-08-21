@@ -729,6 +729,130 @@ When implementing new features, ensure:
 "Failed to process [activity type] data"
 ```
 
+## ✏️ Activity Editing Implementation
+
+### Overview
+The app supports comprehensive activity editing capabilities for both ongoing and completed activities across all activity types (Sleep, Feeding, Diaper).
+
+### Edit Access Points
+
+#### 1. Ongoing Activities (Dashboard)
+- **Sleep**: Tap "Started at [time]" to edit start time
+- **Breast Feeding**: Tap "Started at [time]" to edit start time
+- **Bottle Feeding**: Not applicable (completed immediately)
+- **Diaper**: Not applicable (completed immediately)
+
+#### 2. Last Activities (Dashboard)  
+- **All Activity Types**: Tap on the last activity summary to open edit dialog
+- Shows recent completed activity with edit icon
+- Supports time and notes editing where applicable
+
+#### 3. Activity History (Dedicated Screen)
+- Access via "View Activity History" button on dashboard
+- Lists all recent activities (50 most recent)
+- Edit button available for all completed activities
+- Full editing capabilities (time + notes)
+
+### Editing Capabilities by Activity Type
+
+| Activity Type | Time Editing | Notes | Access Points |
+|---------------|------------|--------|---------------|
+| Sleep | ✅ Start & End Times | ❌ | Ongoing (dashboard), Last (dashboard), History |
+| Breast Feeding | ✅ Start & End Times | ❌ | Ongoing (dashboard), Last (dashboard), History |
+| Bottle Feeding | ✅ Single Timestamp* | ✅ | Last (dashboard), History |
+| Diaper | ✅ Single Timestamp* | ✅ | Last (dashboard), History |
+
+*Instant activities (bottle feeding, diaper) show single time picker since they occur at one moment in time.
+
+### Service Layer Methods
+
+```kotlin
+// Update start time for ongoing activities
+suspend fun updateActivityStartTime(activityId: String, babyId: String, newStartTime: Timestamp): Result<Activity>
+
+// Update both start and end times for completed duration activities (sleep, breast feeding)
+suspend fun updateActivityTimes(activityId: String, babyId: String, newStartTime: Timestamp, newEndTime: Timestamp): Result<Activity>
+
+// Update single timestamp for instant activities (bottle feeding, diaper)
+suspend fun updateInstantActivityTime(activityId: String, babyId: String, newTime: Timestamp): Result<Activity>
+
+// Update notes for activities that support notes
+suspend fun updateActivityNotes(activityId: String, babyId: String, newNotes: String): Result<Activity>
+
+// Get recent activities for history view
+suspend fun getRecentActivities(babyId: String, limit: Int = 20): Result<List<Activity>>
+```
+
+### UI Components
+
+#### TimePickerDialog
+- Material 3 time picker with 24-hour format
+- Shows current time and allows selection
+- Validates input and provides save/cancel options
+
+#### EditActivityDialog  
+- Comprehensive dialog for editing completed activities
+- Dynamically shows relevant fields based on activity type
+- **Instant Activities**: Single time picker for bottle feeding and diaper changes
+- **Duration Activities**: Separate start/end time pickers for sleep and breast feeding
+- Time validation (start ≤ end time to allow very short activities)
+- Notes editing for supported activity types
+- Separate save callbacks for different update types
+
+### Activity Type Classification
+
+#### Duration Activities (Have Start & End Times)
+- **Sleep**: Can last from minutes to hours
+- **Breast Feeding**: Tracked with start/stop timer
+
+*UI Behavior*: Show separate start time and end time pickers when editing
+
+#### Instant Activities (Single Timestamp)  
+- **Bottle Feeding**: Recorded at the moment it occurs
+- **Diaper Changes**: Recorded at the moment they occur
+
+*UI Behavior*: Show single time picker since both startTime and endTime are identical
+
+```kotlin
+// Helper method in Activity model
+@Exclude
+fun isInstantActivity(): Boolean {
+    return (type == ActivityType.DIAPER) || 
+           (type == ActivityType.FEEDING && feedingType == "bottle")
+}
+```
+
+### ViewModel Pattern for Editing
+
+Each tracking ViewModel includes methods for updating both ongoing and completed activities:
+
+```kotlin
+// For ongoing activities (start time only)
+fun updateStartTime(newStartTime: Date)
+
+// For completed duration activities (sleep, breast feeding)
+fun updateCompletedActivityTimes(activity: Activity, newStartTime: Date, newEndTime: Date)
+fun updateCompletedActivityNotes(activity: Activity, newNotes: String)
+
+// For instant activities (bottle feeding, diaper) 
+fun updateInstantActivityTime(activity: Activity, newTime: Date)
+```
+
+### Real-time Synchronization
+
+All activity updates trigger real-time synchronization:
+- Changes appear on all connected devices within seconds
+- Firestore listeners automatically update UI with latest data
+- No manual refresh required
+
+### Error Handling for Editing
+
+- **Validation Errors**: Start time cannot be after end time (≤ allowed for short activities)
+- **Permission Errors**: User must have access to baby profile
+- **Network Errors**: Graceful handling with retry capability
+- **Data Consistency**: Transaction-based updates ensure data integrity
+- **Activity Type Detection**: Automatic detection of instant vs. duration activities for appropriate UI
+
 ## 🔄 Future Updates
 
 When adding new entities or features:

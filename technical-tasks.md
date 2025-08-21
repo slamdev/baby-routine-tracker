@@ -83,27 +83,33 @@ This document outlines the specific acceptance criteria and high-level technical
 **User Story:** As a parent, I want to be able to add a short, optional note to bottle feeding and diaper activities to remember important details.
 
 * **Acceptance Criteria:**  
-  * Bottle feeding logging dialog contains an optional text input field for notes.  
-  * Diaper/poop logging dialog contains an optional text input field for notes.  
+  * Bottle feeding logging dialog contains an optional text input field for notes. ✅ IMPLEMENTED
+  * Diaper/poop logging dialog contains an optional text input field for notes. ✅ IMPLEMENTED
   * Notes are NOT required or available for sleep tracking and breast milk feeding.  
-  * Any text entered in note fields is saved with the corresponding activity log.  
-  * The note is visible when viewing the details of past bottle feeding and diaper activities.  
+  * Any text entered in note fields is saved with the corresponding activity log. ✅ IMPLEMENTED
+  * The note is visible when viewing the details of past bottle feeding and diaper activities. ✅ IMPLEMENTED
+  * Users can edit notes for bottle feeding and diaper activities from the dashboard last activity display. ✅ IMPLEMENTED
+  * Users can edit notes for bottle feeding and diaper activities in the activity history screen. ✅ IMPLEMENTED
 * **Technical Tasks:**  
-  * Add a note field to activity data models in Firestore (already implemented).  
-  * Include a TextField composable in bottle feeding and poop logging UI (already implemented).  
-  * Display notes in activity history for bottle feeding and diaper activities (already implemented).
+  * Add a note field to activity data models in Firestore (already implemented). ✅ COMPLETED
+  * Include a TextField composable in bottle feeding and poop logging UI (already implemented). ✅ COMPLETED
+  * Display notes in activity history for bottle feeding and diaper activities (already implemented). ✅ COMPLETED
+  * Implement service method to update activity notes separately from time updates. ✅ COMPLETED
+  * Add notes editing capability to EditActivityDialog component. ✅ COMPLETED
+  * Enable notes editing from dashboard last activity displays. ✅ COMPLETED
 
-**User Story:** As a parent, I should be able to adjust start and stop time of the activities during and after logging them in case I forgot to press start or stop buttons.
+**User Story:** As a parent, I want to edit recent activities directly from the main dashboard without navigating to a separate screen.
 
-* **Acceptance Criteria:**  
-  * For an in-progress activity, the user can tap the start time to open a time picker and adjust it.  
-  * For a completed activity, the user can find it in a history list and select an "Edit" option.  
-  * When editing, the user can modify both the start and end times using time pickers.  
-  * Saving the changes correctly updates the event's duration and persists the changes across all devices.  
-* **Technical Tasks:**  
-  * Integrate a time picker dialog composable.  
-  * Implement UI for an "Edit" flow for past activities.  
-  * Use Firestore's updateDoc function to modify existing activity documents.
+* **Acceptance Criteria:**
+  * Last completed activities shown on each dashboard card are clickable for editing. ✅ IMPLEMENTED
+  * Clicking opens a comprehensive edit dialog with time and notes editing (where applicable). ✅ IMPLEMENTED
+  * Changes are saved and synchronized in real-time across all devices. ✅ IMPLEMENTED
+  * Edit functionality is available for all activity types (Sleep, Feeding, Diaper). ✅ IMPLEMENTED
+* **Technical Tasks:**
+  * Make last activity displays clickable with edit icons. ✅ COMPLETED
+  * Integrate EditActivityDialog with dashboard tracking cards. ✅ COMPLETED
+  * Add ViewModel methods for updating completed activities from dashboard. ✅ COMPLETED
+  * Ensure real-time listeners update dashboard after edits. ✅ COMPLETED
 
 ### **Real-time Dashboard**
 
@@ -167,43 +173,6 @@ This document outlines the specific acceptance criteria and high-level technical
   * Ensure the resizeableActivity flag is set to true in the AndroidManifest.xml.  
   * Build the UI with flexible and responsive components that do not rely on fixed dimensions.
 
-### **AI Sleep Routine Builder**
-
-**User Story:** As a new parent, I want to get suggestions for a sleep routine based on my baby's actual sleep data and age so I can get help establishing a healthy schedule.
-
-* **Acceptance Criteria:**  
-  * A button or section labeled "Get Sleep Plan" is available.  
-  * Tapping it triggers a call to the AI service, sending recent sleep data and the baby's age.  
-  * A loading indicator is displayed during the process.  
-  * The app displays the AI-generated suggestions upon a successful response.  
-* **Technical Tasks:**  
-  * Set up and configure the Google Gemini API.  
-  * Implement a repository or service class to handle the network request to the API.  
-  * Create data models for serializing the request and deserializing the response.  
-  * Implement UI states for loading, success, and error.
-
-**User Story:** As a parent, I want to see the AI-suggested nap times and bedtime clearly presented within the app.
-
-* **Acceptance Criteria:**  
-  * The suggestions are formatted in a simple, easy-to-scan list or timeline view.  
-  * Nap times are clearly distinguished from the final bedtime.  
-  * A disclaimer is visible, indicating the suggestions are AI-generated and not medical advice.  
-* **Technical Tasks:**  
-  * Design and build a Jetpack Compose UI to display the structured sleep plan.  
-  * Format the data from the API response into a user-friendly presentation.
-
-**User Story:** As a parent, I want to build the sleep plan using AI suggestions and my own customizations.
-
-* **Acceptance Criteria:**  
-  * After the AI generates a plan, the user can edit the proposed times.  
-  * The user can add new sleep windows or remove suggested ones.  
-  * There is a "Save" button to persist the customized plan.  
-  * The saved plan can be viewed later from a dedicated screen.  
-* **Technical Tasks:**  
-  * Create a new Firestore collection to store user-customized sleep plans.  
-  * Build an editable UI for the sleep plan that allows for modification of the AI-generated data.  
-  * Implement the logic to save, fetch, and display the customized plan.
-
 ### **Data Visualization**
 
 **User Story:** As a parent, I want to view a chart showing the total hours my baby slept each day over the last week so I can spot trends.
@@ -240,6 +209,23 @@ This document outlines the specific acceptance criteria and high-level technical
   * Implement a date range picker component.  
   * Modify the Firestore queries to be dynamic, accepting start and end dates as parameters.  
   * Update the ViewModel to refetch and re-process data whenever the selected date range changes.
+
+**User Story:** As a parent, I should be able to adjust start and stop time of the activities during and after logging them in case I forgot to press start or stop buttons.
+
+* **Acceptance Criteria:**
+  * For an in-progress activity, the user can tap the start time to open a time picker and adjust it. ✅ IMPLEMENTED
+  * For a completed activity, the user can find it in a history list and select an "Edit" option. ✅ IMPLEMENTED
+  * For a completed activity displayed on the main dashboard, the user can tap on it to edit. ✅ IMPLEMENTED
+  * When editing, the user can modify both the start and end times using time pickers. ✅ IMPLEMENTED
+  * For activities that support notes (bottle feeding, diaper), users can edit notes in both dashboard and history views. ✅ IMPLEMENTED
+  * Saving the changes correctly updates the event's duration and persists the changes across all devices. ✅ IMPLEMENTED
+* **Technical Tasks:**
+  * Integrate a time picker dialog composable. ✅ COMPLETED
+  * Implement UI for an "Edit" flow for past activities. ✅ COMPLETED
+  * Use Firestore's updateDoc function to modify existing activity documents. ✅ COMPLETED
+  * Create comprehensive EditActivityDialog component supporting both time and notes editing. ✅ COMPLETED
+  * Add activity history screen with full editing capabilities. ✅ COMPLETED
+  * Implement service methods for updating activity times and notes separately. ✅ COMPLETED
 
 ### **Baby Profile Management**
 
@@ -417,3 +403,40 @@ This document outlines the specific acceptance criteria and high-level technical
   * Build data persistence for interrupted operations.  
   * Add transaction rollback and data integrity protection.  
   * Implement graceful degradation strategies for various error types.
+
+### **AI Sleep Routine Builder**
+
+**User Story:** As a new parent, I want to get suggestions for a sleep routine based on my baby's actual sleep data and age so I can get help establishing a healthy schedule.
+
+* **Acceptance Criteria:**
+  * A button or section labeled "Get Sleep Plan" is available.
+  * Tapping it triggers a call to the AI service, sending recent sleep data and the baby's age.
+  * A loading indicator is displayed during the process.
+  * The app displays the AI-generated suggestions upon a successful response.
+* **Technical Tasks:**
+  * Set up and configure the Google Gemini API.
+  * Implement a repository or service class to handle the network request to the API.
+  * Create data models for serializing the request and deserializing the response.
+  * Implement UI states for loading, success, and error.
+
+**User Story:** As a parent, I want to see the AI-suggested nap times and bedtime clearly presented within the app.
+
+* **Acceptance Criteria:**
+  * The suggestions are formatted in a simple, easy-to-scan list or timeline view.
+  * Nap times are clearly distinguished from the final bedtime.
+  * A disclaimer is visible, indicating the suggestions are AI-generated and not medical advice.
+* **Technical Tasks:**
+  * Design and build a Jetpack Compose UI to display the structured sleep plan.
+  * Format the data from the API response into a user-friendly presentation.
+
+**User Story:** As a parent, I want to build the sleep plan using AI suggestions and my own customizations.
+
+* **Acceptance Criteria:**
+  * After the AI generates a plan, the user can edit the proposed times.
+  * The user can add new sleep windows or remove suggested ones.
+  * There is a "Save" button to persist the customized plan.
+  * The saved plan can be viewed later from a dedicated screen.
+* **Technical Tasks:**
+  * Create a new Firestore collection to store user-customized sleep plans.
+  * Build an editable UI for the sleep plan that allows for modification of the AI-generated data.
+  * Implement the logic to save, fetch, and display the customized plan.

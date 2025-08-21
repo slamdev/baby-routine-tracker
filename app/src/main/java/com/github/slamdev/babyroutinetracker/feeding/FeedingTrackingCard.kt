@@ -1,9 +1,11 @@
 package com.github.slamdev.babyroutinetracker.feeding
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -16,6 +18,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.slamdev.babyroutinetracker.ui.components.CompactErrorDisplay
+import com.github.slamdev.babyroutinetracker.ui.components.TimePickerDialog
+import com.github.slamdev.babyroutinetracker.ui.components.EditActivityDialog
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -27,6 +31,8 @@ fun FeedingTrackingCard(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showBottleFeedingDialog by remember { mutableStateOf(false) }
+    var showTimePickerDialog by remember { mutableStateOf(false) }
+    var showEditLastActivityDialog by remember { mutableStateOf(false) }
     
     // Initialize the ViewModel for this baby
     LaunchedEffect(babyId) {
@@ -107,30 +113,49 @@ fun FeedingTrackingCard(
                         else -> "Feeding completed"
                     }
                     
-                    Text(
-                        text = "Last feeding: $feedingDetails",
-                        fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
-                        textAlign = TextAlign.Center
-                    )
-                    
-                    lastFeeding.endTime?.let { endTime ->
-                        Text(
-                            text = "Ended at ${formatTime(endTime.toDate())}",
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-                        )
-                    }
-                    
-                    // Show notes if available for bottle feeding
-                    if (lastFeeding.feedingType == "bottle" && lastFeeding.notes.isNotBlank()) {
-                        Text(
-                            text = "\"${lastFeeding.notes}\"",
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                            textAlign = TextAlign.Center,
-                            fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
-                        )
+                    // Last feeding info (clickable for editing)
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .clickable { showEditLastActivityDialog = true }
+                            .padding(8.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Last feeding: $feedingDetails",
+                                fontSize = 14.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
+                                textAlign = TextAlign.Center
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = "Edit last feeding",
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                                modifier = Modifier.size(12.dp)
+                            )
+                        }
+                        
+                        lastFeeding.endTime?.let { endTime ->
+                            Text(
+                                text = "Ended at ${formatTime(endTime.toDate())}",
+                                fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                            )
+                        }
+                        
+                        // Show notes if available for bottle feeding
+                        if (lastFeeding.feedingType == "bottle" && lastFeeding.notes.isNotBlank()) {
+                            Text(
+                                text = "\"${lastFeeding.notes}\"",
+                                fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                                textAlign = TextAlign.Center,
+                                fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
+                            )
+                        }
                     }
                 }
                 else -> {
@@ -149,6 +174,7 @@ fun FeedingTrackingCard(
                 onStartBreastFeeding = { viewModel.startBreastMilkFeeding() },
                 onStopBreastFeeding = { viewModel.endBreastMilkFeeding() },
                 onClearOngoingError = { viewModel.clearOngoingFeedingError() },
+                onEditStartTime = { showTimePickerDialog = true },
                 formatElapsedTime = { viewModel.formatElapsedTime(it) }
             )
             
@@ -198,6 +224,47 @@ fun FeedingTrackingCard(
             }
         )
     }
+    
+    // Time picker dialog for editing breast feeding start time
+    if (showTimePickerDialog) {
+        uiState.ongoingBreastFeeding?.let { ongoingFeeding ->
+            TimePickerDialog(
+                title = "Edit Feeding Start Time",
+                initialTime = ongoingFeeding.startTime.toDate(),
+                onTimeSelected = { newTime ->
+                    viewModel.updateStartTime(newTime)
+                    showTimePickerDialog = false
+                },
+                onDismiss = {
+                    showTimePickerDialog = false
+                }
+            )
+        }
+    }
+    
+    // Edit dialog for last completed feeding activity
+    if (showEditLastActivityDialog) {
+        uiState.lastFeeding?.let { lastFeeding ->
+            EditActivityDialog(
+                activity = lastFeeding,
+                onDismiss = {
+                    showEditLastActivityDialog = false
+                },
+                onSaveTimeChanges = { activity, newStartTime, newEndTime ->
+                    viewModel.updateCompletedActivityTimes(activity, newStartTime, newEndTime)
+                    showEditLastActivityDialog = false
+                },
+                onSaveNotesChanges = { activity, newNotes ->
+                    viewModel.updateCompletedActivityNotes(activity, newNotes)
+                    showEditLastActivityDialog = false
+                },
+                onSaveInstantTimeChange = { activity, newTime ->
+                    viewModel.updateInstantActivityTime(activity, newTime)
+                    showEditLastActivityDialog = false
+                }
+            )
+        }
+    }
 }
 
 @Composable
@@ -206,6 +273,7 @@ private fun BreastMilkFeedingSection(
     onStartBreastFeeding: () -> Unit,
     onStopBreastFeeding: () -> Unit,
     onClearOngoingError: () -> Unit,
+    onEditStartTime: () -> Unit,
     formatElapsedTime: (Long) -> String
 ) {
     val ongoingBreastFeeding = uiState.ongoingBreastFeeding
@@ -255,11 +323,27 @@ private fun BreastMilkFeedingSection(
                 textAlign = TextAlign.Center
             )
             
-            Text(
-                text = "Started at ${formatTime(ongoingBreastFeeding!!.startTime.toDate())}",
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
-            )
+            // Start time (clickable for editing)
+            Row(
+                modifier = Modifier
+                    .clickable { onEditStartTime() }
+                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = "Edit start time",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                    modifier = Modifier.size(14.dp)
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = "Started at ${formatTime(ongoingBreastFeeding!!.startTime.toDate())}",
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                )
+            }
         }
         
         Button(

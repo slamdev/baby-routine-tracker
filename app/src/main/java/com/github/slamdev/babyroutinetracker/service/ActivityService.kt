@@ -528,6 +528,276 @@ class ActivityService {
     }
 
     /**
+     * Update the start time of an activity (for in-progress activities)
+     */
+    suspend fun updateActivityStartTime(
+        activityId: String,
+        babyId: String,
+        newStartTime: Timestamp
+    ): Result<Activity> {
+        return try {
+            val currentUser = auth.currentUser
+            if (currentUser == null) {
+                val error = Exception("User not authenticated")
+                Log.e(TAG, "Failed to update activity start time - user not authenticated", error)
+                return Result.failure(error)
+            }
+
+            // Verify user has access to this baby
+            if (!hasAccessToBaby(babyId)) {
+                val error = Exception("No access to baby profile")
+                Log.e(TAG, "Failed to update activity start time - no access to baby: $babyId", error)
+                return Result.failure(error)
+            }
+
+            val activityRef = firestore.collection(BABIES_COLLECTION)
+                .document(babyId)
+                .collection(ACTIVITIES_SUBCOLLECTION)
+                .document(activityId)
+
+            val activityDoc = activityRef.get().await()
+            val activity = activityDoc.toObject<Activity>()
+            if (activity == null) {
+                val error = Exception("Activity not found")
+                Log.e(TAG, "Failed to update activity start time - activity not found: $activityId", error)
+                return Result.failure(error)
+            }
+
+            // Validate that new start time is not after end time (if activity is completed)
+            if (activity.endTime != null && newStartTime.seconds > activity.endTime.seconds) {
+                val error = Exception("Start time cannot be after end time")
+                Log.w(TAG, "Invalid start time update - start time after end time", error)
+                return Result.failure(error)
+            }
+
+            val updatedActivity = activity.copy(
+                startTime = newStartTime,
+                updatedAt = Timestamp.now()
+            )
+
+            activityRef.set(updatedActivity).await()
+
+            Log.i(TAG, "Activity start time updated successfully: ${activity.type.displayName} for baby: $babyId")
+            Result.success(updatedActivity)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to update activity start time: $activityId for baby: $babyId", e)
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Update both start and end times of a completed activity
+     */
+    suspend fun updateActivityTimes(
+        activityId: String,
+        babyId: String,
+        newStartTime: Timestamp,
+        newEndTime: Timestamp
+    ): Result<Activity> {
+        return try {
+            val currentUser = auth.currentUser
+            if (currentUser == null) {
+                val error = Exception("User not authenticated")
+                Log.e(TAG, "Failed to update activity times - user not authenticated", error)
+                return Result.failure(error)
+            }
+
+            // Verify user has access to this baby
+            if (!hasAccessToBaby(babyId)) {
+                val error = Exception("No access to baby profile")
+                Log.e(TAG, "Failed to update activity times - no access to baby: $babyId", error)
+                return Result.failure(error)
+            }
+
+            // Validate times (allow start time to be equal to end time for short activities)
+            if (newStartTime.seconds > newEndTime.seconds) {
+                val error = Exception("Start time cannot be after end time")
+                Log.w(TAG, "Invalid time update - start time after end time", error)
+                return Result.failure(error)
+            }
+
+            val activityRef = firestore.collection(BABIES_COLLECTION)
+                .document(babyId)
+                .collection(ACTIVITIES_SUBCOLLECTION)
+                .document(activityId)
+
+            val activityDoc = activityRef.get().await()
+            val activity = activityDoc.toObject<Activity>()
+            if (activity == null) {
+                val error = Exception("Activity not found")
+                Log.e(TAG, "Failed to update activity times - activity not found: $activityId", error)
+                return Result.failure(error)
+            }
+
+            val updatedActivity = activity.copy(
+                startTime = newStartTime,
+                endTime = newEndTime,
+                updatedAt = Timestamp.now()
+            )
+
+            activityRef.set(updatedActivity).await()
+
+            Log.i(TAG, "Activity times updated successfully: ${activity.type.displayName} for baby: $babyId")
+            Result.success(updatedActivity)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to update activity times: $activityId for baby: $babyId", e)
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Update the timestamp of an instant activity (bottle feeding, diaper)
+     * For these activities, startTime and endTime are the same
+     */
+    suspend fun updateInstantActivityTime(
+        activityId: String,
+        babyId: String,
+        newTime: Timestamp
+    ): Result<Activity> {
+        return try {
+            val currentUser = auth.currentUser
+            if (currentUser == null) {
+                val error = Exception("User not authenticated")
+                Log.e(TAG, "Failed to update instant activity time - user not authenticated", error)
+                return Result.failure(error)
+            }
+
+            // Verify user has access to this baby
+            if (!hasAccessToBaby(babyId)) {
+                val error = Exception("No access to baby profile")
+                Log.e(TAG, "Failed to update instant activity time - no access to baby: $babyId", error)
+                return Result.failure(error)
+            }
+
+            val activityRef = firestore.collection(BABIES_COLLECTION)
+                .document(babyId)
+                .collection(ACTIVITIES_SUBCOLLECTION)
+                .document(activityId)
+
+            val activityDoc = activityRef.get().await()
+            val activity = activityDoc.toObject<Activity>()
+            if (activity == null) {
+                val error = Exception("Activity not found")
+                Log.e(TAG, "Failed to update instant activity time - activity not found: $activityId", error)
+                return Result.failure(error)
+            }
+
+            // For instant activities (bottle feeding, diaper), both start and end time should be the same
+            val updatedActivity = activity.copy(
+                startTime = newTime,
+                endTime = newTime,
+                updatedAt = Timestamp.now()
+            )
+
+            activityRef.set(updatedActivity).await()
+
+            Log.i(TAG, "Instant activity time updated successfully: ${activity.type.displayName} for baby: $babyId")
+            Result.success(updatedActivity)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to update instant activity time: $activityId for baby: $babyId", e)
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Update the notes of an activity
+     */
+    suspend fun updateActivityNotes(
+        activityId: String,
+        babyId: String,
+        newNotes: String
+    ): Result<Activity> {
+        return try {
+            val currentUser = auth.currentUser
+            if (currentUser == null) {
+                val error = Exception("User not authenticated")
+                Log.e(TAG, "Failed to update activity notes - user not authenticated", error)
+                return Result.failure(error)
+            }
+
+            // Verify user has access to this baby
+            if (!hasAccessToBaby(babyId)) {
+                val error = Exception("No access to baby profile")
+                Log.e(TAG, "Failed to update activity notes - no access to baby: $babyId", error)
+                return Result.failure(error)
+            }
+
+            val activityRef = firestore.collection(BABIES_COLLECTION)
+                .document(babyId)
+                .collection(ACTIVITIES_SUBCOLLECTION)
+                .document(activityId)
+
+            val activityDoc = activityRef.get().await()
+            val activity = activityDoc.toObject<Activity>()
+            if (activity == null) {
+                val error = Exception("Activity not found")
+                Log.e(TAG, "Failed to update activity notes - activity not found: $activityId", error)
+                return Result.failure(error)
+            }
+
+            val updatedActivity = activity.copy(
+                notes = newNotes,
+                updatedAt = Timestamp.now()
+            )
+
+            activityRef.set(updatedActivity).await()
+
+            Log.i(TAG, "Activity notes updated successfully: ${activity.type.displayName} for baby: $babyId")
+            Result.success(updatedActivity)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to update activity notes: $activityId for baby: $babyId", e)
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Get a list of recent activities for a baby (for history/editing purposes)
+     */
+    suspend fun getRecentActivities(
+        babyId: String,
+        limit: Int = 20
+    ): Result<List<Activity>> {
+        return try {
+            val currentUser = auth.currentUser
+            if (currentUser == null) {
+                val error = Exception("User not authenticated")
+                Log.e(TAG, "Failed to get recent activities - user not authenticated", error)
+                return Result.failure(error)
+            }
+
+            // Verify user has access to this baby
+            if (!hasAccessToBaby(babyId)) {
+                val error = Exception("No access to baby profile")
+                Log.e(TAG, "Failed to get recent activities - no access to baby: $babyId", error)
+                return Result.failure(error)
+            }
+
+            val querySnapshot = firestore.collection(BABIES_COLLECTION)
+                .document(babyId)
+                .collection(ACTIVITIES_SUBCOLLECTION)
+                .orderBy("startTime", Query.Direction.DESCENDING)
+                .limit(limit.toLong())
+                .get()
+                .await()
+
+            val activities = querySnapshot.documents.mapNotNull { document ->
+                try {
+                    document.toObject<Activity>()
+                } catch (e: Exception) {
+                    Log.w(TAG, "Failed to parse activity document: ${document.id}", e)
+                    null
+                }
+            }
+
+            Log.i(TAG, "Retrieved ${activities.size} recent activities for baby: $babyId")
+            Result.success(activities)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to get recent activities for baby: $babyId", e)
+            Result.failure(e)
+        }
+    }
+
+    /**
      * Check if current user has access to a baby profile
      */
     private suspend fun hasAccessToBaby(babyId: String): Boolean {

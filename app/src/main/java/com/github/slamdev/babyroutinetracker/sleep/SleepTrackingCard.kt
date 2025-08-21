@@ -1,9 +1,11 @@
 package com.github.slamdev.babyroutinetracker.sleep
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
@@ -17,6 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.slamdev.babyroutinetracker.ui.components.CompactErrorDisplay
+import com.github.slamdev.babyroutinetracker.ui.components.TimePickerDialog
+import com.github.slamdev.babyroutinetracker.ui.components.EditActivityDialog
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -27,6 +31,8 @@ fun SleepTrackingCard(
     viewModel: SleepTrackingViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    var showTimePickerDialog by remember { mutableStateOf(false) }
+    var showEditLastActivityDialog by remember { mutableStateOf(false) }
     
     // Initialize the ViewModel for this baby
     LaunchedEffect(babyId) {
@@ -127,12 +133,27 @@ fun SleepTrackingCard(
                         textAlign = TextAlign.Center
                     )
                     
-                    // Start time
-                    Text(
-                        text = "Started at ${formatTime(ongoingSleep.startTime.toDate())}",
-                        fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
-                    )
+                    // Start time (clickable for editing)
+                    Row(
+                        modifier = Modifier
+                            .clickable { showTimePickerDialog = true }
+                            .padding(horizontal = 8.dp, vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Edit start time",
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f),
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "Started at ${formatTime(ongoingSleep.startTime.toDate())}",
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                        )
+                    }
                 }
                 else -> {
                     // No ongoing sleep
@@ -183,18 +204,37 @@ fun SleepTrackingCard(
                                 "Unknown duration"
                             }
                             
-                            Text(
-                                text = "Last sleep: $durationText",
-                                fontSize = 14.sp,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
-                            )
-                            
-                            lastSleep.endTime?.let { endTime ->
-                                Text(
-                                    text = "Ended at ${formatTime(endTime.toDate())}",
-                                    fontSize = 12.sp,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-                                )
+                            // Last sleep info (clickable for editing)
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .clickable { showEditLastActivityDialog = true }
+                                    .padding(8.dp)
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = "Last sleep: $durationText",
+                                        fontSize = 14.sp,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Icon(
+                                        imageVector = Icons.Default.Edit,
+                                        contentDescription = "Edit last sleep",
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                                        modifier = Modifier.size(12.dp)
+                                    )
+                                }
+                                
+                                lastSleep.endTime?.let { endTime ->
+                                    Text(
+                                        text = "Ended at ${formatTime(endTime.toDate())}",
+                                        fontSize = 12.sp,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                                    )
+                                }
                             }
                         }
                         else -> {
@@ -296,6 +336,46 @@ fun SleepTrackingCard(
                     viewModel.clearError()
                 }
             }
+        }
+    }
+    
+    // Time picker dialog for editing ongoing sleep start time
+    if (showTimePickerDialog) {
+        uiState.ongoingSleep?.let { ongoingSleep ->
+            TimePickerDialog(
+                title = "Edit Sleep Start Time",
+                initialTime = ongoingSleep.startTime.toDate(),
+                onTimeSelected = { newTime ->
+                    viewModel.updateStartTime(newTime)
+                    showTimePickerDialog = false
+                },
+                onDismiss = {
+                    showTimePickerDialog = false
+                }
+            )
+        }
+    }
+    
+    // Edit dialog for last completed sleep activity
+    if (showEditLastActivityDialog) {
+        uiState.lastSleep?.let { lastSleep ->
+            EditActivityDialog(
+                activity = lastSleep,
+                onDismiss = {
+                    showEditLastActivityDialog = false
+                },
+                onSaveTimeChanges = { activity, newStartTime, newEndTime ->
+                    viewModel.updateCompletedActivityTimes(activity, newStartTime, newEndTime)
+                    showEditLastActivityDialog = false
+                },
+                onSaveNotesChanges = { activity, newNotes ->
+                    viewModel.updateCompletedActivityNotes(activity, newNotes)
+                    showEditLastActivityDialog = false
+                },
+                onSaveInstantTimeChange = { _, _ ->
+                    // Sleep activities are never instant, so this won't be called
+                }
+            )
         }
     }
 }

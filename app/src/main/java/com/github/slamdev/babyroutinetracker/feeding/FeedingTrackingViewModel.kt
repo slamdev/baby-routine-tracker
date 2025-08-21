@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.Date
 
 data class FeedingTrackingUiState(
     val isLoading: Boolean = false,
@@ -304,6 +305,186 @@ class FeedingTrackingViewModel : ViewModel() {
         timerJob = null
         _uiState.value = _uiState.value.copy(currentElapsedTime = 0L)
         Log.d(TAG, "Stopped feeding timer")
+    }
+
+    /**
+     * Update the start time of the ongoing breast feeding activity
+     */
+    fun updateStartTime(newStartTime: Date) {
+        val babyId = currentBabyId
+        val ongoingFeeding = _uiState.value.ongoingBreastFeeding
+        
+        if (babyId == null) {
+            Log.e(TAG, "Cannot update start time - no baby selected")
+            _uiState.value = _uiState.value.copy(errorMessage = "No baby profile selected")
+            return
+        }
+        
+        if (ongoingFeeding == null) {
+            Log.w(TAG, "Cannot update start time - no ongoing breast feeding session")
+            _uiState.value = _uiState.value.copy(errorMessage = "No ongoing breast feeding session to update")
+            return
+        }
+
+        viewModelScope.launch {
+            try {
+                _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+                
+                val newTimestamp = Timestamp(newStartTime)
+                Log.i(TAG, "Updating breast feeding start time: ${ongoingFeeding.id}")
+                val result = activityService.updateActivityStartTime(ongoingFeeding.id, babyId, newTimestamp)
+                
+                result.fold(
+                    onSuccess = { activity ->
+                        Log.i(TAG, "Breast feeding start time updated successfully: ${activity.id}")
+                        _uiState.value = _uiState.value.copy(isLoading = false)
+                        // The real-time listener will update the UI with the new data
+                    },
+                    onFailure = { exception ->
+                        Log.e(TAG, "Failed to update breast feeding start time", exception)
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                            errorMessage = exception.message ?: "Failed to update start time"
+                        )
+                    }
+                )
+            } catch (e: Exception) {
+                Log.e(TAG, "Unexpected error updating breast feeding start time", e)
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    errorMessage = "Unexpected error: ${e.message}"
+                )
+            }
+        }
+    }
+
+    /**
+     * Update times for a completed feeding activity
+     */
+    fun updateCompletedActivityTimes(activity: Activity, newStartTime: Date, newEndTime: Date) {
+        val babyId = currentBabyId
+        if (babyId == null) {
+            Log.e(TAG, "Cannot update activity times - no baby selected")
+            _uiState.value = _uiState.value.copy(errorMessage = "No baby profile selected")
+            return
+        }
+
+        viewModelScope.launch {
+            try {
+                _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+                
+                val newStartTimestamp = Timestamp(newStartTime)
+                val newEndTimestamp = Timestamp(newEndTime)
+                Log.i(TAG, "Updating completed feeding activity times: ${activity.id}")
+                val result = activityService.updateActivityTimes(activity.id, babyId, newStartTimestamp, newEndTimestamp)
+                
+                result.fold(
+                    onSuccess = { updatedActivity ->
+                        Log.i(TAG, "Feeding activity times updated successfully: ${updatedActivity.id}")
+                        _uiState.value = _uiState.value.copy(isLoading = false)
+                        // The real-time listener will update the UI with the new data
+                    },
+                    onFailure = { exception ->
+                        Log.e(TAG, "Failed to update feeding activity times", exception)
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                            errorMessage = exception.message ?: "Failed to update activity times"
+                        )
+                    }
+                )
+            } catch (e: Exception) {
+                Log.e(TAG, "Unexpected error updating feeding activity times", e)
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    errorMessage = "Unexpected error: ${e.message}"
+                )
+            }
+        }
+    }
+
+    /**
+     * Update time for an instant feeding activity (bottle feeding)
+     */
+    fun updateInstantActivityTime(activity: Activity, newTime: Date) {
+        val babyId = currentBabyId
+        if (babyId == null) {
+            Log.e(TAG, "Cannot update instant activity time - no baby selected")
+            _uiState.value = _uiState.value.copy(errorMessage = "No baby profile selected")
+            return
+        }
+
+        viewModelScope.launch {
+            try {
+                _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+                
+                val newTimestamp = Timestamp(newTime)
+                Log.i(TAG, "Updating instant feeding activity time: ${activity.id}")
+                val result = activityService.updateInstantActivityTime(activity.id, babyId, newTimestamp)
+                
+                result.fold(
+                    onSuccess = { updatedActivity ->
+                        Log.i(TAG, "Instant feeding activity time updated successfully: ${updatedActivity.id}")
+                        _uiState.value = _uiState.value.copy(isLoading = false)
+                        // The real-time listener will update the UI with the new data
+                    },
+                    onFailure = { exception ->
+                        Log.e(TAG, "Failed to update instant feeding activity time", exception)
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                            errorMessage = exception.message ?: "Failed to update activity time"
+                        )
+                    }
+                )
+            } catch (e: Exception) {
+                Log.e(TAG, "Unexpected error updating instant feeding activity time", e)
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    errorMessage = "Unexpected error: ${e.message}"
+                )
+            }
+        }
+    }
+
+    /**
+     * Update notes for a completed feeding activity
+     */
+    fun updateCompletedActivityNotes(activity: Activity, newNotes: String) {
+        val babyId = currentBabyId
+        if (babyId == null) {
+            Log.e(TAG, "Cannot update activity notes - no baby selected")
+            _uiState.value = _uiState.value.copy(errorMessage = "No baby profile selected")
+            return
+        }
+
+        viewModelScope.launch {
+            try {
+                _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+                
+                Log.i(TAG, "Updating feeding activity notes: ${activity.id}")
+                val result = activityService.updateActivityNotes(activity.id, babyId, newNotes)
+                
+                result.fold(
+                    onSuccess = { updatedActivity ->
+                        Log.i(TAG, "Feeding activity notes updated successfully: ${updatedActivity.id}")
+                        _uiState.value = _uiState.value.copy(isLoading = false)
+                        // The real-time listener will update the UI with the new data
+                    },
+                    onFailure = { exception ->
+                        Log.e(TAG, "Failed to update feeding activity notes", exception)
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                            errorMessage = exception.message ?: "Failed to update activity notes"
+                        )
+                    }
+                )
+            } catch (e: Exception) {
+                Log.e(TAG, "Unexpected error updating feeding activity notes", e)
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    errorMessage = "Unexpected error: ${e.message}"
+                )
+            }
+        }
     }
 
     /**

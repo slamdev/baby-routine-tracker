@@ -36,6 +36,7 @@ fun DashboardScreen(
     onNavigateToInvitePartner: () -> Unit,
     onNavigateToJoinInvitation: () -> Unit,
     onNavigateToCreateBaby: () -> Unit,
+    onNavigateToHistory: (String) -> Unit,
     modifier: Modifier = Modifier,
     authViewModel: AuthenticationViewModel = viewModel(),
     invitationViewModel: InvitationViewModel = viewModel()
@@ -202,8 +203,17 @@ fun DashboardScreen(
             
             Spacer(modifier = Modifier.height(16.dp))
             
-            // Feature status cards - show coming soon for other features
+            // Feature cards and history navigation
             if (invitationState.selectedBabyId.isNotEmpty()) {
+                // History button
+                Button(
+                    onClick = { onNavigateToHistory(invitationState.selectedBabyId) },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("View Activity History")
+                }
+                
+                // Feature status cards - show coming soon for other features
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)

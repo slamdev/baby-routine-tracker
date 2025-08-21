@@ -33,6 +33,8 @@ Here is a list of user stories broken down by feature for a developer to follow.
 * **As a parent,** I want to quickly log a poop occurrence with optional notes for tracking my baby's bowel movements.  
 * **As a parent,** I want to be able to add a short, optional note to any activity (sleep, feeding, or diaper) to remember important details.  
 * **As a parent**, I should be able to adjust start and stop time of the activities during and after logging them in case I forgot to press start or stop buttons.
+* **As a parent**, I should be able to edit the most recent activities displayed on the main dashboard without navigating to a separate screen.
+* **As a parent**, I should be able to edit notes for bottle feeding and diaper activities from both the dashboard and activity history screens.
 
 ### **Real-time Dashboard**
 

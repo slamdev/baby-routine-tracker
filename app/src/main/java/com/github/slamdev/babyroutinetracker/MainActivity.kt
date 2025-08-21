@@ -11,12 +11,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import com.github.slamdev.babyroutinetracker.auth.AuthenticationViewModel
 import com.github.slamdev.babyroutinetracker.auth.SignInScreen
 import com.github.slamdev.babyroutinetracker.dashboard.DashboardScreen
 import com.github.slamdev.babyroutinetracker.invitation.InvitePartnerScreen
 import com.github.slamdev.babyroutinetracker.invitation.JoinInvitationScreen
 import com.github.slamdev.babyroutinetracker.invitation.CreateBabyProfileScreen
+import com.github.slamdev.babyroutinetracker.history.ActivityHistoryScreen
 import com.github.slamdev.babyroutinetracker.ui.theme.BabyroutinetrackerTheme
 
 class MainActivity : ComponentActivity() {
@@ -76,6 +79,9 @@ fun BabyRoutineTrackerApp() {
                 onNavigateToCreateBaby = {
                     navController.navigate("create_baby")
                 },
+                onNavigateToHistory = { babyId ->
+                    navController.navigate("history/$babyId")
+                },
                 authViewModel = authViewModel
             )
         }
@@ -110,6 +116,19 @@ fun BabyRoutineTrackerApp() {
                     navController.navigate("dashboard") {
                         popUpTo("create_baby") { inclusive = true }
                     }
+                }
+            )
+        }
+        
+        composable(
+            "history/{babyId}",
+            arguments = listOf(navArgument("babyId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val babyId = backStackEntry.arguments?.getString("babyId") ?: ""
+            ActivityHistoryScreen(
+                babyId = babyId,
+                onNavigateBack = {
+                    navController.popBackStack()
                 }
             )
         }

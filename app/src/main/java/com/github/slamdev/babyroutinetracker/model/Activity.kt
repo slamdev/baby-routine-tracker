@@ -28,6 +28,12 @@ data class Activity(
     fun getDurationMinutes(): Long? = endTime?.let { end ->
         ((end.seconds - startTime.seconds) / 60)
     }
+    
+    @Exclude
+    fun isInstantActivity(): Boolean {
+        return (type == ActivityType.DIAPER) || 
+               (type == ActivityType.FEEDING && feedingType == "bottle")
+    }
 }
 
 enum class ActivityType(val displayName: String) {
