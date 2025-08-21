@@ -106,13 +106,19 @@ fun ActivityCard(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             // Header
-            Text(
-                text = "${config.icon} ${config.title}",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
-                textAlign = TextAlign.Center
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "${config.icon} ${config.title}",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                    textAlign = TextAlign.Center
+                )
+            }
 
             // Action button
             val hasOngoingState = !config.isImmediateActivity
@@ -210,7 +216,8 @@ fun ActivityCard(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { onContentClick() }
+                            .clickable { onContentClick() },
+                        contentAlignment = Alignment.Center
                     ) {
                         ActivityCardContentDisplay(
                             config = config,
@@ -290,6 +297,7 @@ private fun ActivityCardContentDisplay(
                 val startTimeText = "Started at ${formatTime(startTime)}"
                 Row(
                     modifier = Modifier
+                        .fillMaxWidth()
                         .let { modifier ->
                             if (content.onEditStartTime != null) {
                                 modifier.clickable { content.onEditStartTime.invoke() }
@@ -350,7 +358,8 @@ private fun ActivityCardContentDisplay(
                     Text(
                         text = timeAgo,
                         fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                        textAlign = TextAlign.Center
                     )
                 }
                 
@@ -364,7 +373,8 @@ private fun ActivityCardContentDisplay(
                     Text(
                         text = timeText,
                         fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                        textAlign = TextAlign.Center
                     )
                 }
                 
