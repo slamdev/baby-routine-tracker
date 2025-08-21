@@ -59,20 +59,22 @@ fun BottleFeedingCard(
             // Action button
             Button(
                 onClick = { showBottleFeedingDialog = true },
-                modifier = Modifier.fillMaxWidth(0.8f),
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .aspectRatio(1f),
                 enabled = !uiState.isLoading
             ) {
                 if (uiState.isLoading) {
                     CircularProgressIndicator(
-                        modifier = Modifier.size(16.dp),
-                        strokeWidth = 2.dp,
+                        modifier = Modifier.size(24.dp),
+                        strokeWidth = 3.dp,
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 } else {
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = "Log Bottle",
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(32.dp)
                     )
                 }
             }
@@ -100,10 +102,9 @@ fun BottleFeedingCard(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "${amount}ml",
+                                text = "Last fed: ${amount}ml",
                                 fontSize = 14.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
-                                textAlign = TextAlign.Center
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Icon(

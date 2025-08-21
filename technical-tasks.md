@@ -49,6 +49,8 @@ This document outlines the specific acceptance criter### **Real-time Dashboard**
   * All cards use consistent design patterns for improved user experience. ✅ IMPLEMENTED
   * **Action buttons positioned immediately after card titles** for better accessibility. ✅ IMPLEMENTED
   * **Icon-only buttons** for clean, minimalist design without text clutter. ✅ IMPLEMENTED
+  * **Square action buttons** with 1:1 aspect ratio for larger touch targets and easier clicking. ✅ IMPLEMENTED
+  * **Proportional icon sizes** (32.dp) that match the larger button size for better visibility. ✅ IMPLEMENTED
 * **Technical Tasks:**  
   * Create separate BreastFeedingCard component with breast milk feeding functionality. ✅ COMPLETED
   * Create separate BottleFeedingCard component with bottle feeding functionality. ✅ COMPLETED
@@ -58,7 +60,9 @@ This document outlines the specific acceptance criter### **Real-time Dashboard**
   * Update card spacing and padding for optimal grid layout appearance. ✅ COMPLETED
   * Standardize card design patterns for consistency across all 4 cards. ✅ COMPLETED
   * **Move action buttons to position right after card titles.** ✅ COMPLETED
-  * **Remove button text, keeping only descriptive icons for cleaner design.** ✅ COMPLETEDlevel technical tasks for each user story defined for the Newborn Tracker App.
+  * **Remove button text, keeping only descriptive icons for cleaner design.** ✅ COMPLETED
+  * **Make action buttons square (1:1 aspect ratio) for better touch targets.** ✅ COMPLETED
+  * **Increase icon sizes (32.dp) to be proportional to larger square buttons.** ✅ COMPLETEDlevel technical tasks for each user story defined for the Newborn Tracker App.
 
 ### **Authentication & Setup**
 

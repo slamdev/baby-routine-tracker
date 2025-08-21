@@ -99,11 +99,13 @@ The app follows modern Android design patterns with a clean, user-friendly inter
 - **UX IMPROVEMENTS**: 
   - **Simplified Design**: Removed button text, keeping only descriptive icons for cleaner appearance
   - **Improved Layout**: Action buttons positioned immediately after card titles for better accessibility
+  - **Enhanced Touch Targets**: Square buttons (aspectRatio 1:1) for larger, easier-to-click interface
   - **Consistent Styling**: All 4 cards now follow identical design patterns:
     - Header font size: 18sp (consistent across all cards)
     - Padding: 16.dp (consistent across all cards) 
     - Button width: 80% using fillMaxWidth(0.8f) (consistent across all cards)
-    - Button icon size: 18.dp (consistent across all cards)
+    - **Button aspect ratio: 1:1 (square)** for better usability
+    - **Button icon size: 32.dp** proportional to larger button size for better visibility
     - **Action button placement**: Right after title for immediate access
     - **Icon-only buttons**: Clean, minimalist design without text
 - **BREAST FEEDING CARD**: 
@@ -124,12 +126,14 @@ The app follows modern Android design patterns with a clean, user-friendly inter
   - Header with emoji (18sp, FontWeight.Bold, primary color)
   - Padding: 16.dp across all cards for consistent spacing
   - **Action button positioned right after card title** for immediate access
+  - **Square buttons** using aspectRatio(1f) for better touch targets and easier clicking
+  - **Icon-only buttons** with larger icons (32.dp) proportional to button size for better visibility
   - **Icon-only buttons** for clean, minimalist design (removed descriptive text)
-  - Action button (80% width using fillMaxWidth(0.8f), 18.dp icon size)
+  - Action button (80% width using fillMaxWidth(0.8f), square aspect ratio, 32.dp icon size)
   - Last activity summary (14sp, clickable with edit icon) positioned after action button
-- **Visual Hierarchy**: Clean, focused layout with action button prominently placed after title
+- **Visual Hierarchy**: Clean, focused layout with prominent square action buttons and properly sized icons after title
 - **Error Handling**: CompactErrorDisplay for user feedback
-- **Loading States**: CircularProgressIndicator with appropriate sizing (16.dp)
+- **Loading States**: CircularProgressIndicator with proportional sizing (24.dp) for larger buttons
 
 #### Profile Icon Implementation Example
 ```kotlin

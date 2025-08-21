@@ -77,22 +77,24 @@ fun DiaperTrackingCard(
             Button(
                 onClick = { showPoopDialog = true },
                 enabled = !uiState.isLoading,
-                modifier = Modifier.fillMaxWidth(0.8f),
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .aspectRatio(1f),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary
                 )
             ) {
                 if (uiState.isLoading) {
                     CircularProgressIndicator(
-                        modifier = Modifier.size(16.dp),
+                        modifier = Modifier.size(24.dp),
                         color = Color.White,
-                        strokeWidth = 2.dp
+                        strokeWidth = 3.dp
                     )
                 } else {
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = "Log Poop",
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(32.dp)
                     )
                 }
             }

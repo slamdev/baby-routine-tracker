@@ -75,7 +75,9 @@ fun BreastFeedingCard(
                     }
                 },
                 enabled = !uiState.isLoading,
-                modifier = Modifier.fillMaxWidth(0.8f),
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .aspectRatio(1f),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (isOngoing) {
                         MaterialTheme.colorScheme.error
@@ -86,15 +88,15 @@ fun BreastFeedingCard(
             ) {
                 if (uiState.isLoading) {
                     CircularProgressIndicator(
-                        modifier = Modifier.size(16.dp),
-                        strokeWidth = 2.dp,
+                        modifier = Modifier.size(24.dp),
+                        strokeWidth = 3.dp,
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 } else {
                     Icon(
                         imageVector = if (isOngoing) Icons.Default.Check else Icons.Default.PlayArrow,
                         contentDescription = if (isOngoing) "Stop Feeding" else "Start Feeding",
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(32.dp)
                     )
                 }
             }
@@ -109,7 +111,18 @@ fun BreastFeedingCard(
                     )
                 }
                 lastFeeding != null && lastFeeding.endTime != null -> {
-                    val duration = lastFeeding.getDurationMinutes() ?: 0
+                    val duration = lastFeeding.getDurationMinutes()
+                    val durationText = if (duration != null) {
+                        val hours = duration / 60
+                        val minutes = duration % 60
+                        if (hours > 0) {
+                            "${hours}h ${minutes}m"
+                        } else {
+                            "${minutes}m"
+                        }
+                    } else {
+                        "Unknown duration"
+                    }
                     
                     // Last feeding info (clickable for editing)
                     Column(
@@ -122,10 +135,9 @@ fun BreastFeedingCard(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "${duration}min",
+                                text = "Last fed: $durationText",
                                 fontSize = 14.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
-                                textAlign = TextAlign.Center
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Icon(
