@@ -62,7 +62,25 @@ This document outlines the specific acceptance criter### **Real-time Dashboard**
   * **Move action buttons to position right after card titles.** ✅ COMPLETED
   * **Remove button text, keeping only descriptive icons for cleaner design.** ✅ COMPLETED
   * **Make action buttons square (1:1 aspect ratio) for better touch targets.** ✅ COMPLETED
-  * **Increase icon sizes (32.dp) to be proportional to larger square buttons.** ✅ COMPLETEDlevel technical tasks for each user story defined for the Newborn Tracker App.
+  * **Increase icon sizes (32.dp) to be proportional to larger square buttons.** ✅ COMPLETED
+
+**User Story:** As a parent, I want to see how long ago each activity last happened in user-friendly time format so I can quickly assess when my baby last slept, ate, or had a diaper change without having to calculate time differences myself.
+
+* **Acceptance Criteria:**  
+  * Each activity card displays time elapsed since the last activity in a user-friendly format (e.g., "Happened 23m ago", "Happened 1h 23m ago", "Happened 1d ago"). ✅ IMPLEMENTED
+  * Time ago information is positioned prominently on each card for easy visibility. ✅ IMPLEMENTED
+  * Time calculations handle edge cases correctly (just happened, minutes, hours, days, weeks). ✅ IMPLEMENTED
+  * For ongoing activities (sleep, breast feeding), time ago refers to when the activity started. ✅ IMPLEMENTED
+  * For completed activities, time ago refers to when the activity ended. ✅ IMPLEMENTED
+  * For instant activities (bottle feeding, diaper), time ago refers to when the activity was logged. ✅ IMPLEMENTED
+* **Technical Tasks:**  
+  * Create TimeUtils utility class with formatTimeAgo function for consistent time formatting. ✅ COMPLETED
+  * Implement getRelevantTimestamp function to determine the correct timestamp for "time ago" calculation. ✅ COMPLETED
+  * Update SleepTrackingCard to display time ago information for the last completed sleep. ✅ COMPLETED
+  * Update BreastFeedingCard to display time ago information for the last completed feeding. ✅ COMPLETED
+  * Update BottleFeedingCard to display time ago information for the last bottle feeding. ✅ COMPLETED
+  * Update DiaperTrackingCard to display time ago information for the last diaper change. ✅ COMPLETED
+  * Ensure time ago information updates automatically when new activities are logged. ✅ COMPLETED
 
 ### **Authentication & Setup**
 

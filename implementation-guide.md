@@ -119,6 +119,22 @@ The app follows modern Android design patterns with a clean, user-friendly inter
   - Last bottle feeding details with notes display (amount in ml)
   - Instant activity logging (no ongoing timer)
   - Dedicated BottleFeedingDialog for input
+- **DIAPER TRACKING CARD**:
+  - Action button (Log Poop) positioned after title
+  - Last diaper change details with notes display
+  - Instant activity logging (no ongoing timer)
+  - Dedicated PoopDialog for input
+
+#### Time Ago Display Feature
+All activity cards now display user-friendly "time ago" information showing when the last activity happened:
+
+- **Format Examples**: "Happened 23m ago", "Happened 1h 23m ago", "Happened 1d ago", "Happened 2w ago"
+- **Smart Timestamp Selection**: 
+  - For completed activities (sleep, breast feeding): uses end time
+  - For ongoing activities: uses start time  
+  - For instant activities (bottle, diaper): uses logged time
+- **Real-time Updates**: Time ago information updates automatically when new activities are logged
+- **Implementation**: Uses `TimeUtils.formatTimeAgo()` utility function with `TimeUtils.getRelevantTimestamp()`
 
 #### Card Design Patterns
 - **Consistent Height**: All cards use dynamic height calculation for responsive design
@@ -206,6 +222,72 @@ composable("screen_name") {
 ```
 
 ## 🔧 Service Layer Pattern
+
+### Time Utilities
+
+#### TimeUtils Class
+Centralized utility for user-friendly time formatting:
+
+```kotlin
+object TimeUtils {
+    /**
+     * Format time elapsed since the given date in a user-friendly way
+     * Examples: "Happened 23m ago", "Happened 1h 23m ago", "Happened 1d ago"
+     */
+    fun formatTimeAgo(pastDate: Date): String {
+        val now = Date()
+        val diffMillis = abs(now.time - pastDate.time)
+        val diffSeconds = diffMillis / 1000
+        val diffMinutes = diffSeconds / 60
+        val diffHours = diffMinutes / 60
+        val diffDays = diffHours / 24
+        
+        return when {
+            diffMinutes < 1 -> "Happened now"
+            diffMinutes < 60 -> "Happened ${diffMinutes}m ago"
+            diffHours < 24 -> {
+                val hours = diffHours
+                val remainingMinutes = diffMinutes % 60
+                if (remainingMinutes == 0L) {
+                    "Happened ${hours}h ago"
+                } else {
+                    "Happened ${hours}h ${remainingMinutes}m ago"
+                }
+            }
+            diffDays < 7 -> "Happened ${diffDays}d ago"
+            else -> {
+                val weeks = diffDays / 7
+                "Happened ${weeks}w ago"
+            }
+        }
+    }
+    
+    /**
+     * Get the most relevant timestamp for an activity to calculate "time ago"
+     * For completed activities, use end time. For ongoing activities, use start time.
+     */
+    fun getRelevantTimestamp(startTime: Date, endTime: Date?): Date {
+        return endTime ?: startTime
+    }
+}
+```
+
+#### Usage in Activity Cards
+```kotlin
+// In any tracking card
+val timeAgo = TimeUtils.formatTimeAgo(
+    TimeUtils.getRelevantTimestamp(
+        activity.startTime.toDate(),
+        activity.endTime?.toDate()
+    )
+)
+
+Text(
+    text = timeAgo,
+    fontSize = 12.sp,
+    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+)
+```
 
 ### Repository/Service Structure
 ```kotlin

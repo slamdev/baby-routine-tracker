@@ -21,6 +21,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.slamdev.babyroutinetracker.ui.components.CompactErrorDisplay
 import com.github.slamdev.babyroutinetracker.ui.components.TimePickerDialog
 import com.github.slamdev.babyroutinetracker.ui.components.EditActivityDialog
+import com.github.slamdev.babyroutinetracker.ui.components.TimeUtils
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -214,6 +215,14 @@ fun SleepTrackingCard(
                                 "Unknown duration"
                             }
                             
+                            // Calculate time ago
+                            val timeAgo = TimeUtils.formatTimeAgo(
+                                TimeUtils.getRelevantTimestamp(
+                                    lastSleep.startTime.toDate(),
+                                    lastSleep.endTime?.toDate()
+                                )
+                            )
+                            
                             // Last sleep info (clickable for editing)
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -237,6 +246,12 @@ fun SleepTrackingCard(
                                         modifier = Modifier.size(12.dp)
                                     )
                                 }
+                                
+                                Text(
+                                    text = timeAgo,
+                                    fontSize = 12.sp,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                                )
                                 
                                 lastSleep.endTime?.let { endTime ->
                                     Text(

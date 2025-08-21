@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.slamdev.babyroutinetracker.ui.components.CompactErrorDisplay
 import com.github.slamdev.babyroutinetracker.ui.components.EditActivityDialog
+import com.github.slamdev.babyroutinetracker.ui.components.TimeUtils
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -129,6 +130,14 @@ fun DiaperTrackingCard(
                     }
                 }
                 lastDiaper != null -> {
+                    // Calculate time ago
+                    val timeAgo = TimeUtils.formatTimeAgo(
+                        TimeUtils.getRelevantTimestamp(
+                            lastDiaper.startTime.toDate(),
+                            lastDiaper.endTime?.toDate()
+                        )
+                    )
+                    
                     // Last diaper info (clickable for editing)
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -153,6 +162,12 @@ fun DiaperTrackingCard(
                                 modifier = Modifier.size(12.dp)
                             )
                         }
+                        
+                        Text(
+                            text = timeAgo,
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                        )
                         
                         Text(
                             text = "at ${formatTime(lastDiaper.startTime.toDate())}",

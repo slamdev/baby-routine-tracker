@@ -44,6 +44,7 @@ Here is a list of user stories broken down by feature for a developer to follow.
 * **As a parent,** I want to swipe left from the main dashboard to access the activity history instead of having a button, making navigation more intuitive and saving screen space.
 * **As a parent,** I want to swipe to different screens (History, Data Visualization, AI Sleep Plans) for a modern mobile app experience.
 * **As a parent,** I want to see 4 separate activity cards (Sleep, Breast Feeding, Bottle Feeding, Poop) displayed in a responsive grid layout that fits my phone screen without needing to scroll, with cards adapting in size based on my screen dimensions.
+* **As a parent,** I want to see how long ago each activity last happened in user-friendly time format (e.g., "Happened 23m ago", "Happened 1h 23m ago", "Happened 1d ago") so I can quickly assess when my baby last slept, ate, or had a diaper change without having to calculate time differences myself.
 
 ### **UI/UX & Responsiveness**
 
