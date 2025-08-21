@@ -29,7 +29,7 @@ Here is a list of user stories broken down by feature for a developer to follow.
 ### **Activity Logging**
 
 * **As a tired parent,** I want to log my baby's sleep with just a start and stop button so that I can quickly record sleep sessions, even in the middle of the night.  
-* **As a parent,** I want to log a feeding, specifying whether it was breast milk or bottle, and record the duration (for breastfeeding) or the amount (for bottle-feeding).  
+* **As a parent,** I want to log a feeding with distinct options for breast milk (using a start/stop timer) and bottle feeding (entering amount directly).  
 * **As a parent,** I want to quickly log a diaper change, noting if it was wet, dirty, or both.  
 * **As a parent,** I want to be able to add a short, optional note to any activity (sleep, feeding, or diaper) to remember important details.  
 * **As a parent**, I should be able to adjust start and stop time of the activities during and after logging them in case I forgot to press start or stop buttons.

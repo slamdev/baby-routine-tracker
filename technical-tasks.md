@@ -52,17 +52,20 @@ This document outlines the specific acceptance criteria and high-level technical
   * Use a ViewModel to manage the state of the ongoing sleep timer.  
   * Implement the logic to create and save a new sleep document in Firestore upon completion.
 
-**User Story:** As a parent, I want to log a feeding, specifying whether it was breast milk or bottle, and record the duration (for breastfeeding) or the amount (for bottle-feeding).
+**User Story:** As a parent, I want to log a feeding with distinct options for breast milk (using a start/stop timer) and bottle feeding (entering amount directly).
 
 * **Acceptance Criteria:**  
-  * Tapping a "Log Feeding" button opens a form or dialog.  
-  * The user can select the feeding type (e.g., "Breast Milk," "Bottle").  
-  * Conditional UI appears: a timer for "Breast Milk" or a numeric input for "Bottle" (in ml/oz).  
-  * The saved event accurately reflects all the selected details.  
+  * The feeding card displays both "Breast Milk" and "Bottle" options directly on the main screen.  
+  * For breast milk: tapping "Start Feeding" begins a real-time timer, tapping "Stop Feeding" ends the session and logs the duration automatically.  
+  * For bottle feeding: tapping "Log Bottle" opens a simple dialog to enter the amount (ml) and optional notes.  
+  * Both feeding types show the last feeding details on the main screen.  
+  * Real-time timer updates are visible during ongoing breast milk feeding sessions.  
 * **Technical Tasks:**  
-  * Create a reusable composable for the feeding log form.  
-  * Implement state logic to show the correct input field based on the selected feeding type.  
-  * Define a Firestore data model for feeding events that can accommodate both duration and amount.
+  * Create FeedingTrackingCard with separate breast milk and bottle sections.  
+  * Implement start/stop timer functionality for breast milk feeding (similar to sleep tracking).  
+  * Create simple bottle feeding dialog for amount entry.  
+  * Add service methods to support both ongoing breast milk sessions and completed bottle feedings.  
+  * Implement real-time synchronization for ongoing breast milk feeding across devices.
 
 **User Story:** As a parent, I want to quickly log a diaper change, noting if it was wet, dirty, or both.
 

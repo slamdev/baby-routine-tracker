@@ -311,6 +311,131 @@ class ActivityService {
     }
 
     /**
+     * Start a breast milk feeding session (ongoing activity)
+     */
+    suspend fun startBreastMilkFeeding(
+        babyId: String,
+        notes: String = ""
+    ): Result<Activity> {
+        return try {
+            val currentUser = auth.currentUser
+            if (currentUser == null) {
+                val error = Exception("User not authenticated")
+                Log.e(TAG, "Failed to start breast milk feeding - user not authenticated", error)
+                return Result.failure(error)
+            }
+
+            // Verify user has access to this baby
+            if (!hasAccessToBaby(babyId)) {
+                val error = Exception("No access to baby profile")
+                Log.e(TAG, "Failed to start breast milk feeding - no access to baby: $babyId", error)
+                return Result.failure(error)
+            }
+
+            // Check if there's already an ongoing feeding activity
+            val ongoingActivity = getOngoingActivity(babyId, ActivityType.FEEDING)
+            if (ongoingActivity != null) {
+                val error = Exception("There is already an ongoing feeding activity")
+                Log.w(TAG, "Attempted to start breast milk feeding while one is already ongoing", error)
+                return Result.failure(error)
+            }
+
+            val activityId = UUID.randomUUID().toString()
+            val activity = Activity(
+                id = activityId,
+                type = ActivityType.FEEDING,
+                babyId = babyId,
+                startTime = Timestamp.now(),
+                endTime = null, // This is an ongoing activity
+                notes = notes,
+                loggedBy = currentUser.uid,
+                createdAt = Timestamp.now(),
+                updatedAt = Timestamp.now(),
+                feedingType = "breast_milk",
+                amount = 0.0
+            )
+
+            firestore.collection(BABIES_COLLECTION)
+                .document(babyId)
+                .collection(ACTIVITIES_SUBCOLLECTION)
+                .document(activityId)
+                .set(activity)
+                .await()
+
+            Log.i(TAG, "Breast milk feeding started successfully for baby: $babyId")
+            Result.success(activity)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to start breast milk feeding for baby: $babyId", e)
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Log a completed feeding activity
+     */
+    suspend fun logCompletedFeeding(
+        babyId: String,
+        feedingType: String,
+        duration: Int,
+        amount: Double,
+        notes: String = ""
+    ): Result<Activity> {
+        return try {
+            val currentUser = auth.currentUser
+            if (currentUser == null) {
+                val error = Exception("User not authenticated")
+                Log.e(TAG, "Failed to log feeding - user not authenticated", error)
+                return Result.failure(error)
+            }
+
+            // Verify user has access to this baby
+            if (!hasAccessToBaby(babyId)) {
+                val error = Exception("No access to baby profile")
+                Log.e(TAG, "Failed to log feeding - no access to baby: $babyId", error)
+                return Result.failure(error)
+            }
+
+            val activityId = UUID.randomUUID().toString()
+            val now = Timestamp.now()
+            
+            // For breast milk feeding, calculate start time based on duration
+            // For bottle feeding, use current time as both start and end
+            val startTime = if (feedingType == "breast_milk" && duration > 0) {
+                Timestamp(now.seconds - (duration * 60), now.nanoseconds)
+            } else {
+                now
+            }
+            
+            val activity = Activity(
+                id = activityId,
+                type = ActivityType.FEEDING,
+                babyId = babyId,
+                startTime = startTime,
+                endTime = now, // Feeding is logged as completed
+                notes = notes,
+                loggedBy = currentUser.uid,
+                createdAt = now,
+                updatedAt = now,
+                feedingType = feedingType,
+                amount = amount
+            )
+
+            firestore.collection(BABIES_COLLECTION)
+                .document(babyId)
+                .collection(ACTIVITIES_SUBCOLLECTION)
+                .document(activityId)
+                .set(activity)
+                .await()
+
+            Log.i(TAG, "Feeding activity logged successfully: $feedingType for baby: $babyId")
+            Result.success(activity)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to log feeding activity: $feedingType for baby: $babyId", e)
+            Result.failure(e)
+        }
+    }
+
+    /**
      * Check if current user has access to a baby profile
      */
     private suspend fun hasAccessToBaby(babyId: String): Boolean {

@@ -2,7 +2,9 @@ package com.github.slamdev.babyroutinetracker.dashboard
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material3.*
@@ -23,6 +25,7 @@ import coil.request.ImageRequest
 import com.github.slamdev.babyroutinetracker.auth.AuthenticationViewModel
 import com.github.slamdev.babyroutinetracker.invitation.InvitationViewModel
 import com.github.slamdev.babyroutinetracker.sleep.SleepTrackingCard
+import com.github.slamdev.babyroutinetracker.feeding.FeedingTrackingCard
 import com.google.firebase.auth.FirebaseUser
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -76,7 +79,8 @@ fun DashboardScreen(
             modifier = modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(24.dp),
+                .padding(24.dp)
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
@@ -96,8 +100,13 @@ fun DashboardScreen(
                         color = MaterialTheme.colorScheme.primary
                     )
                     
-                    // Sleep tracking card
+                    // Activity tracking cards
                     SleepTrackingCard(
+                        babyId = baby.id,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    
+                    FeedingTrackingCard(
                         babyId = baby.id,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -185,7 +194,7 @@ fun DashboardScreen(
                 }
             }
             
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(16.dp))
             
             // Feature status cards - show coming soon for other features
             if (invitationState.selectedBabyId.isNotEmpty()) {
@@ -194,12 +203,12 @@ fun DashboardScreen(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     FeatureCard(
-                        title = "Feeding",
+                        title = "Diapers",
                         description = "Coming soon",
                         modifier = Modifier.weight(1f)
                     )
                     FeatureCard(
-                        title = "Diapers",
+                        title = "Data Visualization",
                         description = "Coming soon",
                         modifier = Modifier.weight(1f)
                     )
