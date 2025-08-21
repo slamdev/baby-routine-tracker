@@ -62,6 +62,42 @@ fun BreastFeedingCard(
                 color = MaterialTheme.colorScheme.primary,
                 textAlign = TextAlign.Center
             )
+
+            // Action button
+            val ongoingBreastFeeding = uiState.ongoingBreastFeeding
+            val isOngoing = ongoingBreastFeeding != null
+            Button(
+                onClick = {
+                    if (isOngoing) {
+                        viewModel.endBreastMilkFeeding()
+                    } else {
+                        viewModel.startBreastMilkFeeding()
+                    }
+                },
+                enabled = !uiState.isLoading,
+                modifier = Modifier.fillMaxWidth(0.8f),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (isOngoing) {
+                        MaterialTheme.colorScheme.error
+                    } else {
+                        MaterialTheme.colorScheme.primary
+                    }
+                )
+            ) {
+                if (uiState.isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(16.dp),
+                        strokeWidth = 2.dp,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                } else {
+                    Icon(
+                        imageVector = if (isOngoing) Icons.Default.Check else Icons.Default.PlayArrow,
+                        contentDescription = if (isOngoing) "Stop Feeding" else "Start Feeding",
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+            }
             
             // Last breast feeding info (only show breast milk feedings)
             val lastFeeding = uiState.lastFeeding?.takeIf { it.feedingType == "breast_milk" }
@@ -119,15 +155,23 @@ fun BreastFeedingCard(
                 }
             }
             
-            // Breast milk feeding section
-            BreastMilkFeedingSection(
-                uiState = uiState,
-                onStartBreastFeeding = { viewModel.startBreastMilkFeeding() },
-                onStopBreastFeeding = { viewModel.endBreastMilkFeeding() },
-                onClearOngoingError = { viewModel.clearOngoingFeedingError() },
-                onEditStartTime = { showTimePickerDialog = true },
-                formatElapsedTime = { viewModel.formatElapsedTime(it) }
-            )
+            // Timer display for ongoing feeding
+            if (isOngoing && ongoingBreastFeeding != null) {
+                Text(
+                    text = viewModel.formatElapsedTime(uiState.currentElapsedTime),
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                
+                // Start time (clickable for editing)
+                Text(
+                    text = "Started at ${formatTime(ongoingBreastFeeding.startTime.toDate())}",
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                    modifier = Modifier.clickable { showTimePickerDialog = true }
+                )
+            }
             
             // Error display
             uiState.ongoingFeedingError?.let { errorMessage ->
@@ -187,77 +231,4 @@ fun BreastFeedingCard(
 private fun formatTime(date: Date): String {
     val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
     return formatter.format(date)
-}
-
-@Composable
-private fun BreastMilkFeedingSection(
-    uiState: FeedingTrackingUiState,
-    onStartBreastFeeding: () -> Unit,
-    onStopBreastFeeding: () -> Unit,
-    onClearOngoingError: () -> Unit,
-    onEditStartTime: () -> Unit,
-    formatElapsedTime: (Long) -> String
-) {
-    val ongoingBreastFeeding = uiState.ongoingBreastFeeding
-    val isOngoing = ongoingBreastFeeding != null
-    
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        if (isOngoing && ongoingBreastFeeding != null) {
-            // Show timer and controls for ongoing feeding
-            Text(
-                text = formatElapsedTime(uiState.currentElapsedTime),
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
-            )
-            
-            // Start time (clickable for editing)
-            Text(
-                text = "Started at ${formatTime(ongoingBreastFeeding.startTime.toDate())}",
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                modifier = Modifier.clickable { onEditStartTime() }
-            )
-            
-            // Stop button
-            Button(
-                onClick = onStopBreastFeeding,
-                modifier = Modifier.fillMaxWidth(0.8f),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.error
-                )
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Check,
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Stop Feeding")
-            }
-        } else {
-            // Start button
-            Button(
-                onClick = onStartBreastFeeding,
-                modifier = Modifier.fillMaxWidth(0.8f),
-                enabled = !uiState.isLoading
-            ) {
-                if (uiState.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(16.dp),
-                        strokeWidth = 2.dp,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                } else {
-                    Icon(
-                        imageVector = Icons.Default.PlayArrow,
-                        contentDescription = "Start Feeding",
-                    )
-                }
-            }
-        }
-    }
 }

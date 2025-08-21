@@ -55,6 +55,27 @@ fun BottleFeedingCard(
                 color = MaterialTheme.colorScheme.primary,
                 textAlign = TextAlign.Center
             )
+
+            // Action button
+            Button(
+                onClick = { showBottleFeedingDialog = true },
+                modifier = Modifier.fillMaxWidth(0.8f),
+                enabled = !uiState.isLoading
+            ) {
+                if (uiState.isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(16.dp),
+                        strokeWidth = 2.dp,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Log Bottle",
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+            }
             
             // Last bottle feeding info (only show bottle feedings)
             val lastFeeding = uiState.lastFeeding?.takeIf { it.feedingType == "bottle" }
@@ -119,26 +140,6 @@ fun BottleFeedingCard(
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                         textAlign = TextAlign.Center
-                    )
-                }
-            }
-            
-            // Bottle feeding button
-            Button(
-                onClick = { showBottleFeedingDialog = true },
-                modifier = Modifier.fillMaxWidth(0.8f),
-                enabled = !uiState.isLoading
-            ) {
-                if (uiState.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(16.dp),
-                        strokeWidth = 2.dp,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                } else {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Log Bottle",
                     )
                 }
             }

@@ -94,14 +94,25 @@ The app follows modern Android design patterns with a clean, user-friendly inter
   - Consistent visual design across all 4 cards
   - Real-time synchronization for all activity types
 
-#### Separated Feeding Cards Pattern - **IMPLEMENTED**
+#### Separated Feeding Cards Pattern - **IMPLEMENTED** ✅ **ENHANCED**
 - **CHANGE**: Split previous combined FeedingTrackingCard into two separate cards
+- **UX IMPROVEMENTS**: 
+  - **Simplified Design**: Removed button text, keeping only descriptive icons for cleaner appearance
+  - **Improved Layout**: Action buttons positioned immediately after card titles for better accessibility
+  - **Consistent Styling**: All 4 cards now follow identical design patterns:
+    - Header font size: 18sp (consistent across all cards)
+    - Padding: 16.dp (consistent across all cards) 
+    - Button width: 80% using fillMaxWidth(0.8f) (consistent across all cards)
+    - Button icon size: 18.dp (consistent across all cards)
+    - **Action button placement**: Right after title for immediate access
+    - **Icon-only buttons**: Clean, minimalist design without text
 - **BREAST FEEDING CARD**: 
+  - Action button (Start/Stop) positioned after title
   - Displays ongoing breast feeding timer (if active) using `formatElapsedTime(uiState.currentElapsedTime)`
-  - Start/Stop breast feeding functionality  
   - Last breast feeding session details (duration in minutes)
   - Editable start time for ongoing sessions
 - **BOTTLE FEEDING CARD**:
+  - Action button (Log Bottle) positioned after title  
   - Quick log bottle feeding with amount and optional notes
   - Last bottle feeding details with notes display (amount in ml)
   - Instant activity logging (no ongoing timer)
@@ -109,12 +120,16 @@ The app follows modern Android design patterns with a clean, user-friendly inter
 
 #### Card Design Patterns
 - **Consistent Height**: All cards use dynamic height calculation for responsive design
-- **Visual Hierarchy**: 
-  - Title with emoji (18sp, bold, primary color)
-  - Last activity summary (14sp, clickable with edit icon)
-  - Action button (80% width, primary/error color based on state)
+- **Standardized Styling**: 
+  - Header with emoji (18sp, FontWeight.Bold, primary color)
+  - Padding: 16.dp across all cards for consistent spacing
+  - **Action button positioned right after card title** for immediate access
+  - **Icon-only buttons** for clean, minimalist design (removed descriptive text)
+  - Action button (80% width using fillMaxWidth(0.8f), 18.dp icon size)
+  - Last activity summary (14sp, clickable with edit icon) positioned after action button
+- **Visual Hierarchy**: Clean, focused layout with action button prominently placed after title
 - **Error Handling**: CompactErrorDisplay for user feedback
-- **Loading States**: CircularProgressIndicator with appropriate sizing
+- **Loading States**: CircularProgressIndicator with appropriate sizing (16.dp)
 
 #### Profile Icon Implementation Example
 ```kotlin

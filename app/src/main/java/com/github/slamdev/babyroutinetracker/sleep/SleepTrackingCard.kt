@@ -61,18 +61,53 @@ fun SleepTrackingCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp),
+                .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             // Header
             Text(
                 text = "😴 Sleep",
-                fontSize = 20.sp,
+                fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
                 textAlign = TextAlign.Center
             )
+
+            // Action button
+            val isOngoingSleep = uiState.ongoingSleep != null
+            Button(
+                onClick = {
+                    if (isOngoingSleep) {
+                        viewModel.endSleep()
+                    } else {
+                        viewModel.startSleep()
+                    }
+                },
+                enabled = !uiState.isLoading,
+                modifier = Modifier.fillMaxWidth(0.8f),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (isOngoingSleep) {
+                        MaterialTheme.colorScheme.error
+                    } else {
+                        MaterialTheme.colorScheme.primary
+                    }
+                )
+            ) {
+                if (uiState.isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(16.dp),
+                        color = Color.White,
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Icon(
+                        imageVector = if (isOngoingSleep) Icons.Default.Check else Icons.Default.PlayArrow,
+                        contentDescription = if (isOngoingSleep) "Stop Sleep" else "Start Sleep",
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+            }
 
             // Current status and timer with error handling
             val ongoingSleepError = uiState.ongoingSleepError
@@ -104,14 +139,6 @@ fun SleepTrackingCard(
                     }
                 }
                 ongoingSleep != null -> {
-                    // Ongoing sleep status
-                    Text(
-                        text = "Sleep in progress",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                    
                     // Timer display
                     Text(
                         text = viewModel.formatElapsedTime(uiState.currentElapsedTime),
@@ -144,13 +171,6 @@ fun SleepTrackingCard(
                     }
                 }
                 else -> {
-                    // No ongoing sleep
-                    Text(
-                        text = "Not sleeping",
-                        fontSize = 16.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
-                    )
-                    
                     // Show last sleep with error handling
                     val lastSleepError = uiState.lastSleepError
                     val lastSleep = uiState.lastSleep
@@ -232,62 +252,6 @@ fun SleepTrackingCard(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                             )
                         }
-                    }
-                }
-            }
-            
-            // Action button
-            val isOngoingSleep = uiState.ongoingSleep != null
-            Button(
-                onClick = {
-                    if (isOngoingSleep) {
-                        viewModel.endSleep()
-                    } else {
-                        viewModel.startSleep()
-                    }
-                },
-                enabled = !uiState.isLoading,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = if (isOngoingSleep) {
-                        MaterialTheme.colorScheme.error
-                    } else {
-                        MaterialTheme.colorScheme.primary
-                    }
-                )
-            ) {
-                if (uiState.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(16.dp),
-                        color = Color.White,
-                        strokeWidth = 2.dp
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = if (isOngoingSleep) "Stopping..." else "Starting...",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium
-                    )
-                } else {
-                    if (isOngoingSleep) {
-                        Icon(
-                            imageVector = Icons.Default.Check,
-                            contentDescription = "Stop Sleep",
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Stop Sleep",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium
-                        )
-                    } else {
-                        Icon(
-                            imageVector = Icons.Default.PlayArrow,
-                            contentDescription = "Start Sleep",
-                        )
                     }
                 }
             }

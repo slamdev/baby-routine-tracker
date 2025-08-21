@@ -46,13 +46,19 @@ This document outlines the specific acceptance criter### **Real-time Dashboard**
   * On larger screens, cards are bigger and more spacious; on smaller screens, cards are more compact but still usable. ✅ IMPLEMENTED
   * No vertical scrolling is required to see all 4 activity cards. ✅ IMPLEMENTED
   * Cards maintain consistent visual hierarchy and information display. ✅ IMPLEMENTED
+  * All cards use consistent design patterns for improved user experience. ✅ IMPLEMENTED
+  * **Action buttons positioned immediately after card titles** for better accessibility. ✅ IMPLEMENTED
+  * **Icon-only buttons** for clean, minimalist design without text clutter. ✅ IMPLEMENTED
 * **Technical Tasks:**  
   * Create separate BreastFeedingCard component with breast milk feeding functionality. ✅ COMPLETED
   * Create separate BottleFeedingCard component with bottle feeding functionality. ✅ COMPLETED
   * Update DashboardContent composable to use LazyVerticalGrid with 2 columns. ✅ COMPLETED
   * Implement dynamic card height based on screen size constraints. ✅ COMPLETED
   * Test responsive layout on various Android screen sizes and orientations. ⏳ PENDING
-  * Update card spacing and padding for optimal grid layout appearance. ✅ COMPLETEDlevel technical tasks for each user story defined for the Newborn Tracker App.
+  * Update card spacing and padding for optimal grid layout appearance. ✅ COMPLETED
+  * Standardize card design patterns for consistency across all 4 cards. ✅ COMPLETED
+  * **Move action buttons to position right after card titles.** ✅ COMPLETED
+  * **Remove button text, keeping only descriptive icons for cleaner design.** ✅ COMPLETEDlevel technical tasks for each user story defined for the Newborn Tracker App.
 
 ### **Authentication & Setup**
 
