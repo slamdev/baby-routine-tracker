@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -23,11 +24,16 @@ import com.github.slamdev.babyroutinetracker.invitation.CreateBabyProfileScreen
 import com.github.slamdev.babyroutinetracker.invitation.EditBabyProfileScreen
 import com.github.slamdev.babyroutinetracker.invitation.InvitationViewModel
 import com.github.slamdev.babyroutinetracker.history.ActivityHistoryScreen
+import com.github.slamdev.babyroutinetracker.offline.OfflineManager
 import com.github.slamdev.babyroutinetracker.ui.theme.BabyroutinetrackerTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        // Initialize offline manager
+        OfflineManager.getInstance(this).initialize()
+        
         enableEdgeToEdge()
         setContent {
             BabyroutinetrackerTheme {

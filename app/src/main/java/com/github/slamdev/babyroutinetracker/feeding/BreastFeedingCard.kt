@@ -8,6 +8,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -18,13 +19,16 @@ import com.github.slamdev.babyroutinetracker.ui.components.*
 import com.github.slamdev.babyroutinetracker.ui.components.formatters.TimeUtils
 import com.github.slamdev.babyroutinetracker.ui.components.helpers.breastFeedingActivityConfig
 import com.github.slamdev.babyroutinetracker.ui.components.helpers.breastFeedingActivityContent
+import com.github.slamdev.babyroutinetracker.viewmodel.FeedingTrackingViewModelFactory
 import java.util.*
 
 @Composable
 fun BreastFeedingCard(
     babyId: String,
     modifier: Modifier = Modifier,
-    viewModel: FeedingTrackingViewModel = viewModel()
+    viewModel: FeedingTrackingViewModel = viewModel(
+        factory = FeedingTrackingViewModelFactory(LocalContext.current)
+    )
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showEditStartTimeDialog by remember { mutableStateOf(false) }

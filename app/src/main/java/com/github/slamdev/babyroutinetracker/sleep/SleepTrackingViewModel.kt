@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.github.slamdev.babyroutinetracker.model.Activity
 import com.github.slamdev.babyroutinetracker.model.ActivityType
 import com.github.slamdev.babyroutinetracker.model.OptionalUiState
+import com.github.slamdev.babyroutinetracker.offline.OfflineManager
 import com.github.slamdev.babyroutinetracker.service.ActivityService
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.Job
@@ -29,8 +30,12 @@ data class SleepTrackingUiState(
     val successMessage: String? = null
 )
 
-class SleepTrackingViewModel : ViewModel() {
-    private val activityService = ActivityService()
+class SleepTrackingViewModel(
+    private val context: android.content.Context
+) : ViewModel() {
+    private val offlineManager = OfflineManager.getInstance(context)
+    private val offlineActivityService = offlineManager.getOfflineActivityService()
+    private val onlineActivityService = ActivityService()
     
     private val _uiState = MutableStateFlow(SleepTrackingUiState())
     val uiState: StateFlow<SleepTrackingUiState> = _uiState.asStateFlow()
@@ -56,7 +61,7 @@ class SleepTrackingViewModel : ViewModel() {
         
         // Start listening to ongoing sleep activity
         viewModelScope.launch {
-            activityService.getOngoingActivityFlow(babyId, ActivityType.SLEEP)
+            offlineActivityService.getOngoingActivityFlow(babyId, ActivityType.SLEEP)
                 .collect { ongoingSleepState ->
                     when (ongoingSleepState) {
                         is OptionalUiState.Loading -> {
@@ -98,7 +103,7 @@ class SleepTrackingViewModel : ViewModel() {
         
         // Start listening to last sleep activity
         viewModelScope.launch {
-            activityService.getLastActivityFlow(babyId, ActivityType.SLEEP)
+            offlineActivityService.getLastCompletedActivityFlow(babyId, ActivityType.SLEEP)
                 .collect { lastSleepState ->
                     when (lastSleepState) {
                         is OptionalUiState.Loading -> {
@@ -152,7 +157,7 @@ class SleepTrackingViewModel : ViewModel() {
                 _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
                 
                 Log.i(TAG, "Starting sleep session for baby: $babyId")
-                val result = activityService.startActivity(babyId, ActivityType.SLEEP, notes)
+                val result = offlineActivityService.startActivity(babyId, ActivityType.SLEEP, notes)
                 
                 result.fold(
                     onSuccess = { activity ->
@@ -201,7 +206,7 @@ class SleepTrackingViewModel : ViewModel() {
                 _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
                 
                 Log.i(TAG, "Ending sleep session: ${ongoingSleep.id}")
-                val result = activityService.endActivity(ongoingSleep.id, babyId)
+                val result = offlineActivityService.endActivity(ongoingSleep.id, babyId)
                 
                 result.fold(
                     onSuccess = { activity ->
@@ -285,7 +290,7 @@ class SleepTrackingViewModel : ViewModel() {
                 _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
 
                 Log.i(TAG, "Updating sleep start time for activity: ${ongoingSleep.id}")
-                val result = activityService.updateActivityStartTime(
+                val result = offlineActivityService.updateActivityStartTime(
                     ongoingSleep.id,
                     babyId,
                     Timestamp(newStartTime)
@@ -333,7 +338,7 @@ class SleepTrackingViewModel : ViewModel() {
                 _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
 
                 Log.i(TAG, "Updating sleep activity: ${activity.id}")
-                val result = activityService.updateActivity(babyId, activity)
+                val result = onlineActivityService.updateActivity(babyId, activity)
 
                 result.fold(
                     onSuccess = { updatedActivity ->

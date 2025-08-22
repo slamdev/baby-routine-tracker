@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -20,6 +21,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.slamdev.babyroutinetracker.ui.components.CompactErrorDisplay
 import com.github.slamdev.babyroutinetracker.ui.components.TimePickerDialog
 import com.github.slamdev.babyroutinetracker.ui.components.EditActivityDialog
+import com.github.slamdev.babyroutinetracker.viewmodel.FeedingTrackingViewModelFactory
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -27,7 +29,9 @@ import java.util.*
 fun FeedingTrackingCard(
     babyId: String,
     modifier: Modifier = Modifier,
-    viewModel: FeedingTrackingViewModel = viewModel()
+    viewModel: FeedingTrackingViewModel = viewModel(
+        factory = FeedingTrackingViewModelFactory(LocalContext.current)
+    )
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showBottleFeedingDialog by remember { mutableStateOf(false) }

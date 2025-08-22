@@ -2,6 +2,7 @@ package com.github.slamdev.babyroutinetracker.sleep
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.slamdev.babyroutinetracker.ui.components.ActivityCard
 import com.github.slamdev.babyroutinetracker.ui.components.ActivityCardState
@@ -9,13 +10,16 @@ import com.github.slamdev.babyroutinetracker.ui.components.EditActivityDialog
 import com.github.slamdev.babyroutinetracker.ui.components.formatters.TimeUtils
 import com.github.slamdev.babyroutinetracker.ui.components.helpers.sleepActivityConfig
 import com.github.slamdev.babyroutinetracker.ui.components.helpers.sleepActivityContent
+import com.github.slamdev.babyroutinetracker.viewmodel.SleepTrackingViewModelFactory
 import java.util.*
 
 @Composable
 fun SleepTrackingCard(
     babyId: String,
     modifier: Modifier = Modifier,
-    viewModel: SleepTrackingViewModel = viewModel()
+    viewModel: SleepTrackingViewModel = viewModel(
+        factory = SleepTrackingViewModelFactory(LocalContext.current)
+    )
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showEditStartTimeDialog by remember { mutableStateOf(false) }

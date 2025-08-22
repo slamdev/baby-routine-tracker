@@ -8,6 +8,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -17,6 +18,7 @@ import com.github.slamdev.babyroutinetracker.ui.components.*
 import com.github.slamdev.babyroutinetracker.ui.components.formatters.TimeUtils
 import com.github.slamdev.babyroutinetracker.ui.components.helpers.bottleFeedingActivityConfig
 import com.github.slamdev.babyroutinetracker.ui.components.helpers.bottleFeedingActivityContent
+import com.github.slamdev.babyroutinetracker.viewmodel.FeedingTrackingViewModelFactory
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.foundation.text.KeyboardOptions
 import java.util.*
@@ -25,7 +27,9 @@ import java.util.*
 fun BottleFeedingCard(
     babyId: String,
     modifier: Modifier = Modifier,
-    viewModel: FeedingTrackingViewModel = viewModel()
+    viewModel: FeedingTrackingViewModel = viewModel(
+        factory = FeedingTrackingViewModelFactory(LocalContext.current)
+    )
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showBottleDialog by remember { mutableStateOf(false) }

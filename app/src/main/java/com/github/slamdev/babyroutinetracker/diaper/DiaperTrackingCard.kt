@@ -7,6 +7,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -15,13 +16,16 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.slamdev.babyroutinetracker.ui.components.*
 import com.github.slamdev.babyroutinetracker.ui.components.helpers.diaperActivityConfig
 import com.github.slamdev.babyroutinetracker.ui.components.helpers.diaperActivityContent
+import com.github.slamdev.babyroutinetracker.viewmodel.DiaperTrackingViewModelFactory
 import java.util.*
 
 @Composable
 fun DiaperTrackingCard(
     babyId: String,
     modifier: Modifier = Modifier,
-    viewModel: DiaperTrackingViewModel = viewModel()
+    viewModel: DiaperTrackingViewModel = viewModel(
+        factory = DiaperTrackingViewModelFactory(LocalContext.current)
+    )
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showPoopDialog by remember { mutableStateOf(false) }

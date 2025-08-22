@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.github.slamdev.babyroutinetracker.model.Activity
 import com.github.slamdev.babyroutinetracker.model.ActivityType
 import com.github.slamdev.babyroutinetracker.model.OptionalUiState
+import com.github.slamdev.babyroutinetracker.offline.OfflineManager
 import com.github.slamdev.babyroutinetracker.service.ActivityService
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.Job
@@ -29,8 +30,12 @@ data class FeedingTrackingUiState(
     val isLoadingLastFeeding: Boolean = false
 )
 
-class FeedingTrackingViewModel : ViewModel() {
-    private val activityService = ActivityService()
+class FeedingTrackingViewModel(
+    private val context: android.content.Context
+) : ViewModel() {
+    private val offlineManager = OfflineManager.getInstance(context)
+    private val offlineActivityService = offlineManager.getOfflineActivityService()
+    private val onlineActivityService = ActivityService()
     
     private val _uiState = MutableStateFlow(FeedingTrackingUiState())
     val uiState: StateFlow<FeedingTrackingUiState> = _uiState.asStateFlow()
@@ -56,7 +61,7 @@ class FeedingTrackingViewModel : ViewModel() {
         
         // Start listening to ongoing breast milk feeding activity
         viewModelScope.launch {
-            activityService.getOngoingActivityFlow(babyId, ActivityType.FEEDING)
+            offlineActivityService.getOngoingActivityFlow(babyId, ActivityType.FEEDING)
                 .collect { ongoingFeedingState ->
                     when (ongoingFeedingState) {
                         is OptionalUiState.Loading -> {
@@ -106,7 +111,7 @@ class FeedingTrackingViewModel : ViewModel() {
         
         // Start listening to last feeding activity
         viewModelScope.launch {
-            activityService.getLastActivityFlow(babyId, ActivityType.FEEDING)
+            offlineActivityService.getLastCompletedActivityFlow(babyId, ActivityType.FEEDING)
                 .collect { lastFeedingState ->
                     when (lastFeedingState) {
                         is OptionalUiState.Loading -> {
@@ -160,7 +165,7 @@ class FeedingTrackingViewModel : ViewModel() {
                 _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
                 
                 Log.i(TAG, "Starting breast milk feeding session for baby: $babyId")
-                val result = activityService.startBreastMilkFeeding(babyId, notes)
+                val result = offlineActivityService.startBreastMilkFeeding(babyId, notes)
                 
                 result.fold(
                     onSuccess = { activity ->
@@ -209,7 +214,7 @@ class FeedingTrackingViewModel : ViewModel() {
                 _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
                 
                 Log.i(TAG, "Ending breast milk feeding session: ${ongoingBreastFeeding.id}")
-                val result = activityService.endActivity(ongoingBreastFeeding.id, babyId)
+                val result = offlineActivityService.endActivity(ongoingBreastFeeding.id, babyId)
                 
                 result.fold(
                     onSuccess = { activity ->
@@ -250,7 +255,7 @@ class FeedingTrackingViewModel : ViewModel() {
                 _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
                 
                 Log.i(TAG, "Logging bottle feeding for baby: $babyId, amount: ${amount}ml")
-                val result = activityService.logCompletedFeeding(babyId, "bottle", 0, amount, notes)
+                val result = offlineActivityService.logBottleFeeding(babyId, amount, notes)
                 
                 result.fold(
                     onSuccess = { activity ->
@@ -322,7 +327,7 @@ class FeedingTrackingViewModel : ViewModel() {
 
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null, successMessage = null)
-            val result = activityService.updateActivityStartTime(
+            val result = offlineActivityService.updateActivityStartTime(
                 ongoingFeeding.id,
                 babyId,
                 Timestamp(newStartTime)
@@ -360,7 +365,7 @@ class FeedingTrackingViewModel : ViewModel() {
             )
 
             Log.i(TAG, "Updating feeding activity: ${updatedActivity.id}")
-            val result = activityService.updateActivity(babyId, updatedActivity)
+            val result = onlineActivityService.updateActivity(babyId, updatedActivity)
 
             result.fold(
                 onSuccess = {

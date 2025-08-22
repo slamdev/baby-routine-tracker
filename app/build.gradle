@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.google.services)
+    id 'kotlin-kapt'
 }
 
 android {
@@ -65,6 +66,20 @@ dependencies {
     
     // Charts
     implementation libs.mp.android.chart
+    
+    // Room Database for offline support
+    implementation libs.androidx.room.runtime
+    implementation libs.androidx.room.ktx
+    kapt libs.androidx.room.compiler
+    
+    // WorkManager for background sync
+    implementation libs.androidx.work.runtime.ktx
+    
+    // Lifecycle Process for app lifecycle monitoring
+    implementation libs.androidx.lifecycle.process
+    
+    // JSON serialization for sync operations
+    implementation 'com.google.code.gson:gson:2.10.1'
     
     // Testing
     testImplementation libs.junit

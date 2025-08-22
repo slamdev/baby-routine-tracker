@@ -13,6 +13,8 @@ lifecycleViewmodel = "2.6.1"
 firebaseBom = "33.4.0"
 googleServicesPlugin = "4.4.2"
 playServicesAuth = "21.2.0"
+room = "2.6.1"
+workManager = "2.9.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -45,6 +47,17 @@ coil-compose = { group = "io.coil-kt", name = "coil-compose", version = "2.5.0" 
 
 # Charts - using MPAndroidChart which is well documented for this use case
 mp-android-chart = { group = "com.github.PhilJay", name = "MPAndroidChart", version = "v3.1.0" }
+
+# Room Database for offline support
+androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+
+# WorkManager for background sync
+androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workManager" }
+
+# Lifecycle Process for app lifecycle monitoring
+androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "lifecycleRuntimeKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

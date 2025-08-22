@@ -9,6 +9,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -23,6 +24,9 @@ import com.github.slamdev.babyroutinetracker.datavisualization.DataVisualization
 import com.github.slamdev.babyroutinetracker.sleepplans.AISleepPlansScreen
 import com.github.slamdev.babyroutinetracker.invitation.InvitationViewModel
 import com.github.slamdev.babyroutinetracker.model.Baby
+import com.github.slamdev.babyroutinetracker.offline.OfflineManager
+import com.github.slamdev.babyroutinetracker.offline.OfflineStatusIndicator
+import com.github.slamdev.babyroutinetracker.offline.SyncProgressIndicator
 import com.github.slamdev.babyroutinetracker.ui.components.ProfileIcon
 import kotlinx.coroutines.launch
 
@@ -137,11 +141,27 @@ fun MainTabScreen(
             )
         }
     ) { paddingValues ->
+        // Get offline state for indicators
+        val context = LocalContext.current
+        val offlineManager = remember { OfflineManager.getInstance(context) }
+        val offlineState by offlineManager.offlineState.collectAsState()
+        
         Column(
             modifier = modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
+            // Offline status indicators
+            OfflineStatusIndicator(
+                isOffline = offlineState.isOffline,
+                pendingOperationsCount = offlineState.pendingOperationsCount
+            )
+            
+            SyncProgressIndicator(
+                isVisible = offlineState.isSyncing,
+                modifier = Modifier.fillMaxWidth()
+            )
+            
             // Main content with horizontal pager
             HorizontalPager(
                 state = pagerState,
