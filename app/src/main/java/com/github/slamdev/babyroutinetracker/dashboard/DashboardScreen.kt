@@ -38,6 +38,8 @@ import com.github.slamdev.babyroutinetracker.feeding.BottleFeedingCard
 import com.github.slamdev.babyroutinetracker.diaper.DiaperTrackingCard
 import com.github.slamdev.babyroutinetracker.ui.components.ProfileIcon
 import com.google.firebase.auth.FirebaseUser
+import kotlin.math.ceil
+import kotlin.math.floor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -102,22 +104,36 @@ fun DashboardContent(
     if (invitationState.selectedBabyId.isNotEmpty()) {
         val selectedBaby = invitationState.babies.find { it.id == invitationState.selectedBabyId }
         selectedBaby?.let { baby ->
-            // Use constraints of the available space (already accounting for Scaffold paddings)
+            // Responsive layout that adapts number of columns & card height to available space
             BoxWithConstraints(modifier = modifier.fillMaxSize()) {
-                // We apply 16.dp vertical padding top & bottom and a single vertical spacing between the two rows.
-                val verticalPadding = 32.dp // 16 top + 16 bottom
-                val verticalSpacing = 12.dp
-                val rawHeightPerCard = (maxHeight - verticalPadding - verticalSpacing) / 2
-                val cardHeight = rawHeightPerCard.coerceAtLeast(140.dp)
+                val cardMinWidth = 180.dp
+                val minCardHeight = 340.dp
+                val outerPadding = 16.dp
+                val spacing = 12.dp
+
+                // Compute how many columns can fit given min width & spacing
+                val availableRowWidth = maxWidth - outerPadding * 2
+                val rawColumns = floor(
+                    ((availableRowWidth + spacing) / (cardMinWidth + spacing)).toDouble()
+                ).toInt().coerceAtLeast(1)
+                val itemCount = 4
+                val columns = rawColumns.coerceAtMost(itemCount) // don't exceed item count
+                val rows = ceil(itemCount / columns.toDouble()).toInt()
+
+                val verticalPaddingTotal = outerPadding * 2
+                val totalVerticalSpacing = spacing * (rows - 1)
+                val availableHeightForCards = maxHeight - verticalPaddingTotal - totalVerticalSpacing
+                val computedCardHeight = (availableHeightForCards / rows)
+                val fitsWithoutScroll = computedCardHeight >= minCardHeight
+                val cardHeight = if (fitsWithoutScroll) computedCardHeight else minCardHeight
 
                 LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
+                    columns = GridCells.Fixed(columns),
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    userScrollEnabled = false // Disable scrolling; cards are sized to fit
+                        .padding(outerPadding),
+                    horizontalArrangement = Arrangement.spacedBy(spacing),
+                    verticalArrangement = Arrangement.spacedBy(spacing),
                 ) {
                     item {
                         SleepTrackingCard(

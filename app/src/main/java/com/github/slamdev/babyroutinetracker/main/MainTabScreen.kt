@@ -1,6 +1,8 @@
 package com.github.slamdev.babyroutinetracker.main
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.*
@@ -10,6 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.slamdev.babyroutinetracker.auth.AuthenticationViewModel
 import com.github.slamdev.babyroutinetracker.dashboard.DashboardContent
@@ -18,6 +22,7 @@ import com.github.slamdev.babyroutinetracker.datavisualization.DataVisualization
 import com.github.slamdev.babyroutinetracker.sleepplans.AISleepPlansScreen
 import com.github.slamdev.babyroutinetracker.invitation.InvitationViewModel
 import com.github.slamdev.babyroutinetracker.ui.components.ProfileIcon
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,13 +46,47 @@ fun MainTabScreen(
     // Get the selected baby from the invitation state
     val selectedBaby = invitationState.babies.find { it.id == invitationState.selectedBabyId }
     
+    // symbol + accessible label
+    val pageSymbols: List<Pair<String, String>> = listOf(
+        "🏠" to "Dashboard",
+        "📜" to "History",
+        "📊" to "Charts",
+        "🤖" to "AI Plans"
+    )
+    val scope = rememberCoroutineScope()
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { 
-                    Text(
-                        text = selectedBaby?.name ?: "Baby Routine Tracker"
-                    )
+                title = {
+                    // Baby name + top navigation chips in one row
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = selectedBaby?.name ?: "Baby Routine Tracker",
+                            style = MaterialTheme.typography.titleLarge,
+                            modifier = Modifier.padding(end = 12.dp)
+                        )
+                        Row(
+                            modifier = Modifier
+                                .horizontalScroll(rememberScrollState()),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                pageSymbols.forEachIndexed { index, (symbol, desc) ->
+                                val selected = pagerState.currentPage == index
+                                NavIconChip(
+                    symbol = symbol,
+                    contentDescription = desc,
+                                    selected = selected,
+                                    onClick = { scope.launch { pagerState.animateScrollToPage(index) } }
+                                )
+                            }
+                        }
+                    }
                 },
                 actions = {
                     ProfileIcon(
@@ -119,51 +158,25 @@ fun MainTabScreen(
                 }
             }
             
-            // Page indicators with labels
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                val pageLabels = listOf("Dashboard", "History", "Charts", "AI Plans")
-                repeat(4) { index ->
-                    val isSelected = pagerState.currentPage == index
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(if (isSelected) 12.dp else 8.dp)
-                        ) {
-                            Card(
-                                colors = CardDefaults.cardColors(
-                                    containerColor = if (isSelected) 
-                                        MaterialTheme.colorScheme.primary 
-                                    else 
-                                        MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
-                                ),
-                                modifier = Modifier.fillMaxSize()
-                            ) {}
-                        }
-                        
-                        Spacer(modifier = Modifier.height(4.dp))
-                        
-                        Text(
-                            text = pageLabels[index],
-                            fontSize = 10.sp,
-                            color = if (isSelected) 
-                                MaterialTheme.colorScheme.primary 
-                            else 
-                                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-                        )
-                    }
-                }
-            }
+            // Bottom indicators removed; navigation moved to top bar
         }
     }
+}
+
+@Composable
+private fun NavIconChip(
+    symbol: String,
+    contentDescription: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    FilterChip(
+        selected = selected,
+        onClick = onClick,
+        label = { Text(symbol) },
+        modifier = modifier.semantics { this.contentDescription = contentDescription }
+    )
 }
 
 @Composable
