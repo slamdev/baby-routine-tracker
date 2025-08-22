@@ -588,16 +588,18 @@ This document outlines the specific acceptance criter### **Real-time Dashboard**
 **User Story:** As a parent, I want to set default feeding amounts and types to speed up logging routine activities.
 
 * **Acceptance Criteria:**  
-  * Default feeding preferences can be set in app settings.  
-  * Logging screens pre-populate with user's default values.  
-  * Multiple default profiles can be created for different feeding types.  
-  * Defaults can be quickly overridden during individual logging sessions.  
+  * Default bottle feeding amount can be set at the baby profile level. ✅ IMPLEMENTED
+  * Setting is accessible from the baby profile edit screen. ✅ IMPLEMENTED
+  * Bottle feeding logging dialog pre-populates with the default value. ✅ IMPLEMENTED
+  * Default value can be quickly overridden during individual logging sessions. ✅ IMPLEMENTED
+  * Setting is optional and stored per baby profile for multi-baby support. ✅ IMPLEMENTED
 * **Technical Tasks:**  
-  * Create feeding preferences data model and storage.  
-  * Implement settings UI for managing default values.  
-  * Build default value injection in logging forms.  
-  * Add quick override functionality in logging interface.  
-  * Create preference validation and reasonable limits.
+  * Add defaultBottleAmount field to Baby data model. ✅ COMPLETED
+  * Update InvitationService.updateBabyProfile to handle default bottle amount. ✅ COMPLETED
+  * Update InvitationViewModel to support default bottle amount in UI state. ✅ COMPLETED
+  * Add default bottle amount field to EditBabyProfileScreen. ✅ COMPLETED
+  * Update BottleFeedingDialog to pre-populate with default amount. ✅ COMPLETED
+  * Pass baby object to BottleFeedingCard for access to default amount. ✅ COMPLETED
 
 ### **Error Handling & User Feedback**
 

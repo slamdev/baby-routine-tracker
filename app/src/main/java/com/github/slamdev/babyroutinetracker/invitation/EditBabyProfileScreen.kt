@@ -264,6 +264,35 @@ fun EditBabyProfileScreen(
                             }
                         )
                     }
+
+                    // Default bottle amount input
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Feeding Preferences",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    
+                    OutlinedTextField(
+                        value = uiState.defaultBottleAmount,
+                        onValueChange = { viewModel.updateDefaultBottleAmount(it) },
+                        label = { Text("Default Bottle Amount (ml)") },
+                        placeholder = { Text("e.g., 120") },
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = !uiState.isLoading,
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number
+                        ),
+                        singleLine = true,
+                        supportingText = { 
+                            Text(
+                                text = "This amount will be pre-filled when logging bottle feedings (optional)",
+                                fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    )
                 }
             }
 
@@ -289,7 +318,8 @@ fun EditBabyProfileScreen(
                             baby.id,
                             uiState.babyName, 
                             uiState.babyBirthDate,
-                            if (includeDueDate) uiState.babyDueDate else null
+                            if (includeDueDate) uiState.babyDueDate else null,
+                            uiState.defaultBottleAmount.toDoubleOrNull()
                         )
                     },
                     enabled = !uiState.isLoading && uiState.babyName.isNotBlank(),

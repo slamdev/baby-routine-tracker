@@ -185,6 +185,7 @@ fun DashboardContent(
                     item {
                         BottleFeedingCard(
                             babyId = baby.id,
+                            baby = baby,
                             modifier = Modifier.height(cardHeight)
                         )
                     }

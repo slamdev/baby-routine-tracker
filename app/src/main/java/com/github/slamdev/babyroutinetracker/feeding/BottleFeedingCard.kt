@@ -14,6 +14,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.github.slamdev.babyroutinetracker.model.Baby
 import com.github.slamdev.babyroutinetracker.ui.components.*
 import com.github.slamdev.babyroutinetracker.ui.components.formatters.TimeUtils
 import com.github.slamdev.babyroutinetracker.ui.components.helpers.bottleFeedingActivityConfig
@@ -26,6 +27,7 @@ import java.util.*
 @Composable
 fun BottleFeedingCard(
     babyId: String,
+    baby: Baby? = null,
     modifier: Modifier = Modifier,
     viewModel: FeedingTrackingViewModel = viewModel(
         factory = FeedingTrackingViewModelFactory(LocalContext.current)
@@ -93,6 +95,7 @@ fun BottleFeedingCard(
 
     if (showBottleDialog) {
         BottleFeedingDialog(
+            defaultAmount = baby?.defaultBottleAmount,
             onDismiss = { showBottleDialog = false },
             onConfirm = { amount, notes ->
                 viewModel.logBottleFeeding(amount, notes)
@@ -116,10 +119,17 @@ fun BottleFeedingCard(
 
 @Composable
 private fun BottleFeedingDialog(
+    defaultAmount: Double? = null,
     onDismiss: () -> Unit,
     onConfirm: (amount: Double, notes: String) -> Unit
 ) {
-    var amount by remember { mutableStateOf("") }
+    var amount by remember { 
+        mutableStateOf(
+            defaultAmount?.let { 
+                if (it % 1.0 == 0.0) it.toInt().toString() else it.toString() 
+            } ?: ""
+        ) 
+    }
     var notes by remember { mutableStateOf("") }
     AlertDialog(
         onDismissRequest = onDismiss,

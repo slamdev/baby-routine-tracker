@@ -985,19 +985,20 @@ class MyViewModel : ViewModel() {
 
 ## 🍼 Baby Profile Management Implementation
 
-### Enhanced Baby Model with Due Date Support
+### Enhanced Baby Model with Due Date & Default Bottle Amount Support
 
-The Baby model has been enhanced to support both regular babies and premature babies with sophisticated age calculations:
+The Baby model has been enhanced to support both regular babies and premature babies with sophisticated age calculations, plus default feeding preferences:
 
 ```kotlin
 data class Baby(
     val id: String = "",
     val name: String = "",
     val birthDate: Timestamp = Timestamp.now(),
-    val dueDate: Timestamp? = null,  // NEW: Optional due date for premature babies
+    val dueDate: Timestamp? = null,  // Optional due date for premature babies
     val parentIds: List<String> = emptyList(),
     val createdAt: Timestamp = Timestamp.now(),
-    val updatedAt: Timestamp = Timestamp.now()
+    val updatedAt: Timestamp = Timestamp.now(),
+    val defaultBottleAmount: Double? = null  // NEW: Default bottle feeding amount in ml
 ) {
     @Exclude
     fun getRealAge(): AgeInfo {
@@ -1070,14 +1071,61 @@ document.toObject<Baby>()?.copy(id = document.id)
 // Create baby with due date support
 suspend fun createBabyProfile(name: String, birthDate: Timestamp, dueDate: Timestamp? = null): Result<Baby>
 
-// Update baby with due date support  
-suspend fun updateBabyProfile(babyId: String, name: String, birthDate: Timestamp, dueDate: Timestamp? = null): Result<Baby>
+// Update baby with due date and default bottle amount support  
+suspend fun updateBabyProfile(
+    babyId: String, 
+    name: String, 
+    birthDate: Timestamp, 
+    dueDate: Timestamp? = null,
+    defaultBottleAmount: Double? = null
+): Result<Baby>
 
 // Load baby for editing
 suspend fun getBabyProfile(babyId: String): Baby?
 
 // Real-time babies flow with proper ID mapping
 fun getUserBabiesFlow(): Flow<Result<List<Baby>>>
+```
+
+### Default Bottle Amount Feature
+
+The app now supports setting a default bottle feeding amount at the baby profile level:
+
+#### Implementation Details
+- **Storage**: Default amount stored as `defaultBottleAmount: Double?` in Baby model
+- **Access**: Configurable from EditBabyProfileScreen with dedicated "Feeding Preferences" section
+- **Usage**: BottleFeedingDialog pre-populates with default amount when available
+- **Override**: Users can easily change the amount during individual logging sessions
+
+#### UI Integration
+```kotlin
+// Baby profile editing includes default amount
+OutlinedTextField(
+    value = uiState.defaultBottleAmount,
+    onValueChange = { viewModel.updateDefaultBottleAmount(it) },
+    label = { Text("Default Bottle Amount (ml)") },
+    placeholder = { Text("e.g., 120") },
+    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+)
+
+// Bottle feeding dialog uses default amount
+BottleFeedingDialog(
+    defaultAmount = baby?.defaultBottleAmount,
+    onConfirm = { amount, notes -> /* ... */ }
+)
+```
+
+#### ViewModel Support
+```kotlin
+// UI state includes default bottle amount
+data class InvitationUiState(
+    // ... other fields
+    val defaultBottleAmount: String = ""
+)
+
+// Update methods
+fun updateDefaultBottleAmount(amount: String)
+fun updateBabyProfile(babyId: String, name: String, birthDate: Timestamp, dueDate: Timestamp? = null, defaultBottleAmount: Double? = null)
 ```
 
 ### Navigation & UI Implementation

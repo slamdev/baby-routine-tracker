@@ -23,6 +23,7 @@ data class InvitationUiState(
     val babyName: String = "",
     val babyBirthDate: Timestamp = Timestamp.now(),
     val babyDueDate: Timestamp? = null,
+    val defaultBottleAmount: String = "",
     val selectedBabyId: String = "",
     val editingBaby: Baby? = null
 )
@@ -202,6 +203,13 @@ class InvitationViewModel : ViewModel() {
     }
 
     /**
+     * Update default bottle amount in UI state
+     */
+    fun updateDefaultBottleAmount(amount: String) {
+        _uiState.value = _uiState.value.copy(defaultBottleAmount = amount)
+    }
+
+    /**
      * Start editing a baby profile
      */
     fun startEditingBaby(baby: Baby) {
@@ -210,6 +218,7 @@ class InvitationViewModel : ViewModel() {
             babyName = baby.name,
             babyBirthDate = baby.birthDate,
             babyDueDate = baby.dueDate,
+            defaultBottleAmount = baby.defaultBottleAmount?.toString() ?: "",
             errorMessage = null,
             successMessage = null
         )
@@ -250,7 +259,13 @@ class InvitationViewModel : ViewModel() {
     /**
      * Update an existing baby profile
      */
-    fun updateBabyProfile(babyId: String, name: String, birthDate: Timestamp, dueDate: Timestamp? = null) {
+    fun updateBabyProfile(
+        babyId: String, 
+        name: String, 
+        birthDate: Timestamp, 
+        dueDate: Timestamp? = null,
+        defaultBottleAmount: Double? = null
+    ) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(
                 isLoading = true,
@@ -258,7 +273,7 @@ class InvitationViewModel : ViewModel() {
                 successMessage = null
             )
             
-            invitationService.updateBabyProfile(babyId, name, birthDate, dueDate)
+            invitationService.updateBabyProfile(babyId, name, birthDate, dueDate, defaultBottleAmount)
                 .onSuccess { baby ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,

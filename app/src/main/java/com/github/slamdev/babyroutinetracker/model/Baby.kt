@@ -12,7 +12,8 @@ data class Baby(
     val dueDate: Timestamp? = null,
     val parentIds: List<String> = emptyList(),
     val createdAt: Timestamp = Timestamp.now(),
-    val updatedAt: Timestamp = Timestamp.now()
+    val updatedAt: Timestamp = Timestamp.now(),
+    val defaultBottleAmount: Double? = null
 ) {
     /**
      * Calculate real age from birth date

@@ -68,7 +68,13 @@ class InvitationService {
     /**
      * Update an existing baby profile
      */
-    suspend fun updateBabyProfile(babyId: String, name: String, birthDate: Timestamp, dueDate: Timestamp? = null): Result<Baby> {
+    suspend fun updateBabyProfile(
+        babyId: String, 
+        name: String, 
+        birthDate: Timestamp, 
+        dueDate: Timestamp? = null,
+        defaultBottleAmount: Double? = null
+    ): Result<Baby> {
         return try {
             val currentUser = auth.currentUser
                 ?: return Result.failure(Exception("User not authenticated"))
@@ -85,6 +91,7 @@ class InvitationService {
                 name = name,
                 birthDate = birthDate,
                 dueDate = dueDate,
+                defaultBottleAmount = defaultBottleAmount,
                 updatedAt = Timestamp.now()
             )
 
