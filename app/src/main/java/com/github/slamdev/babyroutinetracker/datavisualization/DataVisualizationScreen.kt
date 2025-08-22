@@ -1,6 +1,8 @@
 package com.github.slamdev.babyroutinetracker.datavisualization
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -9,71 +11,239 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.github.slamdev.babyroutinetracker.datavisualization.components.DateRangeSelector
+import com.github.slamdev.babyroutinetracker.datavisualization.components.FeedingChart
+import com.github.slamdev.babyroutinetracker.datavisualization.components.SleepChart
+import com.github.slamdev.babyroutinetracker.datavisualization.components.DiaperChart
+import com.github.slamdev.babyroutinetracker.ui.components.ErrorStateComponent
 
 @Composable
 fun DataVisualizationScreen(
     babyId: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: DataVisualizationViewModel = viewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+    
+    // Initialize data loading when screen is first displayed
+    LaunchedEffect(babyId) {
+        viewModel.initialize(babyId)
+    }
+    
     // Responsive layout that adapts to screen orientation
     BoxWithConstraints(
         modifier = modifier.fillMaxSize()
     ) {
         val isLandscape = maxWidth > maxHeight
-        val padding = if (isLandscape) 32.dp else 24.dp
+        val padding = if (isLandscape) 16.dp else 24.dp
         
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+                .padding(padding)
+                .verticalScroll(rememberScrollState())
         ) {
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                ),
-                modifier = Modifier.then(
-                    if (isLandscape) Modifier.fillMaxWidth(0.8f) else Modifier
+            // Header
+            Text(
+                text = "📊 Data Visualization",
+                fontSize = if (isLandscape) 20.sp else 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+            
+            // Error handling
+            val errorMessage = uiState.errorMessage
+            if (errorMessage != null) {
+                ErrorStateComponent(
+                    errorMessage = errorMessage,
+                    onRetry = { viewModel.retryLoading(babyId) },
+                    onDismiss = { viewModel.clearError() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
                 )
-            ) {
-                Column(
-                    modifier = Modifier.padding(if (isLandscape) 24.dp else 32.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+            }
+            
+            // Loading state
+            if (uiState.isLoading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = "📊",
-                        fontSize = if (isLandscape) 40.sp else 48.sp
-                    )
-                    
-                    Spacer(modifier = Modifier.height(if (isLandscape) 12.dp else 16.dp))
-                    
-                    Text(
-                        text = "Data Visualization",
-                        fontSize = if (isLandscape) 20.sp else 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    
-                    Spacer(modifier = Modifier.height(8.dp))
-                    
-                    Text(
-                        text = "Coming Soon",
-                        fontSize = 16.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                        textAlign = TextAlign.Center
-                    )
-                    
-                    Spacer(modifier = Modifier.height(12.dp))
-                    
-                    Text(
-                        text = "Charts and graphs to visualize your baby's activity patterns and trends over time.",
-                        fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                        textAlign = TextAlign.Center,
-                        lineHeight = 20.sp
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(32.dp)
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Loading data...",
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        )
+                    }
+                }
+            } else {
+                // Date range selector
+                DateRangeSelector(
+                    selectedRange = uiState.selectedDateRange,
+                    onRangeSelected = { range ->
+                        viewModel.onDateRangeChanged(babyId, range)
+                    },
+                    modifier = Modifier.padding(bottom = 24.dp)
+                )
+                
+                // Sleep chart
+                SleepChart(
+                    data = uiState.sleepData,
+                    modifier = Modifier.padding(bottom = 24.dp)
+                )
+                
+                // Feeding chart
+                FeedingChart(
+                    data = uiState.feedingData,
+                    modifier = Modifier.padding(bottom = 24.dp)
+                )
+                
+                // Diaper chart
+                DiaperChart(
+                    data = uiState.diaperData,
+                    modifier = Modifier.padding(bottom = 24.dp)
+                )
+                
+                // Summary statistics
+                if (uiState.sleepData.isNotEmpty() || uiState.feedingData.isNotEmpty() || uiState.diaperData.isNotEmpty()) {
+                    DataSummaryCard(
+                        sleepData = uiState.sleepData,
+                        feedingData = uiState.feedingData,
+                        diaperData = uiState.diaperData,
+                        dateRange = uiState.selectedDateRange,
+                        modifier = Modifier.padding(bottom = 16.dp)
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun DataSummaryCard(
+    sleepData: List<DailySleepData>,
+    feedingData: List<DailyFeedingData>,
+    diaperData: List<DailyDiaperData>,
+    dateRange: DateRange,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(
+                text = "📈 Summary (${dateRange.displayName})",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = 12.dp)
+            )
+            
+            // Sleep summary
+            if (sleepData.isNotEmpty()) {
+                val avgSleepHours = sleepData.map { it.totalHours }.average()
+                val totalSleepSessions = sleepData.sumOf { it.sleepSessions }
+                val maxSleepDay = sleepData.maxByOrNull { it.totalHours }
+                
+                SummaryRow(
+                    icon = "😴",
+                    title = "Sleep",
+                    stats = listOf(
+                        "Avg: ${String.format("%.1f", avgSleepHours)}h/day",
+                        "Sessions: $totalSleepSessions",
+                        "Best day: ${String.format("%.1f", maxSleepDay?.totalHours ?: 0f)}h"
+                    )
+                )
+                
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+            
+            // Feeding summary
+            if (feedingData.isNotEmpty()) {
+                val avgFeedings = feedingData.map { it.totalFeedings }.average()
+                val totalBreastFeedings = feedingData.sumOf { it.breastFeedings }
+                val totalBottleFeedings = feedingData.sumOf { it.bottleFeedings }
+                
+                SummaryRow(
+                    icon = "🍼",
+                    title = "Feeding",
+                    stats = listOf(
+                        "Avg: ${String.format("%.1f", avgFeedings)}/day",
+                        "Breast: $totalBreastFeedings",
+                        "Bottle: $totalBottleFeedings"
+                    )
+                )
+                
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+            
+            // Poop summary
+            if (diaperData.isNotEmpty()) {
+                val avgPoops = diaperData.map { it.poopDiapers }.average()
+                val totalPoopDiapers = diaperData.sumOf { it.poopDiapers }
+                
+                SummaryRow(
+                    icon = "💩",
+                    title = "Poops",
+                    stats = listOf(
+                        "Total: $totalPoopDiapers poops",
+                        "Avg: ${String.format("%.1f", avgPoops)}/day"
+                    )
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SummaryRow(
+    icon: String,
+    title: String,
+    stats: List<String>,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.Top
+    ) {
+        Text(
+            text = icon,
+            fontSize = 20.sp,
+            modifier = Modifier.padding(end = 8.dp)
+        )
+        
+        Column {
+            Text(
+                text = title,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            
+            stats.forEach { stat ->
+                Text(
+                    text = "• $stat",
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
+                )
             }
         }
     }

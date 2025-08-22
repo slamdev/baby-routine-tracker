@@ -352,37 +352,64 @@ This document outlines the specific acceptance criter### **Real-time Dashboard**
 **User Story:** As a parent, I want to view a chart showing the total hours my baby slept each day over the last week so I can spot trends.
 
 * **Acceptance Criteria:**  
-  * A "History" or "Charts" screen displays a bar chart for sleep.  
-  * The chart's horizontal axis is labeled with the last 7 days.  
-  * The vertical axis is labeled with hours.  
-  * The height of each bar accurately represents the total sleep duration for that day.  
+  * A "History" or "Charts" screen displays a bar chart for sleep. ✅ IMPLEMENTED
+  * The chart's horizontal axis is labeled with the last 7 days. ✅ IMPLEMENTED
+  * The vertical axis is labeled with hours. ✅ IMPLEMENTED
+  * The height of each bar accurately represents the total sleep duration for that day. ✅ IMPLEMENTED
+  * Users can filter data by different date ranges (Last Week, Last 2 Weeks, Last Month). ✅ IMPLEMENTED
+  * Chart includes summary statistics showing average sleep hours and total sleep sessions. ✅ IMPLEMENTED
 * **Technical Tasks:**  
-  * Integrate a third-party charting library compatible with Jetpack Compose (e.g., MPAndroidChart).  
-  * Write a query to fetch all sleep events within the last 7 days.  
-  * Implement logic to process the data, aggregating total sleep duration per day.  
-  * Configure the chart component to display the aggregated data.
+  * Integrate a third-party charting library compatible with Jetpack Compose (e.g., MPAndroidChart). ✅ COMPLETED
+  * Write a query to fetch all sleep events within the last 7 days. ✅ COMPLETED
+  * Implement logic to process the data, aggregating total sleep duration per day. ✅ COMPLETED
+  * Configure the chart component to display the aggregated data. ✅ COMPLETED
+  * Create DataVisualizationViewModel for managing chart data and state. ✅ COMPLETED
+  * Implement getActivitiesInDateRange service method for flexible date filtering. ✅ COMPLETED
+  * Build responsive chart UI components with proper error handling and loading states. ✅ COMPLETED
+  * Add date range selector with Last Week, Last 2 Weeks, and Last Month options. ✅ COMPLETED
 
 **User Story:** As a parent, I want to see a graph of how many feedings my baby has had each day to ensure they are eating consistently.
 
 * **Acceptance Criteria:**  
-  * The "History" screen also contains a chart for feedings.  
-  * The chart displays the total number of feeding sessions for each of the last 7 days.  
-  * The chart is clearly titled and labeled.  
+  * The "History" screen also contains a chart for feedings. ✅ IMPLEMENTED
+  * The chart displays the total number of feeding sessions for each of the last 7 days. ✅ IMPLEMENTED
+  * The chart is clearly titled and labeled. ✅ IMPLEMENTED
+  * Chart distinguishes between breast feedings and bottle feedings with different colors. ✅ IMPLEMENTED
+  * Chart includes summary statistics showing total feedings and average per day. ✅ IMPLEMENTED
 * **Technical Tasks:**  
-  * Write a query to fetch all feeding events within the last 7 days.  
-  * Implement logic to process the data by counting the number of events per day.  
-  * Configure a second chart component to display this data.
+  * Write a query to fetch all feeding events within the last 7 days. ✅ COMPLETED
+  * Implement logic to process the data by counting the number of events per day. ✅ COMPLETED
+  * Configure a second chart component to display this data. ✅ COMPLETED
+  * Separate breast feeding and bottle feeding data in the chart visualization. ✅ COMPLETED
+
+**User Story:** As a parent, I want to see a graph of how many diaper changes my baby has had each day to track their bathroom habits and health.
+
+* **Acceptance Criteria:**  
+  * The "Charts" screen contains a chart for diaper changes. ✅ IMPLEMENTED
+  * The chart displays the total number of diaper changes for each day in the selected time period. ✅ IMPLEMENTED
+  * The chart distinguishes between poop diapers and wet diapers with different colors. ✅ IMPLEMENTED
+  * The chart includes summary statistics showing total diapers and average per day. ✅ IMPLEMENTED
+  * Chart uses theme colors for consistency with the rest of the app. ✅ IMPLEMENTED
+* **Technical Tasks:**  
+  * Write a query to fetch all diaper events within the selected date range. ✅ COMPLETED
+  * Implement logic to process the data by counting poop vs wet diapers per day. ✅ COMPLETED
+  * Configure a third chart component to display diaper data. ✅ COMPLETED
+  * Create DailyDiaperData model and processing logic in DataVisualizationViewModel. ✅ COMPLETED
+  * Add DiaperChart component using MPAndroidChart with theme colors. ✅ COMPLETED
+  * Include diaper statistics in the summary card. ✅ COMPLETED
 
 **User Story:** As a parent, I want to be able to filter the historical data by a specific date range (e.g., this week, last month).
 
 * **Acceptance Criteria:**  
-  * The "History" screen provides UI controls (e.g., buttons, a calendar icon) to select a date range.  
-  * The user can choose from predefined ranges or select a custom start and end date.  
-  * Changing the date range updates all charts on the screen to reflect the data from the selected period.  
+  * The "History" screen provides UI controls (e.g., buttons, a calendar icon) to select a date range. ✅ IMPLEMENTED
+  * The user can choose from predefined ranges or select a custom start and end date. ✅ IMPLEMENTED (predefined ranges)
+  * Changing the date range updates all charts on the screen to reflect the data from the selected period. ✅ IMPLEMENTED
+  * Available ranges include Last Week, Last 2 Weeks, and Last Month. ✅ IMPLEMENTED
 * **Technical Tasks:**  
-  * Implement a date range picker component.  
-  * Modify the Firestore queries to be dynamic, accepting start and end dates as parameters.  
-  * Update the ViewModel to refetch and re-process data whenever the selected date range changes.
+  * Implement a date range picker component. ✅ COMPLETED
+  * Modify the Firestore queries to be dynamic, accepting start and end dates as parameters. ✅ COMPLETED
+  * Update the ViewModel to refetch and re-process data whenever the selected date range changes. ✅ COMPLETED
+  * Create DateRangeSelector component with predefined range options. ✅ COMPLETED
 
 **User Story:** As a parent, I should be able to adjust start and stop time of the activities during and after logging them in case I forgot to press start or stop buttons.
 

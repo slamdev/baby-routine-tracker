@@ -166,7 +166,17 @@ class ActivityService {
 
             querySnapshot.documents.firstOrNull()?.toObject<Activity>()
         } catch (e: Exception) {
-            Log.e(TAG, "Error getting ongoing activity for baby: $babyId", e)
+            when {
+                e.message?.contains("index") == true -> {
+                    Log.e(TAG, "Index error getting ongoing activity for baby: $babyId. Index needs to be created in Firebase Console.", e)
+                }
+                e.message?.contains("PERMISSION_DENIED") == true -> {
+                    Log.e(TAG, "Permission denied getting ongoing activity for baby: $babyId", e)
+                }
+                else -> {
+                    Log.e(TAG, "Error getting ongoing activity for baby: $babyId", e)
+                }
+            }
             null
         }
     }
@@ -831,6 +841,63 @@ class ActivityService {
             Result.success(activities)
         } catch (e: Exception) {
             Log.e(TAG, "Failed to get recent activities for baby: $babyId", e)
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Get activities within a specific date range for data visualization
+     */
+    suspend fun getActivitiesInDateRange(
+        babyId: String,
+        startDate: Timestamp,
+        endDate: Timestamp,
+        activityType: ActivityType? = null
+    ): Result<List<Activity>> {
+        return try {
+            val currentUser = auth.currentUser
+            if (currentUser == null) {
+                val error = Exception("User not authenticated")
+                Log.e(TAG, "Failed to get activities in date range - user not authenticated", error)
+                return Result.failure(error)
+            }
+
+            // Verify user has access to this baby
+            if (!hasAccessToBaby(babyId)) {
+                val error = Exception("No access to baby profile")
+                Log.e(TAG, "Failed to get activities in date range - no access to baby: $babyId", error)
+                return Result.failure(error)
+            }
+
+            var query = firestore.collection(BABIES_COLLECTION)
+                .document(babyId)
+                .collection(ACTIVITIES_SUBCOLLECTION)
+                .whereGreaterThanOrEqualTo("startTime", startDate)
+                .whereLessThanOrEqualTo("startTime", endDate)
+
+            // Filter by activity type if specified
+            if (activityType != null) {
+                query = query.whereEqualTo("type", activityType.name)
+            }
+
+            val querySnapshot = query
+                .orderBy("startTime", Query.Direction.ASCENDING)
+                .get()
+                .await()
+
+            val activities = querySnapshot.documents.mapNotNull { document ->
+                try {
+                    document.toObject<Activity>()
+                } catch (e: Exception) {
+                    Log.w(TAG, "Failed to parse activity document: ${document.id}", e)
+                    null
+                }
+            }
+
+            Log.i(TAG, "Retrieved ${activities.size} activities in date range for baby: $babyId")
+            Result.success(activities)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to get activities in date range for baby: $babyId", e)
             Result.failure(e)
         }
     }

@@ -17,40 +17,84 @@ This index supports queries that:
 - Filter by completed activities (whereNotEqualTo("endTime", null))
 - Order by end time descending (orderBy("endTime", Query.Direction.DESCENDING))
 
+Collection Group: activities  
+Index 2: For getOngoingActivity and getOngoingActivityFlow queries
+- Field: endTime (Ascending)
+- Field: type (Ascending)
+- Field: startTime (Ascending)
+- Field: __name__ (Ascending)
+
+This index supports queries that:
+- Filter by ongoing activities (whereEqualTo("endTime", null))
+- Filter by activity type (whereEqualTo("type", type.name))
+- Order by start time descending (orderBy("startTime", Query.Direction.DESCENDING))
+
+Collection Group: activities
+Index 3: For getActivitiesInDateRange queries (Data Visualization)
+- Field: type (Ascending)
+- Field: startTime (Ascending)
+- Field: __name__ (Ascending)
+
+This index supports queries that:
+- Filter by activity type (whereEqualTo("type", activityType.name))
+- Filter by date range (whereGreaterThanOrEqualTo("startTime", startDate) and whereLessThanOrEqualTo("startTime", endDate))
+- Order by start time ascending (orderBy("startTime", Query.Direction.ASCENDING))
+
 Instructions for creating indexes:
 ==================================
 
-Option 1: Use the provided error URL
+URGENT: Current Error Resolution
+For the immediate error, click this URL to create the required index:
+https://console.firebase.google.com/v1/r/project/slamdev-baby-routine-tracker/firestore/indexes?create_composite=Cl9wcm9qZWN0cy9zbGFtZGV2LWJhYnktcm91dGluZS10cmFja2VyL2RhdGFiYXNlcy8oZGVmYXVsdCkvY29sbGVjdGlvbkdyb3Vwcy9hY3Rpdml0aWVzL2luZGV4ZXMvXxABGgsKB2VuZFRpbWUQARoICgR0eXBlEAEaDQoJc3RhcnRUaW1lEAIaDAoIX19uYW1lX18QAg
+
+Option 1: Use the provided error URL (FASTEST)
 1. Click the URL from the error message in the logs
 2. This will automatically create the index with the correct configuration
 
 Option 2: Manual creation in Firebase Console
 1. Open Firebase Console (https://console.firebase.google.com/)
-2. Navigate to your Baby Routine Tracker project
+2. Navigate to your Baby Routine Tracker project  
 3. Go to Firestore Database > Indexes
 4. Click "Add Index"
 5. Set Collection Group ID: activities
-6. Add fields in this exact order:
-   - type: Ascending
+6. For Index 2 (ongoing activities), add fields in this exact order:
    - endTime: Ascending
+   - type: Ascending  
+   - startTime: Ascending
    - __name__: Ascending
 7. Click "Create"
+
+Additional Indexes to Create:
+Create Index 1 and Index 3 using the same manual process with their respective field configurations.
 
 Note: Index creation can take several minutes to complete. The app will work normally once the index is built.
 
 Current Query Patterns:
 ======================
 
-1. Get ongoing activities:
+1. Get ongoing activities (getOngoingActivity/getOngoingActivityFlow):
    - whereEqualTo("type", type.name)
    - whereEqualTo("endTime", null)
-   ✅ No index needed (simple equality filters)
+   - orderBy("startTime", Query.Direction.DESCENDING)
+   ❌ Requires composite index (Index 2) - THIS IS THE FAILING QUERY
 
-2. Get last completed activity:
+2. Get last completed activity (getLastActivityFlow/getLastActivity):
    - whereEqualTo("type", type.name) 
    - whereNotEqualTo("endTime", null)
    - orderBy("endTime", Query.Direction.DESCENDING)
-   ❌ Requires composite index (this is the failing query)
+   ❌ Requires composite index (Index 1)
+
+3. Get activities in date range (getActivitiesInDateRange - Data Visualization):
+   - whereEqualTo("type", activityType.name) [optional]
+   - whereGreaterThanOrEqualTo("startTime", startDate)
+   - whereLessThanOrEqualTo("startTime", endDate) 
+   - orderBy("startTime", Query.Direction.ASCENDING)
+   ❌ Requires composite index (Index 3)
+
+4. Get recent activities (getRecentActivities):
+   - orderBy("startTime", Query.Direction.DESCENDING)
+   - limit(limit)
+   ✅ No index needed (simple ordering with limit)
 
 Performance Considerations:
 ==========================

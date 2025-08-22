@@ -63,6 +63,9 @@ dependencies {
     // Image Loading
     implementation libs.coil.compose
     
+    // Charts
+    implementation libs.mp.android.chart
+    
     // Testing
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit
