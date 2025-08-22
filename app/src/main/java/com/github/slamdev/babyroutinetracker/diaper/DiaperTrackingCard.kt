@@ -12,13 +12,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.github.slamdev.babyroutinetracker.ui.components.ActivityCard
-import com.github.slamdev.babyroutinetracker.ui.components.ActivityCardState
-import com.github.slamdev.babyroutinetracker.ui.components.diaperActivityConfig
-import com.github.slamdev.babyroutinetracker.ui.components.diaperActivityContent
-import com.github.slamdev.babyroutinetracker.ui.components.EditActivityDialog
-import com.github.slamdev.babyroutinetracker.ui.components.TimeUtils
-import java.text.SimpleDateFormat
+import com.github.slamdev.babyroutinetracker.ui.components.*
+import com.github.slamdev.babyroutinetracker.ui.components.helpers.diaperActivityConfig
+import com.github.slamdev.babyroutinetracker.ui.components.helpers.diaperActivityContent
 import java.util.*
 
 @Composable
@@ -80,18 +76,12 @@ fun DiaperTrackingCard(
         onContentClick = { 
             uiState.lastDiaper?.let { showEditLastActivityDialog = true }
         },
-        onDismissError = { 
-            uiState.lastDiaperError?.let { viewModel.clearLastDiaperError() }
-            uiState.errorMessage?.let { viewModel.clearError() }
-        },
-        onDismissSuccess = {
-            uiState.successMessage?.let { viewModel.clearSuccess() }
-        }
+        onDismissError = { viewModel.clearError() },
+        onDismissSuccess = { viewModel.clearSuccess() }
     )
 
-    // Poop logging dialog
     if (showPoopDialog) {
-        PoopLoggingDialog(
+        PoopDialog(
             onDismiss = { showPoopDialog = false },
             onConfirm = { notes ->
                 viewModel.logPoop(notes)
@@ -99,75 +89,46 @@ fun DiaperTrackingCard(
             }
         )
     }
-    
-    // Edit dialog for last completed diaper activity
-    if (showEditLastActivityDialog) {
-        uiState.lastDiaper?.let { lastDiaper ->
-            EditActivityDialog(
-                activity = lastDiaper,
-                onDismiss = {
-                    showEditLastActivityDialog = false
-                },
-                onSaveTimeChanges = { activity, newStartTime, newEndTime ->
-                    viewModel.updateCompletedActivityTimes(activity, newStartTime, newEndTime)
-                    showEditLastActivityDialog = false
-                },
-                onSaveNotesChanges = { activity, newNotes ->
-                    viewModel.updateCompletedActivityNotes(activity, newNotes)
-                    showEditLastActivityDialog = false
-                },
-                onSaveInstantTimeChange = { activity, newTime ->
-                    viewModel.updateInstantActivityTime(activity, newTime)
-                    showEditLastActivityDialog = false
-                }
-            )
-        }
+
+    val lastDiaperToEdit = uiState.lastDiaper
+    if (showEditLastActivityDialog && lastDiaperToEdit != null) {
+        EditActivityDialog(
+            activity = lastDiaperToEdit,
+            onDismiss = { showEditLastActivityDialog = false },
+            onSave = { activity, newStartTime, newEndTime, newNotes ->
+                viewModel.updateCompletedDiaper(
+                    activity.copy(
+                        startTime = com.google.firebase.Timestamp(newStartTime),
+                        endTime = newEndTime?.let { com.google.firebase.Timestamp(it) },
+                        notes = newNotes ?: ""
+                    )
+                )
+                showEditLastActivityDialog = false
+            }
+        )
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun PoopLoggingDialog(
+private fun PoopDialog(
     onDismiss: () -> Unit,
     onConfirm: (notes: String) -> Unit
 ) {
     var notes by remember { mutableStateOf("") }
-    
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = {
-            Text(
-                text = "💩 Log Poop",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
+        title = { Text("Log Poop") },
+        text = {
+            OutlinedTextField(
+                value = notes,
+                onValueChange = { notes = it },
+                label = { Text("Notes (optional)") },
+                modifier = Modifier.fillMaxWidth()
             )
         },
-        text = {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                Text(
-                    text = "Add any notes about this diaper change (optional):",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium
-                )
-                OutlinedTextField(
-                    value = notes,
-                    onValueChange = { notes = it },
-                    label = { Text("Notes") },
-                    placeholder = { Text("e.g., consistency, color, timing...") },
-                    modifier = Modifier.fillMaxWidth(),
-                    maxLines = 3
-                )
-            }
-        },
         confirmButton = {
-            TextButton(
-                onClick = {
-                    onConfirm(notes)
-                }
-            ) {
-                Text("Log Poop")
+            Button(onClick = { onConfirm(notes) }) {
+                Text("Log")
             }
         },
         dismissButton = {
@@ -176,12 +137,4 @@ private fun PoopLoggingDialog(
             }
         }
     )
-}
-
-/**
- * Format a Date to display time in HH:mm format
- */
-private fun formatTime(date: Date): String {
-    val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
-    return formatter.format(date)
 }

@@ -148,23 +148,61 @@ class ActivityService {
                 return null
             }
 
+            // Verify user has access to this baby
+            if (!hasAccessToBaby(babyId)) {
+                Log.e(TAG, "Failed to get ongoing activity - no access to baby: $babyId")
+                return null
+            }
+
             val querySnapshot = firestore.collection(BABIES_COLLECTION)
                 .document(babyId)
                 .collection(ACTIVITIES_SUBCOLLECTION)
                 .whereEqualTo("type", type.name)
                 .whereEqualTo("endTime", null)
+                .orderBy("startTime", Query.Direction.DESCENDING)
+                .limit(1)
                 .get()
                 .await()
 
-            val ongoingActivities = querySnapshot.documents.mapNotNull { it.toObject<Activity>() }
-            if (ongoingActivities.size > 1) {
-                Log.w(TAG, "Found multiple ongoing ${type.displayName} activities for baby: $babyId")
-            }
-            
-            ongoingActivities.firstOrNull()
+            querySnapshot.documents.firstOrNull()?.toObject<Activity>()
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to get ongoing activity: ${type.displayName} for baby: $babyId", e)
+            Log.e(TAG, "Error getting ongoing activity for baby: $babyId", e)
             null
+        }
+    }
+
+    /**
+     * Update an existing activity
+     */
+    suspend fun updateActivity(babyId: String, activity: Activity): Result<Activity> {
+        return try {
+            val currentUser = auth.currentUser
+            if (currentUser == null) {
+                val error = Exception("User not authenticated")
+                Log.e(TAG, "Failed to update activity - user not authenticated", error)
+                return Result.failure(error)
+            }
+
+            // Verify user has access to this baby
+            if (!hasAccessToBaby(babyId)) {
+                val error = Exception("No access to baby profile")
+                Log.e(TAG, "Failed to update activity - no access to baby: $babyId", error)
+                return Result.failure(error)
+            }
+
+            val activityRef = firestore.collection(BABIES_COLLECTION)
+                .document(babyId)
+                .collection(ACTIVITIES_SUBCOLLECTION)
+                .document(activity.id)
+
+            val updatedActivity = activity.copy(updatedAt = Timestamp.now())
+            activityRef.set(updatedActivity).await()
+
+            Log.i(TAG, "Activity updated successfully: ${activity.id} for baby: $babyId")
+            Result.success(updatedActivity)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to update activity: ${activity.id} for baby: $babyId", e)
+            Result.failure(e)
         }
     }
 

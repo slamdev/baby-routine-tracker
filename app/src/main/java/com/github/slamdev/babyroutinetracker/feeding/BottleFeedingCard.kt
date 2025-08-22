@@ -13,13 +13,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.github.slamdev.babyroutinetracker.ui.components.ActivityCard
-import com.github.slamdev.babyroutinetracker.ui.components.ActivityCardState
-import com.github.slamdev.babyroutinetracker.ui.components.bottleFeedingActivityConfig
-import com.github.slamdev.babyroutinetracker.ui.components.bottleFeedingActivityContent
-import com.github.slamdev.babyroutinetracker.ui.components.EditActivityDialog
-import com.github.slamdev.babyroutinetracker.ui.components.TimeUtils
-import java.text.SimpleDateFormat
+import com.github.slamdev.babyroutinetracker.ui.components.*
+import com.github.slamdev.babyroutinetracker.ui.components.formatters.TimeUtils
+import com.github.slamdev.babyroutinetracker.ui.components.helpers.bottleFeedingActivityConfig
+import com.github.slamdev.babyroutinetracker.ui.components.helpers.bottleFeedingActivityContent
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.foundation.text.KeyboardOptions
 import java.util.*
 
 @Composable
@@ -29,14 +28,14 @@ fun BottleFeedingCard(
     viewModel: FeedingTrackingViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    var showBottleFeedingDialog by remember { mutableStateOf(false) }
+    var showBottleDialog by remember { mutableStateOf(false) }
     var showEditLastActivityDialog by remember { mutableStateOf(false) }
-    
+
     // Initialize the ViewModel for this baby
     LaunchedEffect(babyId) {
         viewModel.initialize(babyId)
     }
-    
+
     // Activity card state
     val cardState = ActivityCardState(
         isLoading = uiState.isLoading,
@@ -46,10 +45,10 @@ fun BottleFeedingCard(
         isLoadingContent = uiState.isLoadingLastFeeding,
         contentError = uiState.lastFeedingError
     )
-    
+
     // Prepare content based on current state
     val lastFeeding = uiState.lastFeeding?.takeIf { it.feedingType == "bottle" }
-    
+
     val cardContent = when {
         lastFeeding != null && lastFeeding.endTime != null -> {
             val amount = lastFeeding.amount.toInt()
@@ -59,7 +58,7 @@ fun BottleFeedingCard(
                     lastFeeding.endTime?.toDate()
                 )
             )
-            
+
             bottleFeedingActivityContent(
                 lastFeeding = lastFeeding,
                 lastFeedingText = "Last fed ${amount}ml",
@@ -71,71 +70,46 @@ fun BottleFeedingCard(
             bottleFeedingActivityContent() // Empty content
         }
     }
-    
+
     ActivityCard(
         config = bottleFeedingActivityConfig(),
         state = cardState,
         content = cardContent,
         modifier = modifier,
-        onPrimaryAction = { showBottleFeedingDialog = true },
-        onContentClick = { 
+        onPrimaryAction = { showBottleDialog = true },
+        onContentClick = {
             // Only show edit dialog for bottle feedings
-            uiState.lastFeeding?.takeIf { 
-                it.feedingType == "bottle" 
+            uiState.lastFeeding?.takeIf {
+                it.feedingType == "bottle"
             }?.let { showEditLastActivityDialog = true }
         },
-        onDismissError = { 
-            uiState.lastFeedingError?.let { viewModel.clearLastFeedingError() }
-            uiState.errorMessage?.let { viewModel.clearError() }
-        },
-        onDismissSuccess = {
-            uiState.successMessage?.let { viewModel.clearSuccessMessage() }
-        }
+        onDismissError = { viewModel.clearError() },
+        onDismissSuccess = { viewModel.clearSuccessMessage() }
     )
-    // Bottle feeding input dialog
-    if (showBottleFeedingDialog) {
+
+    if (showBottleDialog) {
         BottleFeedingDialog(
-            onDismiss = { showBottleFeedingDialog = false },
+            onDismiss = { showBottleDialog = false },
             onConfirm = { amount, notes ->
                 viewModel.logBottleFeeding(amount, notes)
-                showBottleFeedingDialog = false
+                showBottleDialog = false
             }
         )
     }
-    
-    // Edit dialog for last completed feeding activity
-    if (showEditLastActivityDialog) {
-        val lastFeeding = uiState.lastFeeding?.takeIf { it.feedingType == "bottle" }
-        lastFeeding?.let { lastFeedingActivity ->
-            EditActivityDialog(
-                activity = lastFeedingActivity,
-                onDismiss = {
-                    showEditLastActivityDialog = false
-                },
-                onSaveTimeChanges = { activity, newStartTime, newEndTime ->
-                    viewModel.updateCompletedActivityTimes(activity, newStartTime, newEndTime)
-                    showEditLastActivityDialog = false
-                },
-                onSaveNotesChanges = { activity, newNotes ->
-                    viewModel.updateCompletedActivityNotes(activity, newNotes)
-                    showEditLastActivityDialog = false
-                },
-                onSaveInstantTimeChange = { activity, newTime ->
-                    viewModel.updateInstantActivityTime(activity, newTime)
-                    showEditLastActivityDialog = false
-                }
-            )
-        }
+
+    val lastFeedingToEdit = uiState.lastFeeding
+    if (showEditLastActivityDialog && lastFeedingToEdit != null) {
+        EditActivityDialog(
+            activity = lastFeedingToEdit,
+            onDismiss = { showEditLastActivityDialog = false },
+            onSave = { activity, newStartTime, newEndTime, newNotes ->
+                viewModel.updateCompletedFeeding(activity, newStartTime, newEndTime, newNotes)
+                showEditLastActivityDialog = false
+            }
+        )
     }
 }
 
-// Helper function to format time
-private fun formatTime(date: Date): String {
-    val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
-    return formatter.format(date)
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun BottleFeedingDialog(
     onDismiss: () -> Unit,
@@ -143,65 +117,33 @@ private fun BottleFeedingDialog(
 ) {
     var amount by remember { mutableStateOf("") }
     var notes by remember { mutableStateOf("") }
-    var isValidInput by remember { mutableStateOf(true) }
-    
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = {
-            Text(
-                text = "🍼 Log Bottle Feeding",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
-            )
-        },
+        title = { Text("Log Bottle Feeding") },
         text = {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                Text(
-                    text = "Amount (ml)",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium
-                )
+            Column {
                 OutlinedTextField(
                     value = amount,
-                    onValueChange = { 
-                        amount = it
-                        isValidInput = it.isNotBlank() && it.toDoubleOrNull() != null && it.toDoubleOrNull()!! > 0
-                    },
-                    label = { Text("Amount") },
-                    placeholder = { Text("e.g., 120") },
-                    suffix = { Text("ml") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true,
-                    isError = !isValidInput && amount.isNotBlank()
+                    onValueChange = { amount = it },
+                    label = { Text("Amount (ml)") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth()
                 )
-                
-                // Notes (optional)
-                Text(
-                    text = "Notes (optional)",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium
-                )
+                Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
                     value = notes,
                     onValueChange = { notes = it },
-                    label = { Text("Notes") },
-                    placeholder = { Text("Any additional details...") },
-                    modifier = Modifier.fillMaxWidth(),
-                    maxLines = 3
+                    label = { Text("Notes (optional)") },
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
         },
         confirmButton = {
-            TextButton(
-                onClick = {
-                    val amountDouble = amount.toDoubleOrNull() ?: 0.0
-                    onConfirm(amountDouble, notes)
-                },
-                enabled = amount.isNotBlank() && amount.toDoubleOrNull() != null && amount.toDoubleOrNull()!! > 0
+            Button(
+                onClick = { onConfirm(amount.toDoubleOrNull() ?: 0.0, notes) },
+                enabled = amount.toDoubleOrNull() != null
             ) {
-                Text("Log Bottle")
+                Text("Log")
             }
         },
         dismissButton = {

@@ -18,43 +18,41 @@ import java.util.*
 fun EditActivityDialog(
     activity: Activity,
     onDismiss: () -> Unit,
-    onSaveTimeChanges: (Activity, Date, Date) -> Unit,
-    onSaveNotesChanges: (Activity, String) -> Unit,
-    onSaveInstantTimeChange: (Activity, Date) -> Unit = { _, _ -> },
+    onSave: (Activity, Date, Date?, String?) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var showStartTimePicker by remember { mutableStateOf(false) }
     var showEndTimePicker by remember { mutableStateOf(false) }
     var showInstantTimePicker by remember { mutableStateOf(false) }
     var startTime by remember { mutableStateOf(activity.startTime.toDate()) }
-    var endTime by remember { mutableStateOf(activity.endTime?.toDate() ?: Date()) }
+    var endTime by remember { mutableStateOf(activity.endTime?.toDate()) }
     var instantTime by remember { mutableStateOf(activity.startTime.toDate()) }
     var notes by remember { mutableStateOf(activity.notes) }
-    
+
     // Check if this activity type supports notes
     val supportsNotes = activity.type == ActivityType.FEEDING && activity.feedingType == "bottle" ||
-                       activity.type == ActivityType.DIAPER
-    
+            activity.type == ActivityType.DIAPER
+
     // Check if this is an instant activity (bottle feeding or diaper)
     val isInstantActivity = activity.isInstantActivity()
-    
+
     // Validation
     val isValidTimes = if (isInstantActivity) {
         true // Instant activities always valid
     } else {
-        startTime <= endTime // Allow start time to be equal to end time
+        endTime?.let { startTime <= it } ?: true // Allow start time to be equal to end time
     }
-    
+
     val hasTimeChanges = if (isInstantActivity) {
         instantTime != activity.startTime.toDate()
     } else {
-        startTime != activity.startTime.toDate() || 
-        (activity.endTime != null && endTime != activity.endTime.toDate())
+        startTime != activity.startTime.toDate() ||
+                (activity.endTime != null && endTime != activity.endTime?.toDate())
     }
-    
+
     val hasNotesChanges = notes != activity.notes
     val hasChanges = hasTimeChanges || hasNotesChanges
-    
+
     AlertDialog(
         onDismissRequest = onDismiss,
         modifier = modifier,
@@ -73,7 +71,7 @@ fun EditActivityDialog(
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.primary
                     )
-                    
+
                     if (isInstantActivity) {
                         // For instant activities (bottle feeding, diaper), show single time picker
                         OutlinedCard(
@@ -127,7 +125,7 @@ fun EditActivityDialog(
                                 )
                             }
                         }
-                        
+
                         // End time picker
                         OutlinedCard(
                             modifier = Modifier.fillMaxWidth(),
@@ -145,13 +143,13 @@ fun EditActivityDialog(
                                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                                 )
                                 Text(
-                                    text = formatDateTime(endTime),
+                                    text = formatDateTime(endTime ?: Date()),
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Medium
                                 )
                             }
                         }
-                        
+
                         // Validation error
                         if (!isValidTimes) {
                             Text(
@@ -164,20 +162,20 @@ fun EditActivityDialog(
                         }
                     }
                 }
-                
+
                 // Notes editing (only for supported activity types)
                 if (supportsNotes) {
                     if (activity.endTime != null) {
                         Spacer(modifier = Modifier.height(8.dp))
                     }
-                    
+
                     Text(
                         text = "Notes",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.primary
                     )
-                    
+
                     OutlinedTextField(
                         value = notes,
                         onValueChange = { notes = it },
@@ -187,7 +185,7 @@ fun EditActivityDialog(
                         maxLines = 3
                     )
                 }
-                
+
                 // Show message if no editable fields
                 if (activity.endTime == null && !supportsNotes) {
                     Text(
@@ -201,34 +199,13 @@ fun EditActivityDialog(
             }
         },
         confirmButton = {
-            TextButton(
+            Button(
                 onClick = {
-                    // Save changes based on what changed and activity type
-                    when {
-                        hasTimeChanges && hasNotesChanges -> {
-                            if (isInstantActivity) {
-                                // For instant activities, update single timestamp and notes
-                                onSaveInstantTimeChange(activity, instantTime)
-                                onSaveNotesChanges(activity, notes)
-                            } else {
-                                // For duration activities, update start/end times and notes
-                                onSaveTimeChanges(activity, startTime, endTime)
-                                onSaveNotesChanges(activity, notes)
-                            }
-                        }
-                        hasTimeChanges -> {
-                            if (isInstantActivity) {
-                                onSaveInstantTimeChange(activity, instantTime)
-                            } else {
-                                onSaveTimeChanges(activity, startTime, endTime)
-                            }
-                        }
-                        hasNotesChanges -> {
-                            onSaveNotesChanges(activity, notes)
-                        }
-                    }
+                    val finalEndTime = if (isInstantActivity) null else endTime
+                    onSave(activity, if (isInstantActivity) instantTime else startTime, finalEndTime, notes)
+                    onDismiss()
                 },
-                enabled = hasChanges && (activity.endTime == null || isValidTimes)
+                enabled = hasChanges && isValidTimes
             ) {
                 Text("Save")
             }
@@ -239,53 +216,76 @@ fun EditActivityDialog(
             }
         }
     )
-    
-    // Time picker dialogs
+
     if (showStartTimePicker) {
         TimePickerDialog(
-            title = "Select Start Time",
             initialTime = startTime,
-            onTimeSelected = { newTime ->
-                startTime = newTime
+            onDismiss = { showStartTimePicker = false },
+            onConfirm = {
+                startTime = it
                 showStartTimePicker = false
-            },
-            onDismiss = { showStartTimePicker = false }
+            }
         )
     }
-    
+
     if (showEndTimePicker) {
         TimePickerDialog(
-            title = "Select End Time",
-            initialTime = endTime,
-            onTimeSelected = { newTime ->
-                endTime = newTime
+            initialTime = endTime ?: Date(),
+            onDismiss = { showEndTimePicker = false },
+            onConfirm = {
+                endTime = it
                 showEndTimePicker = false
-            },
-            onDismiss = { showEndTimePicker = false }
+            }
         )
     }
-    
+
     if (showInstantTimePicker) {
         TimePickerDialog(
-            title = when (activity.type) {
-                ActivityType.DIAPER -> "Select Diaper Change Time"
-                ActivityType.FEEDING -> "Select Feeding Time"
-                else -> "Select Activity Time"
-            },
             initialTime = instantTime,
-            onTimeSelected = { newTime ->
-                instantTime = newTime
+            onDismiss = { showInstantTimePicker = false },
+            onConfirm = {
+                instantTime = it
                 showInstantTimePicker = false
-            },
-            onDismiss = { showInstantTimePicker = false }
+            }
         )
     }
 }
 
-/**
- * Format a Date to display date and time
- */
+@Composable
+private fun TimePickerDialog(
+    initialTime: Date,
+    onDismiss: () -> Unit,
+    onConfirm: (Date) -> Unit
+) {
+    val calendar = Calendar.getInstance().apply { time = initialTime }
+    val timePickerDialog = android.app.TimePickerDialog(
+        androidx.compose.ui.platform.LocalContext.current,
+        { _, hourOfDay, minute ->
+            val newTime = Calendar.getInstance().apply {
+                set(Calendar.HOUR_OF_DAY, hourOfDay)
+                set(Calendar.MINUTE, minute)
+            }.time
+            onConfirm(newTime)
+        },
+        calendar.get(Calendar.HOUR_OF_DAY),
+        calendar.get(Calendar.MINUTE),
+        true
+    )
+
+    DisposableEffect(Unit) {
+        timePickerDialog.show()
+        onDispose {
+            timePickerDialog.dismiss()
+        }
+    }
+}
+
 private fun formatDateTime(date: Date): String {
-    val formatter = SimpleDateFormat("MMM dd, HH:mm", Locale.getDefault())
-    return formatter.format(date)
+    val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+    return sdf.format(date)
+}
+
+private fun formatDate(date: Date): String {
+    val sdf = SimpleDateFormat("MMM d", Locale.getDefault())
+    return sdf.format(date)
 }

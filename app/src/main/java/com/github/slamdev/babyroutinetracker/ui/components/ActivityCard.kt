@@ -2,6 +2,7 @@ package com.github.slamdev.babyroutinetracker.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
@@ -12,15 +13,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import com.github.slamdev.babyroutinetracker.ui.components.formatters.formatElapsedTime
+import com.github.slamdev.babyroutinetracker.ui.components.formatters.formatTime
+import java.util.*
 
 /**
  * Activity configuration for the reusable activity card
@@ -129,7 +129,7 @@ fun ActivityCard(
             // Action button
             val hasOngoingState = !config.isImmediateActivity
             val isOngoing = hasOngoingState && state.isOngoing
-            
+
             // Determine button properties based on activity type and state
             val (buttonIcon, buttonText, buttonColor) = when {
                 config.isImmediateActivity -> Triple(
@@ -149,33 +149,38 @@ fun ActivityCard(
                 )
             }
 
-            Button(
-                onClick = {
-                    if (isOngoing) {
-                        onAlternateAction()
+            BoxWithConstraints(modifier = sharedWidthModifier.aspectRatio(1f)) {
+                val buttonSize = maxWidth
+                val iconSize = buttonSize * 0.4f
+
+                Button(
+                    onClick = {
+                        if (isOngoing) {
+                            onAlternateAction()
+                        } else {
+                            onPrimaryAction()
+                        }
+                    },
+                    enabled = !state.isLoading,
+                    modifier = Modifier.size(buttonSize),
+                    shape = CircleShape,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = buttonColor
+                    )
+                ) {
+                    if (state.isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(iconSize),
+                            color = Color.White,
+                            strokeWidth = 3.dp
+                        )
                     } else {
-                        onPrimaryAction()
+                        Icon(
+                            imageVector = buttonIcon,
+                            contentDescription = buttonText,
+                            modifier = Modifier.size(iconSize)
+                        )
                     }
-                },
-                enabled = !state.isLoading,
-                modifier = sharedWidthModifier
-                    .aspectRatio(1f),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = buttonColor
-                )
-            ) {
-                if (state.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        color = Color.White,
-                        strokeWidth = 3.dp
-                    )
-                } else {
-                    Icon(
-                        imageVector = buttonIcon,
-                        contentDescription = buttonText,
-                        modifier = Modifier.size(32.dp)
-                    )
                 }
             }
 
@@ -215,16 +220,15 @@ fun ActivityCard(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Loading...",
+                            "Loading...",
                             fontSize = 14.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                         )
                     }
                 }
                 else -> {
                     Box(
                         modifier = Modifier
-                            .fillMaxWidth()
                             .clickable { onContentClick() },
                         contentAlignment = Alignment.Center
                     ) {
@@ -280,10 +284,10 @@ fun ActivityCard(
                         textAlign = TextAlign.Center
                     )
                 }
-                
+
                 // Clear error after showing it
                 LaunchedEffect(errorMessage) {
-                    kotlinx.coroutines.delay(3000)
+                    kotlinx.coroutines.delay(5000) // Show error for 5 seconds
                     onDismissError()
                 }
             }
@@ -319,8 +323,7 @@ private fun ActivityCardContentDisplay(
                     if (content.onEditStartTime != null) {
                         Icon(
                             imageVector = Icons.Default.Edit,
-                            contentDescription = "Edit start time",
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f),
+                            contentDescription = "Edit Start Time",
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
@@ -334,7 +337,7 @@ private fun ActivityCardContentDisplay(
                 }
             }
         }
-        
+
         // Last activity state
         content.lastActivity != null -> {
             Column(
@@ -350,21 +353,20 @@ private fun ActivityCardContentDisplay(
                     ) {
                         Text(
                             text = activityText,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
-                            maxLines = 1
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Icon(
                             imageVector = Icons.Default.Edit,
-                            contentDescription = "Edit last activity",
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                            modifier = Modifier.size(12.dp)
+                            contentDescription = "Edit Activity",
+                            modifier = Modifier.size(16.dp)
                         )
                     }
                 }
-                
+
                 // Time ago
                 content.lastActivityTimeAgo?.let { timeAgo ->
                     Text(
@@ -376,7 +378,7 @@ private fun ActivityCardContentDisplay(
                         overflow = TextOverflow.Clip
                     )
                 }
-                
+
                 // Activity time
                 content.lastActivityTime?.let { activityTime ->
                     val timeText = if (config.isImmediateActivity) {
@@ -393,24 +395,23 @@ private fun ActivityCardContentDisplay(
                         overflow = TextOverflow.Clip
                     )
                 }
-                
+
                 // Notes if available
                 content.lastActivityNotes?.let { notes ->
                     if (notes.isNotBlank()) {
                         Text(
                             text = "\"$notes\"",
                             fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                             textAlign = TextAlign.Center,
-                            fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.padding(top = 4.dp)
                         )
                     }
                 }
             }
         }
-        
         // No activity state
         else -> {
             Text(
@@ -423,142 +424,4 @@ private fun ActivityCardContentDisplay(
             )
         }
     }
-}
-
-/**
- * Format elapsed time in seconds to a human-readable string
- */
-private fun formatElapsedTime(elapsedTimeSeconds: Long): String {
-    val hours = elapsedTimeSeconds / 3600
-    val minutes = (elapsedTimeSeconds % 3600) / 60
-    val seconds = elapsedTimeSeconds % 60
-    
-    return when {
-        hours > 0 -> "%02d:%02d:%02d".format(hours, minutes, seconds)
-        else -> "%02d:%02d".format(minutes, seconds)
-    }
-}
-
-/**
- * Helper function to create configuration for sleep activity
- */
-fun sleepActivityConfig(): ActivityCardConfig = ActivityCardConfig(
-    title = "Sleep",
-    icon = "😴",
-    isImmediateActivity = false
-)
-
-/**
- * Helper function to create configuration for breast feeding activity
- */
-fun breastFeedingActivityConfig(): ActivityCardConfig = ActivityCardConfig(
-    title = "Boob",
-    icon = "🤱",
-    isImmediateActivity = false
-)
-
-/**
- * Helper function to create configuration for bottle feeding activity
- */
-fun bottleFeedingActivityConfig(): ActivityCardConfig = ActivityCardConfig(
-    title = "Bottle",
-    icon = "🍼",
-    isImmediateActivity = true
-)
-
-/**
- * Helper function to create configuration for diaper activity
- */
-fun diaperActivityConfig(): ActivityCardConfig = ActivityCardConfig(
-    title = "Poop",
-    icon = "💩",
-    isImmediateActivity = true
-)
-
-// Content helper functions
-
-/**
- * Helper function to create content for sleep activity
- */
-fun sleepActivityContent(
-    ongoingSleep: Any? = null,
-    ongoingStartTime: Date? = null,
-    lastSleep: Any? = null,
-    lastSleepText: String? = null,
-    timeAgo: String? = null,
-    endTime: Date? = null,
-    onEditStartTime: (() -> Unit)? = null
-): ActivityCardContent = ActivityCardContent(
-    ongoingActivity = ongoingSleep,
-    ongoingStartTime = ongoingStartTime,
-    onEditStartTime = onEditStartTime,
-    lastActivity = lastSleep,
-    lastActivityText = lastSleepText,
-    lastActivityTimeAgo = timeAgo,
-    lastActivityTime = endTime,
-    noActivityText = "No recent sleep"
-)
-
-/**
- * Helper function to create content for breast feeding activity
- */
-fun breastFeedingActivityContent(
-    ongoingFeeding: Any? = null,
-    ongoingStartTime: Date? = null,
-    lastFeeding: Any? = null,
-    lastFeedingText: String? = null,
-    timeAgo: String? = null,
-    endTime: Date? = null,
-    onEditStartTime: (() -> Unit)? = null
-): ActivityCardContent = ActivityCardContent(
-    ongoingActivity = ongoingFeeding,
-    ongoingStartTime = ongoingStartTime,
-    onEditStartTime = onEditStartTime,
-    lastActivity = lastFeeding,
-    lastActivityText = lastFeedingText,
-    lastActivityTimeAgo = timeAgo,
-    lastActivityTime = endTime,
-    noActivityText = "No recent feeding"
-)
-
-/**
- * Helper function to create content for bottle feeding activity
- */
-fun bottleFeedingActivityContent(
-    lastFeeding: Any? = null,
-    lastFeedingText: String? = null,
-    timeAgo: String? = null,
-    feedingTime: Date? = null
-): ActivityCardContent = ActivityCardContent(
-    lastActivity = lastFeeding,
-    lastActivityText = lastFeedingText,
-    lastActivityTimeAgo = timeAgo,
-    lastActivityTime = feedingTime,
-    noActivityText = "No recent feeding"
-)
-
-/**
- * Helper function to create content for diaper activity
- */
-fun diaperActivityContent(
-    lastDiaper: Any? = null,
-    lastDiaperText: String? = null,
-    timeAgo: String? = null,
-    diaperTime: Date? = null,
-    notes: String? = null
-): ActivityCardContent = ActivityCardContent(
-    lastActivity = lastDiaper,
-    lastActivityText = lastDiaperText,
-    lastActivityTimeAgo = timeAgo,
-    lastActivityTime = diaperTime,
-    lastActivityNotes = notes,
-    noActivityText = "No poops logged yet"
-)
-
-/**
- * Format a Date to display time in HH:mm format
- */
-private fun formatTime(date: Date): String {
-    val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
-    return formatter.format(date)
 }

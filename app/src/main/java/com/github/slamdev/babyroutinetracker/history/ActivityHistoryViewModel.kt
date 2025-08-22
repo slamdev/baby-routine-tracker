@@ -225,6 +225,48 @@ class ActivityHistoryViewModel : ViewModel() {
     }
     
     /**
+     * Update an activity
+     */
+    fun updateActivity(activity: Activity) {
+        val babyId = currentBabyId
+        if (babyId == null) {
+            Log.e(TAG, "Cannot update activity - no baby selected")
+            _uiState.value = _uiState.value.copy(errorMessage = "No baby profile selected")
+            return
+        }
+
+        viewModelScope.launch {
+            try {
+                _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+
+                Log.i(TAG, "Updating activity: ${activity.id}")
+                val result = activityService.updateActivity(babyId, activity)
+
+                result.fold(
+                    onSuccess = { updatedActivity ->
+                        Log.i(TAG, "Activity updated successfully: ${updatedActivity.id}")
+                        // Reload activities to get fresh data
+                        loadActivities()
+                    },
+                    onFailure = { exception ->
+                        Log.e(TAG, "Failed to update activity", exception)
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                            errorMessage = exception.message ?: "Failed to update activity"
+                        )
+                    }
+                )
+            } catch (e: Exception) {
+                Log.e(TAG, "Unexpected error updating activity", e)
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    errorMessage = "Unexpected error: ${e.message}"
+                )
+            }
+        }
+    }
+
+    /**
      * Clear any error message
      */
     fun clearError() {

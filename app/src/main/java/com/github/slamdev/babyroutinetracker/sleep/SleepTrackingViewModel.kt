@@ -25,7 +25,8 @@ data class SleepTrackingUiState(
     val ongoingSleepError: String? = null,
     val lastSleepError: String? = null,
     val isLoadingOngoingSleep: Boolean = false,
-    val isLoadingLastSleep: Boolean = false
+    val isLoadingLastSleep: Boolean = false,
+    val successMessage: String? = null
 )
 
 class SleepTrackingViewModel : ViewModel() {
@@ -263,52 +264,40 @@ class SleepTrackingViewModel : ViewModel() {
         _uiState.value = _uiState.value.copy(errorMessage = null)
     }
 
-    /**
-     * Clear ongoing sleep error
-     */
-    fun clearOngoingSleepError() {
-        _uiState.value = _uiState.value.copy(ongoingSleepError = null)
+    fun clearSuccessMessage() {
+        _uiState.value = _uiState.value.copy(successMessage = null)
     }
 
     /**
-     * Clear last sleep error
+     * Update start time for an ongoing sleep activity
      */
-    fun clearLastSleepError() {
-        _uiState.value = _uiState.value.copy(lastSleepError = null)
-    }
-
-    /**
-     * Update the start time of the ongoing sleep activity
-     */
-    fun updateStartTime(newStartTime: Date) {
+    fun updateSleepStartTime(newStartTime: Date) {
         val babyId = currentBabyId
         val ongoingSleep = _uiState.value.ongoingSleep
-        
-        if (babyId == null) {
-            Log.e(TAG, "Cannot update start time - no baby selected")
-            _uiState.value = _uiState.value.copy(errorMessage = "No baby profile selected")
-            return
-        }
-        
-        if (ongoingSleep == null) {
-            Log.w(TAG, "Cannot update start time - no ongoing sleep session")
-            _uiState.value = _uiState.value.copy(errorMessage = "No ongoing sleep session to update")
+        if (babyId == null || ongoingSleep == null) {
+            Log.e(TAG, "Cannot update start time - no ongoing sleep")
+            _uiState.value = _uiState.value.copy(errorMessage = "No ongoing sleep to update")
             return
         }
 
         viewModelScope.launch {
             try {
                 _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
-                
-                val newTimestamp = Timestamp(newStartTime)
-                Log.i(TAG, "Updating sleep start time: ${ongoingSleep.id}")
-                val result = activityService.updateActivityStartTime(ongoingSleep.id, babyId, newTimestamp)
-                
+
+                Log.i(TAG, "Updating sleep start time for activity: ${ongoingSleep.id}")
+                val result = activityService.updateActivityStartTime(
+                    ongoingSleep.id,
+                    babyId,
+                    Timestamp(newStartTime)
+                )
+
                 result.fold(
-                    onSuccess = { activity ->
-                        Log.i(TAG, "Sleep start time updated successfully: ${activity.id}")
-                        _uiState.value = _uiState.value.copy(isLoading = false)
-                        // The real-time listener will update the UI with the new data
+                    onSuccess = { updatedActivity ->
+                        Log.i(TAG, "Sleep start time updated successfully: ${updatedActivity.id}")
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                            successMessage = "Start time updated successfully!"
+                        )
                     },
                     onFailure = { exception ->
                         Log.e(TAG, "Failed to update sleep start time", exception)
@@ -331,10 +320,10 @@ class SleepTrackingViewModel : ViewModel() {
     /**
      * Update times for a completed sleep activity
      */
-    fun updateCompletedActivityTimes(activity: Activity, newStartTime: Date, newEndTime: Date) {
+    fun updateCompletedSleep(activity: Activity) {
         val babyId = currentBabyId
         if (babyId == null) {
-            Log.e(TAG, "Cannot update activity times - no baby selected")
+            Log.e(TAG, "Cannot update sleep - no baby selected")
             _uiState.value = _uiState.value.copy(errorMessage = "No baby profile selected")
             return
         }
@@ -342,96 +331,33 @@ class SleepTrackingViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
-                
-                val newStartTimestamp = Timestamp(newStartTime)
-                val newEndTimestamp = Timestamp(newEndTime)
-                Log.i(TAG, "Updating completed sleep activity times: ${activity.id}")
-                val result = activityService.updateActivityTimes(activity.id, babyId, newStartTimestamp, newEndTimestamp)
-                
+
+                Log.i(TAG, "Updating sleep activity: ${activity.id}")
+                val result = activityService.updateActivity(babyId, activity)
+
                 result.fold(
                     onSuccess = { updatedActivity ->
-                        Log.i(TAG, "Sleep activity times updated successfully: ${updatedActivity.id}")
-                        _uiState.value = _uiState.value.copy(isLoading = false)
-                        // The real-time listener will update the UI with the new data
-                    },
-                    onFailure = { exception ->
-                        Log.e(TAG, "Failed to update sleep activity times", exception)
+                        Log.i(TAG, "Sleep activity updated successfully: ${updatedActivity.id}")
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
-                            errorMessage = exception.message ?: "Failed to update activity times"
+                            successMessage = "Sleep activity updated successfully!"
+                        )
+                    },
+                    onFailure = { exception ->
+                        Log.e(TAG, "Failed to update sleep activity", exception)
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                            errorMessage = exception.message ?: "Failed to update sleep activity"
                         )
                     }
                 )
             } catch (e: Exception) {
-                Log.e(TAG, "Unexpected error updating sleep activity times", e)
+                Log.e(TAG, "Unexpected error updating sleep activity", e)
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     errorMessage = "Unexpected error: ${e.message}"
                 )
             }
         }
-    }
-
-    /**
-     * Update notes for a completed sleep activity
-     */
-    fun updateCompletedActivityNotes(activity: Activity, newNotes: String) {
-        val babyId = currentBabyId
-        if (babyId == null) {
-            Log.e(TAG, "Cannot update activity notes - no baby selected")
-            _uiState.value = _uiState.value.copy(errorMessage = "No baby profile selected")
-            return
-        }
-
-        viewModelScope.launch {
-            try {
-                _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
-                
-                Log.i(TAG, "Updating sleep activity notes: ${activity.id}")
-                val result = activityService.updateActivityNotes(activity.id, babyId, newNotes)
-                
-                result.fold(
-                    onSuccess = { updatedActivity ->
-                        Log.i(TAG, "Sleep activity notes updated successfully: ${updatedActivity.id}")
-                        _uiState.value = _uiState.value.copy(isLoading = false)
-                        // The real-time listener will update the UI with the new data
-                    },
-                    onFailure = { exception ->
-                        Log.e(TAG, "Failed to update sleep activity notes", exception)
-                        _uiState.value = _uiState.value.copy(
-                            isLoading = false,
-                            errorMessage = exception.message ?: "Failed to update activity notes"
-                        )
-                    }
-                )
-            } catch (e: Exception) {
-                Log.e(TAG, "Unexpected error updating sleep activity notes", e)
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    errorMessage = "Unexpected error: ${e.message}"
-                )
-            }
-        }
-    }
-
-    /**
-     * Format elapsed time for display
-     */
-    fun formatElapsedTime(seconds: Long): String {
-        val hours = seconds / 3600
-        val minutes = (seconds % 3600) / 60
-        val remainingSeconds = seconds % 60
-        
-        return if (hours > 0) {
-            String.format("%d:%02d:%02d", hours, minutes, remainingSeconds)
-        } else {
-            String.format("%02d:%02d", minutes, remainingSeconds)
-        }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        stopTimer()
-        Log.d(TAG, "SleepTrackingViewModel cleared")
     }
 }

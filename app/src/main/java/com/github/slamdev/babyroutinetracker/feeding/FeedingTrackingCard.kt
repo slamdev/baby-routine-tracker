@@ -237,7 +237,7 @@ fun FeedingTrackingCard(
                 title = "Edit Feeding Start Time",
                 initialTime = ongoingFeeding.startTime.toDate(),
                 onTimeSelected = { newTime ->
-                    viewModel.updateStartTime(newTime)
+                    viewModel.updateBreastFeedingStartTime(newTime)
                     showTimePickerDialog = false
                 },
                 onDismiss = {
@@ -255,16 +255,8 @@ fun FeedingTrackingCard(
                 onDismiss = {
                     showEditLastActivityDialog = false
                 },
-                onSaveTimeChanges = { activity, newStartTime, newEndTime ->
-                    viewModel.updateCompletedActivityTimes(activity, newStartTime, newEndTime)
-                    showEditLastActivityDialog = false
-                },
-                onSaveNotesChanges = { activity, newNotes ->
-                    viewModel.updateCompletedActivityNotes(activity, newNotes)
-                    showEditLastActivityDialog = false
-                },
-                onSaveInstantTimeChange = { activity, newTime ->
-                    viewModel.updateInstantActivityTime(activity, newTime)
+                onSave = { activity, newStartTime, newEndTime, newNotes ->
+                    viewModel.updateCompletedFeeding(activity, newStartTime, newEndTime, newNotes)
                     showEditLastActivityDialog = false
                 }
             )

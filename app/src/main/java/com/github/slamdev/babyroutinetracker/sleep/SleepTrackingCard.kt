@@ -1,26 +1,14 @@
 package com.github.slamdev.babyroutinetracker.sleep
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.slamdev.babyroutinetracker.ui.components.ActivityCard
 import com.github.slamdev.babyroutinetracker.ui.components.ActivityCardState
-import com.github.slamdev.babyroutinetracker.ui.components.sleepActivityConfig
-import com.github.slamdev.babyroutinetracker.ui.components.sleepActivityContent
-import com.github.slamdev.babyroutinetracker.ui.components.TimePickerDialog
 import com.github.slamdev.babyroutinetracker.ui.components.EditActivityDialog
-import com.github.slamdev.babyroutinetracker.ui.components.TimeUtils
-import java.text.SimpleDateFormat
+import com.github.slamdev.babyroutinetracker.ui.components.formatters.TimeUtils
+import com.github.slamdev.babyroutinetracker.ui.components.helpers.sleepActivityConfig
+import com.github.slamdev.babyroutinetracker.ui.components.helpers.sleepActivityContent
 import java.util.*
 
 @Composable
@@ -30,14 +18,14 @@ fun SleepTrackingCard(
     viewModel: SleepTrackingViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    var showTimePickerDialog by remember { mutableStateOf(false) }
+    var showEditStartTimeDialog by remember { mutableStateOf(false) }
     var showEditLastActivityDialog by remember { mutableStateOf(false) }
-    
+
     // Initialize the ViewModel for this baby
     LaunchedEffect(babyId) {
         viewModel.initialize(babyId)
     }
-    
+
     // Activity card state
     val cardState = ActivityCardState(
         isLoading = uiState.isLoading,
@@ -47,17 +35,17 @@ fun SleepTrackingCard(
         isLoadingContent = uiState.isLoadingLastSleep || uiState.isLoadingOngoingSleep,
         contentError = uiState.lastSleepError ?: uiState.ongoingSleepError
     )
-    
+
     // Prepare content based on current state
     val ongoingSleep = uiState.ongoingSleep
     val lastSleep = uiState.lastSleep
-    
+
     val cardContent = when {
         ongoingSleep != null -> {
             sleepActivityContent(
                 ongoingSleep = ongoingSleep,
                 ongoingStartTime = ongoingSleep.startTime.toDate(),
-                onEditStartTime = { showTimePickerDialog = true }
+                onEditStartTime = { showEditStartTimeDialog = true }
             )
         }
         lastSleep != null && lastSleep.endTime != null -> {
@@ -73,14 +61,14 @@ fun SleepTrackingCard(
             } else {
                 "Duration unknown"
             }
-            
+
             val timeAgo = TimeUtils.formatTimeAgo(
                 TimeUtils.getRelevantTimestamp(
                     lastSleep.startTime.toDate(),
                     lastSleep.endTime?.toDate()
                 )
             )
-            
+
             sleepActivityContent(
                 lastSleep = lastSleep,
                 lastSleepText = "Last slept $durationText",
@@ -92,7 +80,7 @@ fun SleepTrackingCard(
             sleepActivityContent() // Empty content
         }
     }
-    
+
     ActivityCard(
         config = sleepActivityConfig(),
         state = cardState,
@@ -100,56 +88,40 @@ fun SleepTrackingCard(
         modifier = modifier,
         onPrimaryAction = { viewModel.startSleep() },
         onAlternateAction = { viewModel.endSleep() },
-        onContentClick = { 
+        onContentClick = {
             uiState.lastSleep?.let { showEditLastActivityDialog = true }
         },
-        onDismissError = { 
-            uiState.lastSleepError?.let { viewModel.clearLastSleepError() }
-            uiState.ongoingSleepError?.let { viewModel.clearOngoingSleepError() }
-            uiState.errorMessage?.let { viewModel.clearError() }
-        }
+        onDismissError = { viewModel.clearError() },
+        onDismissSuccess = { viewModel.clearSuccessMessage() }
     )
-    
-    // Time picker dialog for editing ongoing sleep start time
-    if (showTimePickerDialog) {
-        uiState.ongoingSleep?.let { ongoingSleep ->
-            TimePickerDialog(
-                title = "Edit Sleep Start Time",
-                initialTime = ongoingSleep.startTime.toDate(),
-                onTimeSelected = { newTime ->
-                    viewModel.updateStartTime(newTime)
-                    showTimePickerDialog = false
-                },
-                onDismiss = { showTimePickerDialog = false }
-            )
-        }
-    }
-    
-    // Edit dialog for last completed sleep activity
-    if (showEditLastActivityDialog) {
-        uiState.lastSleep?.let { lastSleep ->
-            EditActivityDialog(
-                activity = lastSleep,
-                onDismiss = {
-                    showEditLastActivityDialog = false
-                },
-                onSaveTimeChanges = { activity, newStartTime, newEndTime ->
-                    viewModel.updateCompletedActivityTimes(activity, newStartTime, newEndTime)
-                    showEditLastActivityDialog = false
-                },
-                onSaveNotesChanges = { activity, newNotes ->
-                    viewModel.updateCompletedActivityNotes(activity, newNotes)
-                    showEditLastActivityDialog = false
-                }
-            )
-        }
-    }
-}
 
-/**
- * Format a Date to display time in HH:mm format
- */
-private fun formatTime(date: Date): String {
-    val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
-    return formatter.format(date)
+    val ongoingSleepToEdit = uiState.ongoingSleep
+    if (showEditStartTimeDialog && ongoingSleepToEdit != null) {
+        EditActivityDialog(
+            activity = ongoingSleepToEdit,
+            onDismiss = { showEditStartTimeDialog = false },
+            onSave = { activity, newStartTime, newEndTime, newNotes ->
+                viewModel.updateSleepStartTime(newStartTime)
+                showEditStartTimeDialog = false
+            }
+        )
+    }
+
+    val lastSleepToEdit = uiState.lastSleep
+    if (showEditLastActivityDialog && lastSleepToEdit != null) {
+        EditActivityDialog(
+            activity = lastSleepToEdit,
+            onDismiss = { showEditLastActivityDialog = false },
+            onSave = { activity, newStartTime, newEndTime, newNotes ->
+                viewModel.updateCompletedSleep(
+                    activity.copy(
+                        startTime = com.google.firebase.Timestamp(newStartTime),
+                        endTime = newEndTime?.let { com.google.firebase.Timestamp(it) },
+                        notes = newNotes ?: ""
+                    )
+                )
+                showEditLastActivityDialog = false
+            }
+        )
+    }
 }

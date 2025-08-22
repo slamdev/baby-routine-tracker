@@ -144,18 +144,14 @@ fun ActivityHistoryContent(
                 showEditDialog = false
                 selectedActivity = null
             },
-            onSaveTimeChanges = { activity, newStartTime, newEndTime ->
-                viewModel.updateActivityTimes(activity, newStartTime, newEndTime)
-                showEditDialog = false
-                selectedActivity = null
-            },
-            onSaveNotesChanges = { activity, newNotes ->
-                viewModel.updateActivityNotes(activity, newNotes)
-                showEditDialog = false
-                selectedActivity = null
-            },
-            onSaveInstantTimeChange = { activity, newTime ->
-                viewModel.updateInstantActivityTime(activity, newTime)
+            onSave = { activity, newStartTime, newEndTime, newNotes ->
+                viewModel.updateActivity(
+                    activity.copy(
+                        startTime = com.google.firebase.Timestamp(newStartTime),
+                        endTime = newEndTime?.let { com.google.firebase.Timestamp(it) },
+                        notes = newNotes ?: ""
+                    )
+                )
                 showEditDialog = false
                 selectedActivity = null
             }

@@ -148,141 +148,44 @@ class DiaperTrackingViewModel : ViewModel() {
     /**
      * Update times for a completed diaper activity
      */
-    fun updateCompletedActivityTimes(activity: Activity, newStartTime: Date, newEndTime: Date) {
+    fun updateCompletedDiaper(activity: Activity) {
         val babyId = currentBabyId
         if (babyId == null) {
-            Log.e(TAG, "Cannot update activity times - no baby selected")
+            Log.e(TAG, "Cannot update diaper - no baby selected")
             _uiState.value = _uiState.value.copy(errorMessage = "No baby profile selected")
             return
         }
 
         viewModelScope.launch {
             try {
-                _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
-                
-                val newStartTimestamp = Timestamp(newStartTime)
-                val newEndTimestamp = Timestamp(newEndTime)
-                Log.i(TAG, "Updating completed diaper activity times: ${activity.id}")
-                val result = activityService.updateActivityTimes(activity.id, babyId, newStartTimestamp, newEndTimestamp)
-                
+                _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null, successMessage = null)
+
+                Log.i(TAG, "Updating diaper activity: ${activity.id}")
+                val result = activityService.updateActivity(babyId, activity)
+
                 result.fold(
                     onSuccess = { updatedActivity ->
-                        Log.i(TAG, "Diaper activity times updated successfully: ${updatedActivity.id}")
-                        _uiState.value = _uiState.value.copy(isLoading = false)
-                        // The real-time listener will update the UI with the new data
-                    },
-                    onFailure = { exception ->
-                        Log.e(TAG, "Failed to update diaper activity times", exception)
+                        Log.i(TAG, "Diaper activity updated successfully: ${updatedActivity.id}")
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
-                            errorMessage = exception.message ?: "Failed to update activity times"
+                            successMessage = "Diaper activity updated successfully!"
+                        )
+                    },
+                    onFailure = { exception ->
+                        Log.e(TAG, "Failed to update diaper activity", exception)
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                            errorMessage = exception.message ?: "Failed to update diaper activity"
                         )
                     }
                 )
             } catch (e: Exception) {
-                Log.e(TAG, "Unexpected error updating diaper activity times", e)
+                Log.e(TAG, "Unexpected error updating diaper activity", e)
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     errorMessage = "Unexpected error: ${e.message}"
                 )
             }
         }
-    }
-
-    /**
-     * Update time for an instant diaper activity
-     */
-    fun updateInstantActivityTime(activity: Activity, newTime: Date) {
-        val babyId = currentBabyId
-        if (babyId == null) {
-            Log.e(TAG, "Cannot update instant activity time - no baby selected")
-            _uiState.value = _uiState.value.copy(errorMessage = "No baby profile selected")
-            return
-        }
-
-        viewModelScope.launch {
-            try {
-                _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
-                
-                val newTimestamp = Timestamp(newTime)
-                Log.i(TAG, "Updating instant diaper activity time: ${activity.id}")
-                val result = activityService.updateInstantActivityTime(activity.id, babyId, newTimestamp)
-                
-                result.fold(
-                    onSuccess = { updatedActivity ->
-                        Log.i(TAG, "Instant diaper activity time updated successfully: ${updatedActivity.id}")
-                        _uiState.value = _uiState.value.copy(isLoading = false)
-                        // The real-time listener will update the UI with the new data
-                    },
-                    onFailure = { exception ->
-                        Log.e(TAG, "Failed to update instant diaper activity time", exception)
-                        _uiState.value = _uiState.value.copy(
-                            isLoading = false,
-                            errorMessage = exception.message ?: "Failed to update activity time"
-                        )
-                    }
-                )
-            } catch (e: Exception) {
-                Log.e(TAG, "Unexpected error updating instant diaper activity time", e)
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    errorMessage = "Unexpected error: ${e.message}"
-                )
-            }
-        }
-    }
-
-    /**
-     * Update notes for a completed diaper activity
-     */
-    fun updateCompletedActivityNotes(activity: Activity, newNotes: String) {
-        val babyId = currentBabyId
-        if (babyId == null) {
-            Log.e(TAG, "Cannot update activity notes - no baby selected")
-            _uiState.value = _uiState.value.copy(errorMessage = "No baby profile selected")
-            return
-        }
-
-        viewModelScope.launch {
-            try {
-                _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
-                
-                Log.i(TAG, "Updating diaper activity notes: ${activity.id}")
-                val result = activityService.updateActivityNotes(activity.id, babyId, newNotes)
-                
-                result.fold(
-                    onSuccess = { updatedActivity ->
-                        Log.i(TAG, "Diaper activity notes updated successfully: ${updatedActivity.id}")
-                        _uiState.value = _uiState.value.copy(isLoading = false)
-                        // The real-time listener will update the UI with the new data
-                    },
-                    onFailure = { exception ->
-                        Log.e(TAG, "Failed to update diaper activity notes", exception)
-                        _uiState.value = _uiState.value.copy(
-                            isLoading = false,
-                            errorMessage = exception.message ?: "Failed to update activity notes"
-                        )
-                    }
-                )
-            } catch (e: Exception) {
-                Log.e(TAG, "Unexpected error updating diaper activity notes", e)
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    errorMessage = "Unexpected error: ${e.message}"
-                )
-            }
-        }
-    }
-
-    /**
-     * Clear last diaper error
-     */
-    fun clearLastDiaperError() {
-        _uiState.value = _uiState.value.copy(lastDiaperError = null)
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        Log.d(TAG, "DiaperTrackingViewModel cleared")
     }
 }
