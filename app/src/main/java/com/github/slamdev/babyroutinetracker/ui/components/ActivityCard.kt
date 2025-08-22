@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.slamdev.babyroutinetracker.ui.components.formatters.formatElapsedTime
 import com.github.slamdev.babyroutinetracker.ui.components.formatters.formatTime
+import com.github.slamdev.babyroutinetracker.ui.theme.extended
 import java.util.*
 
 /**
@@ -97,7 +98,7 @@ fun ActivityCard(
         colors = CardDefaults.cardColors(
             containerColor = config.cardBackgroundColor(state.isOngoing)
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp) // Slightly more elevation for better visual hierarchy
     ) {
         Column(
             modifier = Modifier
@@ -135,17 +136,17 @@ fun ActivityCard(
                 config.isImmediateActivity -> Triple(
                     Icons.Default.Add,
                     "Log ${config.title}",
-                    MaterialTheme.colorScheme.primary
+                    MaterialTheme.colorScheme.extended.actionButton
                 )
                 isOngoing -> Triple(
                     Icons.Default.Check,
                     "Stop ${config.title}",
-                    MaterialTheme.colorScheme.error
+                    MaterialTheme.colorScheme.error // Keep error color for stop action
                 )
                 else -> Triple(
                     Icons.Default.PlayArrow,
                     "Start ${config.title}",
-                    MaterialTheme.colorScheme.primary
+                    MaterialTheme.colorScheme.extended.actionButton
                 )
             }
 
@@ -171,14 +172,15 @@ fun ActivityCard(
                     if (state.isLoading) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(iconSize),
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.extended.onActionButton,
                             strokeWidth = 3.dp
                         )
                     } else {
                         Icon(
                             imageVector = buttonIcon,
                             contentDescription = buttonText,
-                            modifier = Modifier.size(iconSize)
+                            modifier = Modifier.size(iconSize),
+                            tint = if (isOngoing) Color.White else MaterialTheme.colorScheme.extended.onActionButton
                         )
                     }
                 }

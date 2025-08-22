@@ -18,6 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.github.slamdev.babyroutinetracker.ui.theme.extended
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -190,7 +191,7 @@ fun JoinInvitationScreen(
             if (uiState.successMessage != null) {
                 Card(
                     colors = CardDefaults.cardColors(
-                        containerColor = Color(0xFF4CAF50).copy(alpha = 0.1f)
+                        containerColor = MaterialTheme.colorScheme.extended.successContainer
                     )
                 ) {
                     Column(
@@ -201,7 +202,7 @@ fun JoinInvitationScreen(
                     ) {
                         Text(
                             text = uiState.successMessage!!,
-                            color = Color(0xFF2E7D32),
+                            color = MaterialTheme.colorScheme.extended.onSuccessContainer,
                             textAlign = TextAlign.Center,
                             fontWeight = FontWeight.Medium
                         )
@@ -210,7 +211,7 @@ fun JoinInvitationScreen(
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
                                 text = "You can now track ${uiState.baby!!.name}'s activities together!",
-                                color = Color(0xFF2E7D32),
+                                color = MaterialTheme.colorScheme.extended.onSuccessContainer,
                                 textAlign = TextAlign.Center,
                                 fontSize = 14.sp
                             )

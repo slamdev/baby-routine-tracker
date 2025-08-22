@@ -6,27 +6,28 @@ import androidx.compose.ui.graphics.Color
 import com.github.slamdev.babyroutinetracker.model.ActivityType
 
 /**
- * Color scheme for different activity types that work well in both light and dark modes
+ * Modern color scheme for different activity types with improved harmony in both light and dark modes
+ * Following Material Design 3 principles with better contrast and visual appeal
  */
 object ActivityColors {
     
-    // Sleep colors - Calming blue tones
-    private val sleepLight = Color(0xFFE3F2FD) // Very light blue
-    private val sleepDark = Color(0xFF1A237E) // Deep blue
-    private val sleepOngoingLight = Color(0xFFBBDEFB) // Medium light blue
-    private val sleepOngoingDark = Color(0xFF283593) // Medium dark blue
+    // Sleep colors - Calming blue/indigo tones with better contrast
+    private val sleepLight = Color(0xFFE8F4FD) // Softer light blue
+    private val sleepDark = Color(0xFF2C3E7A) // Refined dark blue (less harsh)
+    private val sleepOngoingLight = Color(0xFFD1E9FC) // More vibrant ongoing light
+    private val sleepOngoingDark = Color(0xFF3F51B5) // Material indigo for ongoing
     
-    // Feeding colors - Warm orange/peach tones  
-    private val feedingLight = Color(0xFFFFF3E0) // Very light orange
-    private val feedingDark = Color(0xFFE65100) // Deep orange
-    private val feedingOngoingLight = Color(0xFFFFE0B2) // Medium light orange
-    private val feedingOngoingDark = Color(0xFFFF6F00) // Medium dark orange
+    // Feeding colors - Warm coral/peach tones (more modern than orange)
+    private val feedingLight = Color(0xFFFFF4F0) // Soft peachy background
+    private val feedingDark = Color(0xFF8D4E2A) // Warmer brown-orange (less jarring)
+    private val feedingOngoingLight = Color(0xFFFFE4D6) // Gentle coral
+    private val feedingOngoingDark = Color(0xFFD4700A) // Refined orange-amber
     
-    // Diaper colors - Fresh green tones
-    private val diaperLight = Color(0xFFE8F5E8) // Very light green
-    private val diaperDark = Color(0xFF2E7D32) // Deep green
-    private val diaperOngoingLight = Color(0xFFC8E6C9) // Medium light green (not used for instant activities)
-    private val diaperOngoingDark = Color(0xFF388E3C) // Medium dark green (not used for instant activities)
+    // Diaper colors - Fresh mint/teal tones (more modern than pure green)
+    private val diaperLight = Color(0xFFF0FAF5) // Mint-tinged background
+    private val diaperDark = Color(0xFF2E5D4A) // Forest green (more sophisticated)
+    private val diaperOngoingLight = Color(0xFFD8F5E3) // Soft mint
+    private val diaperOngoingDark = Color(0xFF4CAF50) // Material green for ongoing
     
     /**
      * Get background color for sleep activity

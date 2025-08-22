@@ -254,12 +254,12 @@ This document outlines the specific acceptance criter### **Real-time Dashboard**
 **User Story:** As a user, I want the app to automatically switch between light and dark mode based on my phone's system settings.
 
 * **Acceptance Criteria:**  
-  * The app's theme correctly reflects the device's current light or dark mode setting upon launch.  
-  * If the system theme is changed while the app is open, the app's theme updates instantly to match.  
-  * All UI components and text are legible and aesthetically pleasing in both themes.  
+  * The app's theme correctly reflects the device's current light or dark mode setting upon launch. ✅ IMPLEMENTED  
+  * If the system theme is changed while the app is open, the app's theme updates instantly to match. ✅ IMPLEMENTED  
+  * All UI components and text are legible and aesthetically pleasing in both themes. ✅ IMPLEMENTED  
 * **Technical Tasks:**  
-  * Define complete color palettes for both light and dark themes in the app's theme files.  
-  * Use theme-aware colors (MaterialTheme.colors) for all UI components instead of hardcoded color values.
+  * Define complete color palettes for both light and dark themes in the app's theme files. ✅ COMPLETED  
+  * Use theme-aware colors (MaterialTheme.colors) for all UI components instead of hardcoded color values. ✅ COMPLETED
 
 **User Story:** As a user, I want the app to display correctly and be fully usable when I rotate my phone to landscape mode.
 

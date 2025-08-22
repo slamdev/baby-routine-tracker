@@ -138,16 +138,18 @@ All activity cards now display user-friendly "time ago" information showing when
 
 #### Card Design Patterns
 - **Consistent Height**: All cards use dynamic height calculation for responsive design
-- **Standardized Styling**: 
+- **Modernized Styling**: 
   - Header with emoji (18sp, FontWeight.Bold, primary color)
   - Padding: 16.dp across all cards for consistent spacing
   - **Action button positioned right after card title** for immediate access
+  - **Modern action buttons** using sophisticated indigo colors (`MaterialTheme.colorScheme.extended.actionButton`)
   - **Square buttons** using aspectRatio(1f) for better touch targets and easier clicking
   - **Icon-only buttons** with larger icons (32.dp) proportional to button size for better visibility
-  - **Icon-only buttons** for clean, minimalist design (removed descriptive text)
+  - **Enhanced elevation** (6.dp) for better visual hierarchy and depth
   - Action button (80% width using fillMaxWidth(0.8f), square aspect ratio, 32.dp icon size)
   - Last activity summary (14sp, clickable with edit icon) positioned after action button
-- **Visual Hierarchy**: Clean, focused layout with prominent square action buttons and properly sized icons after title
+- **Visual Hierarchy**: Clean, focused layout with modern action buttons that harmonize with both light and dark themes
+- **Theme Integration**: All components use theme-aware colors for seamless light/dark mode transitions
 - **Error Handling**: CompactErrorDisplay for user feedback
 - **Loading States**: CircularProgressIndicator with proportional sizing (24.dp) for larger buttons
 
@@ -183,46 +185,121 @@ private fun ProfileIcon(
 }
 ```
 
-### Activity Color System - **IMPLEMENTED**
+### Activity Color System - **ENHANCED** ✅
 
-The app uses a distinctive color system for different activity types to help users quickly identify activities without reading card titles. The same colors are used consistently across dashboard cards and history entries.
+The app uses a sophisticated color system that provides distinct, pleasing colors for each activity type:
 
-#### Color Scheme
-- **Sleep Activities**: Calming blue tones
-  - Light mode: Very light blue (#E3F2FD) for regular, medium blue (#BBDEFB) for ongoing
-  - Dark mode: Deep blue (#1A237E) for regular, medium dark blue (#283593) for ongoing
+#### **Refined Color Palette**
+- **Sleep (😴)**: Modern blue/indigo tones - calming and sophisticated
+  - Light: Soft mint-blue backgrounds (`#E8F4FD`)
+  - Dark: Refined indigo (`#2C3E7A`) instead of harsh blues
+  - Better contrast and less eye strain
   
-- **Feeding Activities**: Warm orange/peach tones (both breast and bottle feeding)
-  - Light mode: Very light orange (#FFF3E0) for regular, medium orange (#FFE0B2) for ongoing
-  - Dark mode: Deep orange (#E65100) for regular, medium dark orange (#FF6F00) for ongoing
+- **Feeding (🤱🍼)**: Warm coral/peach tones - nurturing and modern
+  - Light: Soft peachy backgrounds (`#FFF4F0`)
+  - Dark: Warmer brown-orange (`#8D4E2A`) instead of jarring bright orange
+  - More harmonious with overall app palette
   
-- **Diaper Activities**: Fresh green tones
-  - Light mode: Very light green (#E8F5E8) for regular
-  - Dark mode: Deep green (#2E7D32) for regular
+- **Diaper (💩)**: Fresh mint/teal tones - clean and modern
+  - Light: Mint-tinged backgrounds (`#F0FAF5`)
+  - Dark: Sophisticated forest green (`#2E5D4A`)
+  - More refined than pure green
 
-#### Implementation
+#### **Modern Design Principles**
+- **Harmonious Palette**: All colors work together cohesively in both themes
+- **Reduced Eye Strain**: Softer, more muted colors in dark mode
+- **Better Accessibility**: Improved contrast ratios for text readability
+- **Material Design 3**: Follows modern Android design language
+
+### Theme System Implementation - **IMPLEMENTED** ✅
+
+The app features a comprehensive theme system that automatically switches between light and dark modes based on the system settings:
+
+#### Theme Architecture
+- **Automatic Theme Detection**: Uses `isSystemInDarkTheme()` to detect system preference
+- **Real-time Updates**: Theme changes instantly when system setting is modified
+- **Dynamic Colors**: Supports Android 12+ dynamic color theming when available
+- **Extended Colors**: Custom success colors for states not covered by Material 3
+
+#### Theme Files Structure
 ```kotlin
-// In ActivityCardHelpers.kt
-fun sleepActivityConfig(): ActivityCardConfig = ActivityCardConfig(
-    title = "Sleep",
-    icon = "😴",
-    isImmediateActivity = false,
-    cardBackgroundColor = { isOngoing -> ActivityColors.getSleepColor(isOngoing) }
+// Theme.kt - Main theme composable
+@Composable
+fun BabyroutinetrackerTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    dynamicColor: Boolean = true,
+    content: @Composable () -> Unit
 )
 
-// In ActivityHistoryScreen.kt  
-val backgroundColor = when (activity.type) {
-    ActivityType.SLEEP -> ActivityColors.getSleepColor(isOngoing = activity.isOngoing())
-    ActivityType.FEEDING -> ActivityColors.getFeedingColor(isOngoing = activity.isOngoing())
-    ActivityType.DIAPER -> ActivityColors.getDiaperColor(isOngoing = activity.isOngoing())
+// Color.kt - Theme color definitions
+val Purple80 = Color(0xFFD0BCFF)  // Dark theme colors
+val Purple40 = Color(0xFF6650a4)  // Light theme colors
+val SuccessLight = Color(0xFF4CAF50)  // Custom success colors
+val SuccessDark = Color(0xFF81C784)
+
+// ExtendedColors.kt - Additional theme colors
+@Stable
+data class ExtendedColors(
+    val success: Color,
+    val onSuccess: Color,
+    val successContainer: Color,
+    val onSuccessContainer: Color
+)
+```
+
+#### Using Theme Colors
+Instead of hardcoded colors, always use theme-aware colors:
+
+```kotlin
+// ✅ DO: Use theme colors
+Card(
+    colors = CardDefaults.cardColors(
+        containerColor = MaterialTheme.colorScheme.extended.successContainer
+    )
+) {
+    Text(
+        text = "Success message",
+        color = MaterialTheme.colorScheme.extended.onSuccessContainer
+    )
+}
+
+// ❌ DON'T: Hardcode colors
+Card(
+    colors = CardDefaults.cardColors(
+        containerColor = Color(0xFF4CAF50).copy(alpha = 0.1f)  // ❌ Wrong
+    )
+) {
+    Text(
+        text = "Success message", 
+        color = Color(0xFF2E7D32)  // ❌ Wrong
+    )
 }
 ```
 
-#### Dark Mode Support
-Colors are automatically adjusted based on the system theme:
-- Uses luminance detection to determine if the current theme is light or dark
-- Provides appropriate contrast ratios for text readability
-- Pleasant eye-friendly colors for both light and dark modes
+#### Extended Colors Usage
+Access extended colors via the `extended` property:
+```kotlin
+// Success states
+MaterialTheme.colorScheme.extended.success
+MaterialTheme.colorScheme.extended.onSuccess
+MaterialTheme.colorScheme.extended.successContainer
+MaterialTheme.colorScheme.extended.onSuccessContainer
+
+// Action button colors (modern, theme-aware)
+MaterialTheme.colorScheme.extended.actionButton        // Modern indigo for buttons
+MaterialTheme.colorScheme.extended.onActionButton      // White/light color for button content
+MaterialTheme.colorScheme.extended.actionButtonPressed // Pressed state color
+MaterialTheme.colorScheme.extended.surfaceElevated     // Elevated surface for better contrast
+```
+
+#### Color Scheme Completeness
+Both light and dark themes include full color definitions:
+- Primary, secondary, tertiary colors
+- Background, surface colors with appropriate contrast
+- Error colors with proper readability
+- Extended success colors for positive feedback states
+- **Modern action button colors**: Sophisticated indigo colors that work harmoniously in both themes
+- **Elevated surfaces**: Better visual hierarchy with appropriate contrast
 
 ### Button Consistency
 When creating buttons that should have equal sizes:

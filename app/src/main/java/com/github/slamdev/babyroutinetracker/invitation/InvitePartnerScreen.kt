@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.github.slamdev.babyroutinetracker.ui.theme.extended
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -268,12 +269,12 @@ fun InvitePartnerScreen(
             if (uiState.successMessage != null) {
                 Card(
                     colors = CardDefaults.cardColors(
-                        containerColor = Color(0xFF4CAF50).copy(alpha = 0.1f)
+                        containerColor = MaterialTheme.colorScheme.extended.successContainer
                     )
                 ) {
                     Text(
                         text = uiState.successMessage!!,
-                        color = Color(0xFF2E7D32),
+                        color = MaterialTheme.colorScheme.extended.onSuccessContainer,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp),
