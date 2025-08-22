@@ -274,11 +274,11 @@ This document outlines the specific acceptance criter### **Real-time Dashboard**
 **User Story:** As a user, I want to be able to use the app in split-screen mode alongside another app (like a messaging app or browser) without the layout breaking.
 
 * **Acceptance Criteria:**  
-  * The app UI resizes smoothly when entering and adjusting split-screen mode.  
-  * The app remains fully functional, readable, and tappable even at its smallest allowed size.  
+  * The app UI resizes smoothly when entering and adjusting split-screen mode. ✅ IMPLEMENTED
+  * The app remains fully functional, readable, and tappable even at its smallest allowed size. ✅ IMPLEMENTED
 * **Technical Tasks:**  
-  * Ensure the resizeableActivity flag is set to true in the AndroidManifest.xml.  
-  * Build the UI with flexible and responsive components that do not rely on fixed dimensions.
+  * Ensure the resizeableActivity flag is set to true in the AndroidManifest.xml. ✅ COMPLETED
+  * Build the UI with flexible and responsive components that do not rely on fixed dimensions. ✅ COMPLETED
 
 **User Story:** As a user, I want to see a clean, modern interface with a profile icon in the top-right corner like modern Android apps, rather than a large welcome card taking up screen space.
 
