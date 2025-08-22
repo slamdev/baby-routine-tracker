@@ -19,6 +19,7 @@ import com.github.slamdev.babyroutinetracker.model.Activity
 import com.github.slamdev.babyroutinetracker.model.ActivityType
 import com.github.slamdev.babyroutinetracker.ui.components.CompactErrorDisplay
 import com.github.slamdev.babyroutinetracker.ui.components.EditActivityDialog
+import com.github.slamdev.babyroutinetracker.ui.theme.ActivityColors
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -165,10 +166,17 @@ private fun ActivityHistoryItem(
     onEditActivity: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // Get background color based on activity type
+    val backgroundColor = when (activity.type) {
+        ActivityType.SLEEP -> ActivityColors.getSleepColor(isOngoing = activity.isOngoing())
+        ActivityType.FEEDING -> ActivityColors.getFeedingColor(isOngoing = activity.isOngoing())
+        ActivityType.DIAPER -> ActivityColors.getDiaperColor(isOngoing = activity.isOngoing())
+    }
+    
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
+            containerColor = backgroundColor
         )
     ) {
         Row(
@@ -185,12 +193,18 @@ private fun ActivityHistoryItem(
                 Text(
                     text = when (activity.type) {
                         ActivityType.SLEEP -> "😴 Sleep"
-                        ActivityType.FEEDING -> "🍼 ${activity.feedingType.replace("_", " ").replaceFirstChar { it.uppercase() }}"
+                        ActivityType.FEEDING -> {
+                            if (activity.feedingType == "breast_milk") {
+                                "🤱 Breast Feeding"
+                            } else {
+                                "🍼 Bottle Feeding"
+                            }
+                        }
                         ActivityType.DIAPER -> "💩 Diaper"
                     },
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 
                 // Time information
@@ -219,7 +233,7 @@ private fun ActivityHistoryItem(
                 Text(
                     text = timeInfo,
                     fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
                 )
                 
                 // Activity-specific details
@@ -229,7 +243,7 @@ private fun ActivityHistoryItem(
                             Text(
                                 text = "${activity.amount.toInt()} ml",
                                 fontSize = 12.sp,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                             )
                         }
                     }
@@ -241,7 +255,7 @@ private fun ActivityHistoryItem(
                     Text(
                         text = "\"${activity.notes}\"",
                         fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                         fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
                     )
                 }

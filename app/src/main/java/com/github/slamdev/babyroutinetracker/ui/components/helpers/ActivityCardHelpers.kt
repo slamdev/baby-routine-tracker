@@ -2,6 +2,7 @@ package com.github.slamdev.babyroutinetracker.ui.components.helpers
 
 import com.github.slamdev.babyroutinetracker.ui.components.ActivityCardConfig
 import com.github.slamdev.babyroutinetracker.ui.components.ActivityCardContent
+import com.github.slamdev.babyroutinetracker.ui.theme.ActivityColors
 import java.util.Date
 
 /**
@@ -10,7 +11,8 @@ import java.util.Date
 fun sleepActivityConfig(): ActivityCardConfig = ActivityCardConfig(
     title = "Sleep",
     icon = "😴",
-    isImmediateActivity = false
+    isImmediateActivity = false,
+    cardBackgroundColor = { isOngoing -> ActivityColors.getSleepColor(isOngoing) }
 )
 
 /**
@@ -19,7 +21,8 @@ fun sleepActivityConfig(): ActivityCardConfig = ActivityCardConfig(
 fun breastFeedingActivityConfig(): ActivityCardConfig = ActivityCardConfig(
     title = "Boob",
     icon = "🤱",
-    isImmediateActivity = false
+    isImmediateActivity = false,
+    cardBackgroundColor = { isOngoing -> ActivityColors.getFeedingColor(isOngoing) }
 )
 
 /**
@@ -28,7 +31,8 @@ fun breastFeedingActivityConfig(): ActivityCardConfig = ActivityCardConfig(
 fun bottleFeedingActivityConfig(): ActivityCardConfig = ActivityCardConfig(
     title = "Bottle",
     icon = "🍼",
-    isImmediateActivity = true
+    isImmediateActivity = true,
+    cardBackgroundColor = { isOngoing -> ActivityColors.getFeedingColor(isOngoing) }
 )
 
 /**
@@ -37,7 +41,8 @@ fun bottleFeedingActivityConfig(): ActivityCardConfig = ActivityCardConfig(
 fun diaperActivityConfig(): ActivityCardConfig = ActivityCardConfig(
     title = "Poop",
     icon = "💩",
-    isImmediateActivity = true
+    isImmediateActivity = true,
+    cardBackgroundColor = { isOngoing -> ActivityColors.getDiaperColor(isOngoing) }
 )
 
 // Content helper functions

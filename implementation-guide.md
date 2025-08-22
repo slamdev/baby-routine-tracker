@@ -183,6 +183,47 @@ private fun ProfileIcon(
 }
 ```
 
+### Activity Color System - **IMPLEMENTED**
+
+The app uses a distinctive color system for different activity types to help users quickly identify activities without reading card titles. The same colors are used consistently across dashboard cards and history entries.
+
+#### Color Scheme
+- **Sleep Activities**: Calming blue tones
+  - Light mode: Very light blue (#E3F2FD) for regular, medium blue (#BBDEFB) for ongoing
+  - Dark mode: Deep blue (#1A237E) for regular, medium dark blue (#283593) for ongoing
+  
+- **Feeding Activities**: Warm orange/peach tones (both breast and bottle feeding)
+  - Light mode: Very light orange (#FFF3E0) for regular, medium orange (#FFE0B2) for ongoing
+  - Dark mode: Deep orange (#E65100) for regular, medium dark orange (#FF6F00) for ongoing
+  
+- **Diaper Activities**: Fresh green tones
+  - Light mode: Very light green (#E8F5E8) for regular
+  - Dark mode: Deep green (#2E7D32) for regular
+
+#### Implementation
+```kotlin
+// In ActivityCardHelpers.kt
+fun sleepActivityConfig(): ActivityCardConfig = ActivityCardConfig(
+    title = "Sleep",
+    icon = "😴",
+    isImmediateActivity = false,
+    cardBackgroundColor = { isOngoing -> ActivityColors.getSleepColor(isOngoing) }
+)
+
+// In ActivityHistoryScreen.kt  
+val backgroundColor = when (activity.type) {
+    ActivityType.SLEEP -> ActivityColors.getSleepColor(isOngoing = activity.isOngoing())
+    ActivityType.FEEDING -> ActivityColors.getFeedingColor(isOngoing = activity.isOngoing())
+    ActivityType.DIAPER -> ActivityColors.getDiaperColor(isOngoing = activity.isOngoing())
+}
+```
+
+#### Dark Mode Support
+Colors are automatically adjusted based on the system theme:
+- Uses luminance detection to determine if the current theme is light or dark
+- Provides appropriate contrast ratios for text readability
+- Pleasant eye-friendly colors for both light and dark modes
+
 ### Button Consistency
 When creating buttons that should have equal sizes:
 ```kotlin

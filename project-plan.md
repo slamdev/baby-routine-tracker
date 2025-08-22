@@ -33,6 +33,11 @@ This document outlines the project plan for a personal Android application desig
     * Bottle Feeding (🍼) - Quick log bottle amount and notes
     * Poop (💩) - Quick log diaper changes with notes
   * **Responsive Design** - Cards automatically adapt size based on screen dimensions, ensuring all 4 cards fit without scrolling
+  * **Activity Color System** - Distinctive background colors for each activity type for quick visual identification:
+    * Sleep: Calming blue tones (light/dark mode variants)
+    * Feeding: Warm orange/peach tones (both breast and bottle)
+    * Diaper: Fresh green tones
+    * Same colors used consistently across dashboard cards and history entries
   * Timers for ongoing activities (e.g., current sleep session, ongoing breast feeding).  
   * At-a-glance view of the current day's routine.  
 * **Data Synchronization:**  
