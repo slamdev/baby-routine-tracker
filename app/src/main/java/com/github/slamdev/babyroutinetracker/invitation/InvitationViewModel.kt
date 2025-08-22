@@ -22,7 +22,9 @@ data class InvitationUiState(
     val invitationCode: String = "",
     val babyName: String = "",
     val babyBirthDate: Timestamp = Timestamp.now(),
-    val selectedBabyId: String = ""
+    val babyDueDate: Timestamp? = null,
+    val selectedBabyId: String = "",
+    val editingBaby: Baby? = null
 )
 
 class InvitationViewModel : ViewModel() {
@@ -73,7 +75,7 @@ class InvitationViewModel : ViewModel() {
     /**
      * Create a new baby profile
      */
-    fun createBabyProfile(name: String, birthDate: Timestamp) {
+    fun createBabyProfile(name: String, birthDate: Timestamp, dueDate: Timestamp? = null) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(
                 isLoading = true,
@@ -81,7 +83,7 @@ class InvitationViewModel : ViewModel() {
                 successMessage = null
             )
             
-            invitationService.createBabyProfile(name, birthDate)
+            invitationService.createBabyProfile(name, birthDate, dueDate)
                 .onSuccess { baby ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
@@ -190,6 +192,103 @@ class InvitationViewModel : ViewModel() {
      */
     fun updateBabyBirthDate(birthDate: Timestamp) {
         _uiState.value = _uiState.value.copy(babyBirthDate = birthDate)
+    }
+
+    /**
+     * Update baby due date in UI state
+     */
+    fun updateBabyDueDate(dueDate: Timestamp?) {
+        _uiState.value = _uiState.value.copy(babyDueDate = dueDate)
+    }
+
+    /**
+     * Start editing a baby profile
+     */
+    fun startEditingBaby(baby: Baby) {
+        _uiState.value = _uiState.value.copy(
+            editingBaby = baby,
+            babyName = baby.name,
+            babyBirthDate = baby.birthDate,
+            babyDueDate = baby.dueDate,
+            errorMessage = null,
+            successMessage = null
+        )
+    }
+
+    /**
+     * Load a baby for editing by ID
+     */
+    fun loadBabyForEditing(babyId: String) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(
+                isLoading = true,
+                errorMessage = null
+            )
+            
+            // First check if baby is already in the list
+            val existingBaby = _uiState.value.babies.find { it.id == babyId }
+            if (existingBaby != null) {
+                startEditingBaby(existingBaby)
+                _uiState.value = _uiState.value.copy(isLoading = false)
+                return@launch
+            }
+            
+            // If not in list, load it directly from service
+            val baby = invitationService.getBabyProfile(babyId)
+            if (baby != null) {
+                startEditingBaby(baby)
+                _uiState.value = _uiState.value.copy(isLoading = false)
+            } else {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    errorMessage = "Baby profile not found"
+                )
+            }
+        }
+    }
+
+    /**
+     * Update an existing baby profile
+     */
+    fun updateBabyProfile(babyId: String, name: String, birthDate: Timestamp, dueDate: Timestamp? = null) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(
+                isLoading = true,
+                errorMessage = null,
+                successMessage = null
+            )
+            
+            invitationService.updateBabyProfile(babyId, name, birthDate, dueDate)
+                .onSuccess { baby ->
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        baby = baby,
+                        editingBaby = null,
+                        successMessage = "Baby profile updated successfully!"
+                    )
+                    // Real-time listener will automatically update the babies list
+                }
+                .onFailure { error ->
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        errorMessage = error.message
+                    )
+                }
+        }
+    }
+
+    /**
+     * Cancel editing baby profile
+     */
+    fun cancelEditingBaby() {
+        _uiState.value = _uiState.value.copy(
+            editingBaby = null,
+            babyName = "",
+            babyBirthDate = Timestamp.now(),
+            babyDueDate = null,
+            errorMessage = null,
+            successMessage = null
+        )
     }
 
     /**

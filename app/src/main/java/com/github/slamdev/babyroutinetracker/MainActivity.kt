@@ -20,6 +20,8 @@ import com.github.slamdev.babyroutinetracker.main.MainTabScreen
 import com.github.slamdev.babyroutinetracker.invitation.InvitePartnerScreen
 import com.github.slamdev.babyroutinetracker.invitation.JoinInvitationScreen
 import com.github.slamdev.babyroutinetracker.invitation.CreateBabyProfileScreen
+import com.github.slamdev.babyroutinetracker.invitation.EditBabyProfileScreen
+import com.github.slamdev.babyroutinetracker.invitation.InvitationViewModel
 import com.github.slamdev.babyroutinetracker.history.ActivityHistoryScreen
 import com.github.slamdev.babyroutinetracker.ui.theme.BabyroutinetrackerTheme
 
@@ -80,6 +82,9 @@ fun BabyRoutineTrackerApp() {
                 onNavigateToCreateBaby = {
                     navController.navigate("create_baby")
                 },
+                onNavigateToEditBaby = { baby ->
+                    navController.navigate("edit_baby/${baby.id}")
+                },
                 authViewModel = authViewModel
             )
         }
@@ -115,6 +120,27 @@ fun BabyRoutineTrackerApp() {
                         popUpTo("create_baby") { inclusive = true }
                     }
                 }
+            )
+        }
+        
+        composable(
+            "edit_baby/{babyId}",
+            arguments = listOf(navArgument("babyId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val babyId = backStackEntry.arguments?.getString("babyId") ?: ""
+            val invitationViewModel: InvitationViewModel = viewModel()
+            
+            EditBabyProfileScreen(
+                babyId = babyId,
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onUpdateSuccess = {
+                    navController.navigate("dashboard") {
+                        popUpTo("edit_baby/{babyId}") { inclusive = true }
+                    }
+                },
+                viewModel = invitationViewModel
             )
         }
         

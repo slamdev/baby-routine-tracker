@@ -33,7 +33,7 @@ class InvitationService {
     /**
      * Create a baby profile for the current user
      */
-    suspend fun createBabyProfile(name: String, birthDate: Timestamp): Result<Baby> {
+    suspend fun createBabyProfile(name: String, birthDate: Timestamp, dueDate: Timestamp? = null): Result<Baby> {
         return try {
             val currentUser = auth.currentUser
                 ?: return Result.failure(Exception("User not authenticated"))
@@ -46,6 +46,7 @@ class InvitationService {
                 id = babyId,
                 name = name,
                 birthDate = birthDate,
+                dueDate = dueDate,
                 parentIds = listOf(currentUser.uid),
                 createdAt = Timestamp.now(),
                 updatedAt = Timestamp.now()
@@ -60,6 +61,42 @@ class InvitationService {
             Result.success(baby)
         } catch (e: Exception) {
             Log.e(TAG, "Failed to create baby profile: $name", e)
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Update an existing baby profile
+     */
+    suspend fun updateBabyProfile(babyId: String, name: String, birthDate: Timestamp, dueDate: Timestamp? = null): Result<Baby> {
+        return try {
+            val currentUser = auth.currentUser
+                ?: return Result.failure(Exception("User not authenticated"))
+
+            // Verify user has access to this baby
+            val existingBaby = getBabyProfile(babyId)
+                ?: return Result.failure(Exception("Baby profile not found"))
+
+            if (!existingBaby.parentIds.contains(currentUser.uid)) {
+                return Result.failure(Exception("You don't have permission to edit this baby profile"))
+            }
+
+            val updatedBaby = existingBaby.copy(
+                name = name,
+                birthDate = birthDate,
+                dueDate = dueDate,
+                updatedAt = Timestamp.now()
+            )
+
+            firestore.collection(BABIES_COLLECTION)
+                .document(babyId)
+                .set(updatedBaby)
+                .await()
+
+            Log.i(TAG, "Baby profile updated successfully: ${updatedBaby.name}")
+            Result.success(updatedBaby)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to update baby profile: $babyId", e)
             Result.failure(e)
         }
     }
@@ -196,7 +233,7 @@ class InvitationService {
                 .get()
                 .await()
 
-            document.toObject<Baby>()
+            document.toObject<Baby>()?.copy(id = document.id)
         } catch (e: Exception) {
             Log.e(TAG, "Failed to get baby profile: $babyId", e)
             null
@@ -216,7 +253,9 @@ class InvitationService {
                 .get()
                 .await()
 
-            val babies = querySnapshot.documents.mapNotNull { it.toObject<Baby>() }
+            val babies = querySnapshot.documents.mapNotNull { document ->
+                document.toObject<Baby>()?.copy(id = document.id)
+            }
             Log.d(TAG, "Retrieved ${babies.size} baby profiles for current user")
             Result.success(babies)
         } catch (e: Exception) {
@@ -252,7 +291,7 @@ class InvitationService {
                     try {
                         val babies = snapshot.documents.mapNotNull { document ->
                             try {
-                                document.toObject<Baby>()
+                                document.toObject<Baby>()?.copy(id = document.id)
                             } catch (e: Exception) {
                                 Log.w(TAG, "Failed to parse baby document: ${document.id}", e)
                                 null

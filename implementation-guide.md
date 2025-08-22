@@ -983,6 +983,199 @@ class MyViewModel : ViewModel() {
 2. Add to `app/build.gradle`
 3. Run compile command to verify
 
+## 🍼 Baby Profile Management Implementation
+
+### Enhanced Baby Model with Due Date Support
+
+The Baby model has been enhanced to support both regular babies and premature babies with sophisticated age calculations:
+
+```kotlin
+data class Baby(
+    val id: String = "",
+    val name: String = "",
+    val birthDate: Timestamp = Timestamp.now(),
+    val dueDate: Timestamp? = null,  // NEW: Optional due date for premature babies
+    val parentIds: List<String> = emptyList(),
+    val createdAt: Timestamp = Timestamp.now(),
+    val updatedAt: Timestamp = Timestamp.now()
+) {
+    @Exclude
+    fun getRealAge(): AgeInfo {
+        return calculateAge(birthDate.toDate())
+    }
+    
+    @Exclude
+    fun getAdjustedAge(): AgeInfo? {
+        return dueDate?.let { calculateAge(it.toDate()) }
+    }
+    
+    @Exclude
+    fun wasBornEarly(): Boolean {
+        return dueDate != null && birthDate.seconds < dueDate.seconds
+    }
+}
+```
+
+### Age Calculation System
+
+#### AgeInfo Data Class
+```kotlin
+data class AgeInfo(
+    val years: Int,
+    val months: Int,
+    val weeks: Int,
+    val days: Int,
+    val totalDays: Long,
+    val totalWeeks: Long,
+    val totalMonths: Long
+)
+```
+
+#### Age Display Components
+
+**BabyAgeDisplay**: Full age information with both real and corrected ages
+```kotlin
+@Composable
+fun BabyAgeDisplay(baby: Baby, modifier: Modifier = Modifier) {
+    val realAge = baby.getRealAge()
+    val adjustedAge = baby.getAdjustedAge()
+    
+    Column(modifier = modifier) {
+        Text("Real age: ${baby.getFormattedRealAge()}")
+        if (adjustedAge != null) {
+            Text("Corrected age: ${baby.getFormattedAdjustedAge()}")
+        }
+    }
+}
+```
+
+**CompactBabyAgeDisplay**: Space-efficient version for cards
+**DashboardAgeDisplay**: Optimized for dashboard titles
+
+### Service Layer Enhancements
+
+#### Fixed Firebase Document ID Mapping
+**CRITICAL FIX**: Baby objects now properly include their Firebase document IDs:
+
+```kotlin
+// Before (missing ID):
+document.toObject<Baby>()
+
+// After (with proper ID):
+document.toObject<Baby>()?.copy(id = document.id)
+```
+
+#### Baby Profile Service Methods
+```kotlin
+// Create baby with due date support
+suspend fun createBabyProfile(name: String, birthDate: Timestamp, dueDate: Timestamp? = null): Result<Baby>
+
+// Update baby with due date support  
+suspend fun updateBabyProfile(babyId: String, name: String, birthDate: Timestamp, dueDate: Timestamp? = null): Result<Baby>
+
+// Load baby for editing
+suspend fun getBabyProfile(babyId: String): Baby?
+
+// Real-time babies flow with proper ID mapping
+fun getUserBabiesFlow(): Flow<Result<List<Baby>>>
+```
+
+### Navigation & UI Implementation
+
+#### Enhanced Edit Navigation
+The edit baby functionality was fixed to handle proper data loading:
+
+```kotlin
+// Navigation route
+composable(
+    "edit_baby/{babyId}",
+    arguments = listOf(navArgument("babyId") { type = NavType.StringType })
+) { backStackEntry ->
+    val babyId = backStackEntry.arguments?.getString("babyId") ?: ""
+    EditBabyProfileScreen(
+        babyId = babyId,
+        onNavigateBack = { navController.popBackStack() },
+        onUpdateSuccess = { navController.navigate("dashboard") },
+        viewModel = invitationViewModel
+    )
+}
+```
+
+#### ViewModel Baby Loading
+```kotlin
+fun loadBabyForEditing(babyId: String) {
+    viewModelScope.launch {
+        _uiState.value = _uiState.value.copy(isLoading = true)
+        
+        // First check if baby is already in the list
+        val existingBaby = _uiState.value.babies.find { it.id == babyId }
+        if (existingBaby != null) {
+            startEditingBaby(existingBaby)
+        } else {
+            // Load directly from service if not in cache
+            val baby = invitationService.getBabyProfile(babyId)
+            if (baby != null) {
+                startEditingBaby(baby)
+            }
+        }
+        
+        _uiState.value = _uiState.value.copy(isLoading = false)
+    }
+}
+```
+
+### Profile Icon Integration
+
+The ProfileIcon component includes baby profile management options:
+
+```kotlin
+@Composable
+fun ProfileIcon(
+    user: FirebaseUser?,
+    babies: List<Baby>,
+    selectedBaby: Baby?,
+    onNavigateToEditBaby: (Baby) -> Unit,
+    // ... other callbacks
+) {
+    // Profile dropdown includes:
+    // - "Create Baby Profile" 
+    // - "Join Profile"
+    // - "Edit [Baby Name]" (when baby selected)
+    // - "Invite Partner" (when babies exist)
+    // - "Sign Out"
+}
+```
+
+### Age Display Integration
+
+#### Dashboard Title Integration
+```kotlin
+TopAppBar(
+    title = {
+        Text(
+            text = selectedBaby?.let { "${it.name} (${it.getFormattedRealAge()})" } 
+                ?: "Baby Routine Tracker"
+        )
+    }
+)
+```
+
+#### Profile Screen Age Display
+```kotlin
+BabyAgeDisplay(
+    baby = baby,
+    modifier = Modifier.padding(16.dp)
+)
+```
+
+### Key Implementation Patterns
+
+1. **Firebase ID Mapping**: Always use `.copy(id = document.id)` when converting Firestore documents
+2. **Age Calculations**: Use `@Exclude` for computed age properties to prevent Firebase storage
+3. **Due Date Support**: Optional field with proper null handling throughout the UI
+4. **Navigation Safety**: Load baby data in edit screens rather than relying on cached lists
+5. **Real-time Sync**: All profile updates sync automatically across devices
+
 ## 🧪 Testing Guidelines
 
 ### Always Test These Scenarios

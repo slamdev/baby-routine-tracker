@@ -113,6 +113,7 @@ users/{userId}
 babies/{babyId}
   - name: String
   - birthDate: Timestamp
+  - dueDate: Timestamp (optional, for premature babies)
   - parentIds: Array<String>
   - createdAt: Timestamp
   - updatedAt: Timestamp
@@ -222,16 +223,20 @@ This project will be broken down into six manageable phases.
 * \[ \] Create initial repository pattern structure.  
 * \[ \] Set up CI/CD pipeline basics.
 
-### **Phase 1: Authentication & Baby Profile Setup (1-2 Weeks)**
+### **Phase 1: Authentication & Baby Profile Setup (1-2 Weeks)** ✅ **COMPLETED**
 
-* \[ \] Implement Firebase Authentication with Google Sign-In flow.  
-* \[ \] Create user onboarding screens.  
-* \[ \] Design and implement baby profile creation and management.  
-* \[ \] Implement Firestore database schema for users, babies, and activities.  
-* \[ \] Create partner invitation system with unique codes.  
-* \[ \] Implement baby profile sharing and multi-user access.  
-* \[ \] Set up comprehensive error handling for authentication flows.  
-* \[ \] Create basic navigation structure and app settings screen.
+* \[✅\] Implement Firebase Authentication with Google Sign-In flow.  
+* \[✅\] Create user onboarding screens.  
+* \[✅\] Design and implement baby profile creation and management.  
+* \[✅\] **ENHANCED**: Add due date support for premature babies with corrected age calculations.
+* \[✅\] Implement Firestore database schema for users, babies, and activities.  
+* \[✅\] Create partner invitation system with unique codes.  
+* \[✅\] Implement baby profile sharing and multi-user access.  
+* \[✅\] **ENHANCED**: Fix Firebase document ID mapping for proper baby identification.
+* \[✅\] Set up comprehensive error handling for authentication flows.  
+* \[✅\] Create basic navigation structure and app settings screen.
+* \[✅\] **ENHANCED**: Implement edit baby profile functionality with reliable navigation.
+* \[✅\] **ENHANCED**: Create multiple age display components for different UI contexts.
 
 ### **Phase 2: Core Activity Logging & Dashboard (2-3 Weeks)**
 

@@ -430,44 +430,68 @@ This document outlines the specific acceptance criter### **Real-time Dashboard**
 
 ### **Baby Profile Management**
 
-**User Story:** As a new parent, I want to create my baby's profile with their name, and birthdate so I can personalize the app experience.
+**User Story:** As a new parent, I want to create my baby's profile with their name and birthdate so I can personalize the app experience.
 
 * **Acceptance Criteria:**  
-  * After authentication, new users are prompted to create a baby profile.  
-  * The profile creation form includes fields for baby's name and birthdate.  
-  * The baby's age is automatically calculated and displayed based on the birthdate.  
-  * Profile creation is required before accessing other app features.  
+  * After authentication, new users are prompted to create a baby profile. ✅ IMPLEMENTED
+  * The profile creation form includes fields for baby's name and birthdate. ✅ IMPLEMENTED
+  * **ENHANCED**: Optional due date field for premature babies with corrected age calculation. ✅ IMPLEMENTED
+  * The baby's age is automatically calculated and displayed based on the birthdate. ✅ IMPLEMENTED
+  * **ENHANCED**: Displays both real age and corrected age (from due date) for premature babies. ✅ IMPLEMENTED
+  * Profile creation is required before accessing other app features. ✅ IMPLEMENTED
 * **Technical Tasks:**  
-  * Design and implement baby profile creation UI using Jetpack Compose.  
-  * Create Firestore document structure for baby profiles.  
-  * Build age calculation logic based on birthdate.  
-  * Add profile validation and error handling.
+  * Design and implement baby profile creation UI using Jetpack Compose. ✅ COMPLETED
+  * Create Firestore document structure for baby profiles. ✅ COMPLETED
+  * Build age calculation logic based on birthdate. ✅ COMPLETED
+  * **ENHANCED**: Add due date support and corrected age calculation algorithms. ✅ COMPLETED
+  * Add profile validation and error handling. ✅ COMPLETED
+  * **ENHANCED**: Create BabyAgeDisplay components for various age display formats. ✅ COMPLETED
 
 **User Story:** As a parent, I want to edit my baby's information if I made a mistake.
 
 * **Acceptance Criteria:**  
-  * There is an "Edit Profile" option accessible from the baby profile or settings screen.  
-  * Users can modify any field in the baby profile (name, birthdate).  
-  * Changes are saved instantly and synchronized across all devices.  
-  * Users receive confirmation when changes are successfully saved.  
+  * There is an "Edit Profile" option accessible from the profile icon dropdown menu. ✅ IMPLEMENTED
+  * Users can modify any field in the baby profile (name, birthdate, due date). ✅ IMPLEMENTED
+  * **ENHANCED**: Edit screen loads baby data reliably and handles navigation correctly. ✅ IMPLEMENTED
+  * Changes are saved instantly and synchronized across all devices. ✅ IMPLEMENTED
+  * Users receive confirmation when changes are successfully saved. ✅ IMPLEMENTED
+  * **ENHANCED**: Age information updates automatically when profile changes are made. ✅ IMPLEMENTED
 * **Technical Tasks:**  
-  * Create edit profile UI with pre-populated fields.  
-  * Implement real-time validation for profile updates.  
-  * Use Firestore transactions to ensure atomic updates.  
-  * Add loading states and error handling for profile updates.
+  * Create edit profile UI with pre-populated fields. ✅ COMPLETED
+  * **ENHANCED**: Fix navigation issues by implementing proper baby data loading in EditBabyProfileScreen. ✅ COMPLETED
+  * **ENHANCED**: Add loadBabyForEditing method to InvitationViewModel for reliable data loading. ✅ COMPLETED
+  * **ENHANCED**: Fix Firebase document ID mapping to ensure proper baby identification. ✅ COMPLETED
+  * Implement real-time validation for profile updates. ✅ COMPLETED
+  * Use Firestore transactions to ensure atomic updates. ✅ COMPLETED
+  * Add loading states and error handling for profile updates. ✅ COMPLETED
 
 **User Story:** As a parent, I want to see my baby's age calculated automatically based on their birthdate so I can track their development stages.
 
 * **Acceptance Criteria:**  
-  * Baby's age is displayed prominently in the profile and dashboard.  
-  * Age calculation shows appropriate units (days for newborns, weeks/months as appropriate).  
-  * Age updates automatically and is always current.  
-  * Development milestone hints are shown based on age ranges.  
+  * Baby's age is displayed prominently in the profile and dashboard. ✅ IMPLEMENTED
+  * Age calculation shows appropriate units (days for newborns, weeks/months as appropriate). ✅ IMPLEMENTED
+  * **ENHANCED**: Smart age formatting with "X months old" format for dashboard titles. ✅ IMPLEMENTED
+  * Age updates automatically and is always current. ✅ IMPLEMENTED
+  * **ENHANCED**: Corrected age calculation for premature babies based on due date. ✅ IMPLEMENTED
+  * **ENHANCED**: Clear distinction between real age and corrected age display. ✅ IMPLEMENTED
+  * Development milestone hints are shown based on age ranges. ⏳ PENDING
 * **Technical Tasks:**  
-  * Implement precise age calculation algorithm accounting for leap years.  
-  * Create age formatting logic for different time periods.  
-  * Design age display component for consistent presentation.  
-  * Add development milestone data and display logic.
+  * Implement precise age calculation algorithm accounting for leap years. ✅ COMPLETED
+  * **ENHANCED**: Create AgeInfo data class and comprehensive age calculation methods. ✅ COMPLETED
+  * **ENHANCED**: Implement getRealAge() and getAdjustedAge() methods in Baby model. ✅ COMPLETED
+  * Create age formatting logic for different time periods. ✅ COMPLETED
+  * **ENHANCED**: Build multiple age display components (BabyAgeDisplay, CompactBabyAgeDisplay, DashboardAgeDisplay). ✅ COMPLETED
+  * Design age display component for consistent presentation. ✅ COMPLETED
+  * **ENHANCED**: Add age information to dashboard title bars and profile screens. ✅ COMPLETED
+  * Add development milestone data and display logic. ⏳ PENDING
+
+**ENHANCEMENT SUMMARY:**
+* **Due Date Support**: Full support for premature babies with optional due date field
+* **Corrected Age Calculation**: Sophisticated algorithms to calculate both real age and corrected age
+* **Enhanced UI**: Multiple age display components for different contexts (dashboard, profile, compact views)
+* **Reliable Navigation**: Fixed edit baby functionality with proper data loading and navigation
+* **Firebase Integration**: Proper document ID mapping and real-time synchronization
+* **Age Display**: Smart age formatting with contextual information display
 
 ### **User Onboarding & Tutorial**
 

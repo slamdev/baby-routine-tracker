@@ -73,9 +73,13 @@ Here is a list of user stories broken down by feature for a developer to follow.
 
 ### **Baby Profile Management**
 
-* **As a new parent,** I want to create my baby's profile with their name, and birthdate so I can personalize the app experience.  
+* **As a new parent,** I want to create my baby's profile with their name and birthdate so I can personalize the app experience.  
+* **ENHANCED:** As a parent of a premature baby, I want to specify both birthdate and due date so I can track both real age and corrected age for development milestones.
 * **As a parent,** I want to edit my baby's information if I made a mistake.  
+* **ENHANCED:** As a parent, I want reliable access to edit my baby's profile from the profile menu with proper navigation and data loading.
 * **As a parent,** I want to see my baby's age calculated automatically based on their birthdate so I can track their development stages.  
+* **ENHANCED:** As a parent of a premature baby, I want to see both real age and corrected age clearly distinguished in the app interface.
+* **ENHANCED:** As a parent, I want to see my baby's age displayed in the dashboard title for quick reference and contextual awareness.  
 
 ### **User Onboarding & Tutorial**
 

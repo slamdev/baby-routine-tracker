@@ -11,7 +11,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -19,6 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.github.slamdev.babyroutinetracker.model.Baby
 import com.github.slamdev.babyroutinetracker.ui.theme.extended
 import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
@@ -26,9 +26,10 @@ import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateBabyProfileScreen(
+fun EditBabyProfileScreen(
+    babyId: String,
     onNavigateBack: () -> Unit,
-    onCreateSuccess: () -> Unit,
+    onUpdateSuccess: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: InvitationViewModel = viewModel()
 ) {
@@ -39,10 +40,34 @@ fun CreateBabyProfileScreen(
     var showDueDatePicker by remember { mutableStateOf(false) }
     var includeDueDate by remember { mutableStateOf(false) }
 
-    // Handle successful creation
+    // Load baby data when screen starts
+    LaunchedEffect(babyId) {
+        viewModel.loadBabyForEditing(babyId)
+    }
+
+    // Get the baby from the editing state or babies list
+    val baby = uiState.editingBaby ?: uiState.babies.find { it.id == babyId }
+
+    // Show loading while baby is being loaded
+    if (baby == null) {
+        Box(
+            modifier = modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+        return
+    }
+
+    // Initialize due date state when baby is loaded
+    LaunchedEffect(baby) {
+        includeDueDate = baby.dueDate != null
+    }
+
+    // Handle successful update
     LaunchedEffect(uiState.baby) {
-        if (uiState.baby != null && uiState.successMessage != null) {
-            onCreateSuccess()
+        if (uiState.editingBaby == null && uiState.successMessage != null) {
+            onUpdateSuccess()
         }
     }
 
@@ -57,9 +82,12 @@ fun CreateBabyProfileScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Create Baby Profile") },
+                title = { Text("Edit Baby Profile") },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
+                    IconButton(onClick = {
+                        viewModel.cancelEditingBaby()
+                        onNavigateBack()
+                    }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
                 },
@@ -92,7 +120,7 @@ fun CreateBabyProfileScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Create Your Baby's Profile",
+                        text = "Edit ${baby.name}'s Profile",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
@@ -100,11 +128,56 @@ fun CreateBabyProfileScreen(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Enter your baby's information including birthdate and optional due date for age tracking.",
+                        text = "Update your baby's information and age calculation settings.",
                         fontSize = 14.sp,
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f)
                     )
+                }
+            }
+
+            // Current age display
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.extended.successContainer.copy(alpha = 0.1f)
+                )
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        text = "Current Age Information",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    
+                    Text(
+                        text = "Real Age: ${baby.getFormattedRealAge()}",
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+                    )
+                    
+                    baby.getFormattedAdjustedAge()?.let { adjustedAge ->
+                        Text(
+                            text = "Corrected Age: $adjustedAge",
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+                        )
+                    }
+                    
+                    if (baby.wasBornEarly()) {
+                        baby.getGestationWeeks()?.let { weeks ->
+                            Text(
+                                text = "Born at approximately $weeks weeks gestation",
+                                fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                            )
+                        }
+                    }
                 }
             }
 
@@ -194,26 +267,43 @@ fun CreateBabyProfileScreen(
                 }
             }
 
-            // Create button
-            Button(
-                onClick = { 
-                    viewModel.createBabyProfile(
-                        uiState.babyName, 
-                        uiState.babyBirthDate,
-                        if (includeDueDate) uiState.babyDueDate else null
-                    )
-                },
-                enabled = !uiState.isLoading && uiState.babyName.isNotBlank(),
-                modifier = Modifier.fillMaxWidth()
+            // Action buttons
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                if (uiState.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(16.dp),
-                        strokeWidth = 2.dp
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
+                OutlinedButton(
+                    onClick = {
+                        viewModel.cancelEditingBaby()
+                        onNavigateBack()
+                    },
+                    enabled = !uiState.isLoading,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Cancel")
                 }
-                Text(if (uiState.isLoading) "Creating..." else "Create Profile")
+                
+                Button(
+                    onClick = { 
+                        viewModel.updateBabyProfile(
+                            baby.id,
+                            uiState.babyName, 
+                            uiState.babyBirthDate,
+                            if (includeDueDate) uiState.babyDueDate else null
+                        )
+                    },
+                    enabled = !uiState.isLoading && uiState.babyName.isNotBlank(),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    if (uiState.isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(16.dp),
+                            strokeWidth = 2.dp
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                    }
+                    Text(if (uiState.isLoading) "Updating..." else "Update")
+                }
             }
 
             // Error message

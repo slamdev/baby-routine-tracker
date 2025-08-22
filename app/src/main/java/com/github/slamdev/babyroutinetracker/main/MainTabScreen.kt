@@ -22,6 +22,7 @@ import com.github.slamdev.babyroutinetracker.history.ActivityHistoryContent
 import com.github.slamdev.babyroutinetracker.datavisualization.DataVisualizationScreen
 import com.github.slamdev.babyroutinetracker.sleepplans.AISleepPlansScreen
 import com.github.slamdev.babyroutinetracker.invitation.InvitationViewModel
+import com.github.slamdev.babyroutinetracker.model.Baby
 import com.github.slamdev.babyroutinetracker.ui.components.ProfileIcon
 import kotlinx.coroutines.launch
 
@@ -32,6 +33,7 @@ fun MainTabScreen(
     onNavigateToInvitePartner: () -> Unit,
     onNavigateToJoinInvitation: () -> Unit,
     onNavigateToCreateBaby: () -> Unit,
+    onNavigateToEditBaby: (Baby) -> Unit,
     modifier: Modifier = Modifier,
     authViewModel: AuthenticationViewModel = viewModel(),
     invitationViewModel: InvitationViewModel = viewModel()
@@ -75,13 +77,27 @@ fun MainTabScreen(
                                 Arrangement.spacedBy(8.dp)
                             }
                         ) {
-                            Text(
-                                text = selectedBaby?.name ?: "Baby Routine Tracker",
-                                style = MaterialTheme.typography.titleLarge,
-                                modifier = Modifier.padding(end = if (isLandscape) 16.dp else 8.dp),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
+                            Column(
+                                modifier = Modifier.padding(end = if (isLandscape) 16.dp else 8.dp)
+                            ) {
+                                Text(
+                                    text = selectedBaby?.name ?: "Baby Routine Tracker",
+                                    style = MaterialTheme.typography.titleLarge,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                                selectedBaby?.let { baby ->
+                                    Text(
+                                        text = baby.getFormattedRealAge() + (
+                                            baby.getFormattedAdjustedAge()?.let { corrected ->
+                                                if (baby.wasBornEarly()) " (corrected: $corrected)" else ""
+                                            } ?: ""
+                                        ),
+                                        fontSize = 12.sp,
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                                    )
+                                }
+                            }
                             
                             // Navigation chips with responsive spacing
                             Row(
@@ -111,9 +127,11 @@ fun MainTabScreen(
                         user = authState.user,
                         onSignOut = onSignOut,
                         babies = invitationState.babies,
+                        selectedBaby = selectedBaby,
                         onNavigateToCreateBaby = onNavigateToCreateBaby,
                         onNavigateToJoinInvitation = onNavigateToJoinInvitation,
-                        onNavigateToInvitePartner = onNavigateToInvitePartner
+                        onNavigateToInvitePartner = onNavigateToInvitePartner,
+                        onNavigateToEditBaby = onNavigateToEditBaby
                     )
                 }
             )

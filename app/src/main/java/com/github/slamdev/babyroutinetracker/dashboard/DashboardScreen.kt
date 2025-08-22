@@ -48,6 +48,7 @@ fun DashboardScreen(
     onNavigateToInvitePartner: () -> Unit,
     onNavigateToJoinInvitation: () -> Unit,
     onNavigateToCreateBaby: () -> Unit,
+    onNavigateToEditBaby: (Baby) -> Unit,
     onNavigateToHistory: (String) -> Unit,
     modifier: Modifier = Modifier,
     authViewModel: AuthenticationViewModel = viewModel(),
@@ -63,18 +64,33 @@ fun DashboardScreen(
         topBar = {
             TopAppBar(
                 title = { 
-                    Text(
-                        text = selectedBaby?.name ?: "Baby Routine Tracker"
-                    )
+                    Column {
+                        Text(
+                            text = selectedBaby?.name ?: "Baby Routine Tracker"
+                        )
+                        selectedBaby?.let { baby ->
+                            Text(
+                                text = baby.getFormattedRealAge() + (
+                                    baby.getFormattedAdjustedAge()?.let { corrected ->
+                                        if (baby.wasBornEarly()) " (corrected: $corrected)" else ""
+                                    } ?: ""
+                                ),
+                                fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                            )
+                        }
+                    }
                 },
                 actions = {
                     ProfileIcon(
                         user = authState.user,
                         onSignOut = onSignOut,
                         babies = invitationState.babies,
+                        selectedBaby = selectedBaby,
                         onNavigateToCreateBaby = onNavigateToCreateBaby,
                         onNavigateToJoinInvitation = onNavigateToJoinInvitation,
-                        onNavigateToInvitePartner = onNavigateToInvitePartner
+                        onNavigateToInvitePartner = onNavigateToInvitePartner,
+                        onNavigateToEditBaby = onNavigateToEditBaby
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(

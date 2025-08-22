@@ -30,9 +30,11 @@ fun ProfileIcon(
     user: FirebaseUser?,
     onSignOut: () -> Unit,
     babies: List<Baby>,
+    selectedBaby: Baby?,
     onNavigateToCreateBaby: () -> Unit,
     onNavigateToJoinInvitation: () -> Unit,
     onNavigateToInvitePartner: () -> Unit,
+    onNavigateToEditBaby: (Baby) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var showDropdownMenu by remember { mutableStateOf(false) }
@@ -156,6 +158,28 @@ fun ProfileIcon(
                     onNavigateToJoinInvitation()
                 }
             )
+
+            // Show edit baby profile option if a baby is selected
+            selectedBaby?.let { baby ->
+                DropdownMenuItem(
+                    text = { 
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Person, // Using Person for edit as Edit icon may not be available
+                                contentDescription = "Edit Baby Profile"
+                            )
+                            Text("Edit ${baby.name}")
+                        }
+                    },
+                    onClick = {
+                        showDropdownMenu = false
+                        onNavigateToEditBaby(baby)
+                    }
+                )
+            }
             
             // Only show invite partner option if there are baby profiles
             if (babies.isNotEmpty()) {
