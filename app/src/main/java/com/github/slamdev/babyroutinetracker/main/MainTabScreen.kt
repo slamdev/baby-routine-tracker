@@ -10,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.semantics.semantics
@@ -59,31 +60,48 @@ fun MainTabScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    // Baby name + top navigation chips in one row
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
+                    // Responsive title layout optimized for landscape and portrait
+                    BoxWithConstraints(
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(
-                            text = selectedBaby?.name ?: "Baby Routine Tracker",
-                            style = MaterialTheme.typography.titleLarge,
-                            modifier = Modifier.padding(end = 12.dp)
-                        )
+                        val isLandscape = maxWidth > maxHeight
+                        
                         Row(
-                            modifier = Modifier
-                                .horizontalScroll(rememberScrollState()),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = if (isLandscape) {
+                                Arrangement.spacedBy(16.dp)
+                            } else {
+                                Arrangement.spacedBy(8.dp)
+                            }
                         ) {
-                pageSymbols.forEachIndexed { index, (symbol, desc) ->
-                                val selected = pagerState.currentPage == index
-                                NavIconChip(
-                    symbol = symbol,
-                    contentDescription = desc,
-                                    selected = selected,
-                                    onClick = { scope.launch { pagerState.animateScrollToPage(index) } }
-                                )
+                            Text(
+                                text = selectedBaby?.name ?: "Baby Routine Tracker",
+                                style = MaterialTheme.typography.titleLarge,
+                                modifier = Modifier.padding(end = if (isLandscape) 16.dp else 8.dp),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            
+                            // Navigation chips with responsive spacing
+                            Row(
+                                modifier = Modifier
+                                    .weight(1f, fill = false)
+                                    .horizontalScroll(rememberScrollState()),
+                                horizontalArrangement = Arrangement.spacedBy(
+                                    if (isLandscape) 12.dp else 8.dp
+                                ),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                pageSymbols.forEachIndexed { index, (symbol, desc) ->
+                                    val selected = pagerState.currentPage == index
+                                    NavIconChip(
+                                        symbol = symbol,
+                                        contentDescription = desc,
+                                        selected = selected,
+                                        onClick = { scope.launch { pagerState.animateScrollToPage(index) } }
+                                    )
+                                }
                             }
                         }
                     }

@@ -111,21 +111,40 @@ fun DashboardContent(
                 val outerPadding = 16.dp
                 val spacing = 12.dp
 
-                // Compute how many columns can fit given min width & spacing
+                // Enhanced responsive logic for better landscape support
                 val availableRowWidth = maxWidth - outerPadding * 2
+                val isLandscape = maxWidth > maxHeight
+                
+                // Calculate optimal columns based on available width and orientation
                 val rawColumns = floor(
                     ((availableRowWidth + spacing) / (cardMinWidth + spacing)).toDouble()
                 ).toInt().coerceAtLeast(1)
+                
                 val itemCount = 4
-                val columns = rawColumns.coerceAtMost(itemCount) // don't exceed item count
+                val columns = if (isLandscape) {
+                    // In landscape, prefer 4 columns if space allows, otherwise 2
+                    when {
+                        rawColumns >= 4 -> 4
+                        rawColumns >= 2 -> 2
+                        else -> 1
+                    }
+                } else {
+                    // In portrait, stick to 2 columns for optimal usability
+                    rawColumns.coerceAtMost(2)
+                }.coerceAtMost(itemCount) // Never exceed item count
+                
                 val rows = ceil(itemCount / columns.toDouble()).toInt()
 
+                // Calculate card heights with better landscape optimization
                 val verticalPaddingTotal = outerPadding * 2
                 val totalVerticalSpacing = spacing * (rows - 1)
                 val availableHeightForCards = maxHeight - verticalPaddingTotal - totalVerticalSpacing
                 val computedCardHeight = (availableHeightForCards / rows)
-                val fitsWithoutScroll = computedCardHeight >= minCardHeight
-                val cardHeight = if (fitsWithoutScroll) computedCardHeight else minCardHeight
+                
+                // In landscape mode, allow slightly smaller cards for better fit
+                val effectiveMinHeight = if (isLandscape) (minCardHeight * 0.8f) else minCardHeight
+                val fitsWithoutScroll = computedCardHeight >= effectiveMinHeight
+                val cardHeight = if (fitsWithoutScroll) computedCardHeight else effectiveMinHeight
 
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(columns),

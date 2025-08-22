@@ -15,54 +15,65 @@ fun AISleepPlansScreen(
     babyId: String,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+    // Responsive layout that adapts to screen orientation
+    BoxWithConstraints(
+        modifier = modifier.fillMaxSize()
     ) {
-        Card(
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant
-            )
+        val isLandscape = maxWidth > maxHeight
+        val padding = if (isLandscape) 32.dp else 24.dp
+        
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Column(
-                modifier = Modifier.padding(32.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                ),
+                modifier = Modifier.then(
+                    if (isLandscape) Modifier.fillMaxWidth(0.8f) else Modifier
+                )
             ) {
-                Text(
-                    text = "🤖",
-                    fontSize = 48.sp
-                )
-                
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                Text(
-                    text = "AI Sleep Plans",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                
-                Spacer(modifier = Modifier.height(8.dp))
-                
-                Text(
-                    text = "Coming Soon",
-                    fontSize = 16.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                    textAlign = TextAlign.Center
-                )
-                
-                Spacer(modifier = Modifier.height(12.dp))
-                
-                Text(
-                    text = "AI-powered sleep routine suggestions based on your baby's sleep patterns and age.",
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                    textAlign = TextAlign.Center,
-                    lineHeight = 20.sp
-                )
+                Column(
+                    modifier = Modifier.padding(if (isLandscape) 24.dp else 32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "🤖",
+                        fontSize = if (isLandscape) 40.sp else 48.sp
+                    )
+                    
+                    Spacer(modifier = Modifier.height(if (isLandscape) 12.dp else 16.dp))
+                    
+                    Text(
+                        text = "AI Sleep Plans",
+                        fontSize = if (isLandscape) 20.sp else 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    
+                    Spacer(modifier = Modifier.height(8.dp))
+                    
+                    Text(
+                        text = "Coming Soon",
+                        fontSize = 16.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                        textAlign = TextAlign.Center
+                    )
+                    
+                    Spacer(modifier = Modifier.height(12.dp))
+                    
+                    Text(
+                        text = "AI-powered sleep routine suggestions based on your baby's sleep patterns and age.",
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                        textAlign = TextAlign.Center,
+                        lineHeight = 20.sp
+                    )
+                }
             }
         }
     }

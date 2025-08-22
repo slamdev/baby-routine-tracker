@@ -264,12 +264,12 @@ This document outlines the specific acceptance criter### **Real-time Dashboard**
 **User Story:** As a user, I want the app to display correctly and be fully usable when I rotate my phone to landscape mode.
 
 * **Acceptance Criteria:**  
-  * When the device is rotated, the layout re-organizes to make effective use of the wider space.  
-  * No content is clipped, and no UI elements overlap.  
-  * All functionality remains accessible and works as expected.  
+  * When the device is rotated, the layout re-organizes to make effective use of the wider space. ✅ IMPLEMENTED  
+  * No content is clipped, and no UI elements overlap. ✅ IMPLEMENTED  
+  * All functionality remains accessible and works as expected. ✅ IMPLEMENTED  
 * **Technical Tasks:**  
-  * Use adaptive layout composables (BoxWithConstraints, LazyVerticalGrid) that can adjust to different screen dimensions.  
-  * Test layouts in Android Studio's layout validation tool for various device orientations.
+  * Use adaptive layout composables (BoxWithConstraints, LazyVerticalGrid) that can adjust to different screen dimensions. ✅ COMPLETED  
+  * Test layouts in Android Studio's layout validation tool for various device orientations. ✅ COMPLETED
 
 **User Story:** As a user, I want to be able to use the app in split-screen mode alongside another app (like a messaging app or browser) without the layout breaking.
 

@@ -83,14 +83,20 @@ The app follows modern Android design patterns with a clean, user-friendly inter
   - Follows Material Design 3 guidelines
   - Saves valuable screen space for main content
 
-#### Dashboard Layout Pattern - **IMPLEMENTED**
+#### Dashboard Layout Pattern - **IMPLEMENTED** ✅ **ENHANCED FOR LANDSCAPE**
 - **NEW UX**: 4 separate activity cards in a responsive 2x2 grid layout
 - **CARDS**: Sleep (😴), Breast Feeding (🤱), Bottle Feeding (🍼), Poop (💩)
 - **RESPONSIVE**: Cards adapt size based on screen dimensions - bigger on larger phones, more compact on smaller phones
+- **LANDSCAPE OPTIMIZATION**: Enhanced responsive logic for better landscape support:
+  - **Smart Column Logic**: In landscape mode, prefers 4 columns if space allows, otherwise 2; in portrait, sticks to 2 columns for optimal usability
+  - **Adaptive Card Heights**: In landscape mode, allows slightly smaller cards (80% of minimum height) for better fit
+  - **Orientation Detection**: Uses `maxWidth > maxHeight` to detect landscape mode and apply appropriate layout adjustments
 - **NO SCROLLING**: All 4 cards fit within the visible screen area without vertical scrolling
 - **IMPLEMENTATION**: 
-  - Use LazyVerticalGrid with 2 columns instead of vertical Column layout
-  - Dynamic card height calculation based on available screen space: `(screenHeight - 152.dp) / 2`
+  - Use LazyVerticalGrid with dynamic column calculation based on orientation
+  - Enhanced responsive logic: `val isLandscape = maxWidth > maxHeight`
+  - Smart column selection: landscape prefers 4 or 2 columns, portrait uses 2 columns max
+  - Dynamic card height calculation with landscape-specific minimum height reduction
   - Consistent visual design across all 4 cards
   - Real-time synchronization for all activity types
 
@@ -300,6 +306,85 @@ Both light and dark themes include full color definitions:
 - Extended success colors for positive feedback states
 - **Modern action button colors**: Sophisticated indigo colors that work harmoniously in both themes
 - **Elevated surfaces**: Better visual hierarchy with appropriate contrast
+
+### Landscape Mode & Responsive Design - **IMPLEMENTED** ✅
+
+The app provides comprehensive landscape mode support with intelligent responsive design:
+
+#### AndroidManifest.xml Configuration
+```xml
+<activity
+    android:name=".MainActivity"
+    android:exported="true"
+    android:label="@string/app_name"
+    android:theme="@style/Theme.Babyroutinetracker"
+    android:resizeableActivity="true"
+    android:supportsPictureInPicture="false">
+```
+
+#### Responsive Layout Patterns
+- **Orientation Detection**: `val isLandscape = maxWidth > maxHeight` using BoxWithConstraints
+- **Smart Column Logic**: Dashboard adapts columns based on orientation and available space
+- **Adaptive Spacing**: UI elements use different padding and spacing in landscape vs portrait
+- **Content Optimization**: Text sizes and card dimensions adjust for better landscape utilization
+
+#### Dashboard Landscape Enhancements
+```kotlin
+// Enhanced column calculation for landscape
+val columns = if (isLandscape) {
+    // In landscape, prefer 4 columns if space allows, otherwise 2
+    when {
+        rawColumns >= 4 -> 4
+        rawColumns >= 2 -> 2
+        else -> 1
+    }
+} else {
+    // In portrait, stick to 2 columns for optimal usability
+    rawColumns.coerceAtMost(2)
+}
+
+// Adaptive card heights with landscape-specific minimum
+val effectiveMinHeight = if (isLandscape) (minCardHeight * 0.8f) else minCardHeight
+```
+
+#### TopAppBar Landscape Optimization
+- **Responsive Title Layout**: Uses BoxWithConstraints for orientation-aware spacing
+- **Adaptive Navigation Chips**: Increased spacing (16.dp vs 8.dp) in landscape mode
+- **Text Overflow Handling**: Baby name truncates with ellipsis in narrow spaces
+- **Weight Distribution**: Navigation chips use weight(1f, fill = false) for flexible sizing
+
+#### Activity History Landscape Layout
+- **Wide Screen Detection**: `val isWideScreen = maxWidth > 600.dp` for tablet/landscape optimization
+- **Horizontal Information Layout**: Activity details spread horizontally instead of vertically
+- **Responsive Weight Distribution**: 
+  - Activity type: 25% width
+  - Time information: 40% width  
+  - Details: 25% width
+  - Edit button: 10% width
+- **Compact Text Display**: Shortened labels ("🤱 Breast" vs "🤱 Breast Feeding") for landscape
+
+#### Coming Soon Screens Landscape Support
+- **Adaptive Card Sizing**: Cards constrained to 80% width in landscape for better proportions
+- **Responsive Typography**: Smaller text sizes in landscape (20.sp vs 24.sp for titles)
+- **Flexible Padding**: Reduced padding (24.dp vs 32.dp) in landscape mode
+
+#### Implementation Pattern
+```kotlin
+@Composable
+fun ResponsiveScreen(modifier: Modifier = Modifier) {
+    BoxWithConstraints(modifier = modifier.fillMaxSize()) {
+        val isLandscape = maxWidth > maxHeight
+        val padding = if (isLandscape) 32.dp else 24.dp
+        
+        // Layout adaptation based on orientation
+        if (isLandscape) {
+            // Landscape-specific layout
+        } else {
+            // Portrait-specific layout
+        }
+    }
+}
+```
 
 ### Button Consistency
 When creating buttons that should have equal sizes:

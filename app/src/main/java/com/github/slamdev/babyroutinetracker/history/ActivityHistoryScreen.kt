@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -179,98 +180,184 @@ private fun ActivityHistoryItem(
             containerColor = backgroundColor
         )
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                // Activity type and basic info
-                Text(
-                    text = when (activity.type) {
-                        ActivityType.SLEEP -> "😴 Sleep"
-                        ActivityType.FEEDING -> {
-                            if (activity.feedingType == "breast_milk") {
-                                "🤱 Breast Feeding"
-                            } else {
-                                "🍼 Bottle Feeding"
-                            }
-                        }
-                        ActivityType.DIAPER -> "💩 Diaper"
-                    },
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                
-                // Time information
-                val timeInfo = if (activity.endTime != null) {
-                    if (activity.isInstantActivity()) {
-                        // For instant activities (bottle feeding, diaper), show single timestamp
-                        "at ${formatTime(activity.startTime.toDate())}"
-                    } else {
-                        // For duration activities (sleep, breast feeding), show start-end with duration
-                        val startTime = formatTime(activity.startTime.toDate())
-                        val endTime = formatTime(activity.endTime.toDate())
-                        val duration = activity.getDurationMinutes()
-                        if (duration != null) {
-                            val hours = duration / 60
-                            val minutes = duration % 60
-                            val durationText = if (hours > 0) "${hours}h ${minutes}m" else "${minutes}m"
-                            "$startTime - $endTime ($durationText)"
-                        } else {
-                            "$startTime - $endTime"
-                        }
-                    }
-                } else {
-                    "Started at ${formatTime(activity.startTime.toDate())} (ongoing)"
-                }
-                
-                Text(
-                    text = timeInfo,
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
-                )
-                
-                // Activity-specific details
-                when (activity.type) {
-                    ActivityType.FEEDING -> {
-                        if (activity.feedingType == "bottle" && activity.amount > 0) {
-                            Text(
-                                text = "${activity.amount.toInt()} ml",
-                                fontSize = 12.sp,
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                            )
-                        }
-                    }
-                    else -> { /* No additional details for sleep/diaper */ }
-                }
-                
-                // Notes if available
-                if (activity.notes.isNotBlank()) {
-                    Text(
-                        text = "\"${activity.notes}\"",
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                        fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
-                    )
-                }
-            }
+        // Responsive layout that adapts to screen width
+        BoxWithConstraints {
+            val isWideScreen = maxWidth > 600.dp
             
-            // Edit button (only for completed activities)
-            if (activity.endTime != null) {
-                IconButton(onClick = onEditActivity) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "Edit activity",
-                        tint = MaterialTheme.colorScheme.primary
+            if (isWideScreen) {
+                // Landscape/wide layout: more horizontal organization
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    // Activity type and icon
+                    Row(
+                        modifier = Modifier.weight(0.25f),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = when (activity.type) {
+                                ActivityType.SLEEP -> "😴 Sleep"
+                                ActivityType.FEEDING -> {
+                                    if (activity.feedingType == "breast_milk") {
+                                        "🤱 Breast"
+                                    } else {
+                                        "🍼 Bottle"
+                                    }
+                                }
+                                ActivityType.DIAPER -> "💩 Diaper"
+                            },
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp
+                        )
+                    }
+                    
+                    // Time information
+                    Row(
+                        modifier = Modifier.weight(0.4f),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        ActivityTimeInfo(activity = activity)
+                    }
+                    
+                    // Additional details
+                    Row(
+                        modifier = Modifier.weight(0.25f),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        ActivityDetailsInfo(activity = activity)
+                    }
+                    
+                    // Edit button
+                    IconButton(
+                        onClick = onEditActivity,
+                        modifier = Modifier.weight(0.1f, fill = false)
+                    ) {
+                        Icon(
+                            Icons.Default.Edit,
+                            contentDescription = "Edit activity"
+                        )
+                    }
+                }
+            } else {
+                // Portrait/narrow layout: more vertical organization
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        // Activity type and basic info
+                        Text(
+                            text = when (activity.type) {
+                                ActivityType.SLEEP -> "😴 Sleep"
+                                ActivityType.FEEDING -> {
+                                    if (activity.feedingType == "breast_milk") {
+                                        "🤱 Breast Feeding"
+                                    } else {
+                                        "🍼 Bottle Feeding"
+                                    }
+                                }
+                                ActivityType.DIAPER -> "💩 Diaper Change"
+                            },
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp
+                        )
+                        
+                        ActivityTimeInfo(activity = activity)
+                        ActivityDetailsInfo(activity = activity)
+                    }
+                    
+                    IconButton(onClick = onEditActivity) {
+                        Icon(
+                            Icons.Default.Edit,
+                            contentDescription = "Edit activity"
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ActivityTimeInfo(
+    activity: Activity,
+    modifier: Modifier = Modifier
+) {
+    // Time information
+    val timeInfo = if (activity.endTime != null) {
+        if (activity.isInstantActivity()) {
+            // For instant activities (bottle feeding, diaper), show single timestamp
+            "at ${formatTime(activity.startTime.toDate())}"
+        } else {
+            // For duration activities (sleep, breast feeding), show start-end with duration
+            val startTime = formatTime(activity.startTime.toDate())
+            val endTime = formatTime(activity.endTime.toDate())
+            val duration = activity.getDurationMinutes()
+            if (duration != null) {
+                val hours = duration / 60
+                val minutes = duration % 60
+                val durationText = if (hours > 0) "${hours}h ${minutes}m" else "${minutes}m"
+                "$startTime - $endTime ($durationText)"
+            } else {
+                "$startTime - $endTime"
+            }
+        }
+    } else {
+        "Started at ${formatTime(activity.startTime.toDate())} (ongoing)"
+    }
+    
+    Text(
+        text = timeInfo,
+        fontSize = 14.sp,
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+        modifier = modifier
+    )
+}
+
+@Composable
+private fun ActivityDetailsInfo(
+    activity: Activity,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(2.dp)
+    ) {
+        // Activity-specific details
+        when (activity.type) {
+            ActivityType.FEEDING -> {
+                if (activity.feedingType == "bottle" && activity.amount > 0) {
+                    Text(
+                        text = "${activity.amount.toInt()} ml",
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                     )
                 }
             }
+            else -> { /* No additional details for sleep/diaper */ }
+        }
+        
+        // Notes if available
+        if (activity.notes.isNotBlank()) {
+            Text(
+                text = "\"${activity.notes}\"",
+                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
         }
     }
 }
