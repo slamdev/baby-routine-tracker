@@ -1,14 +1,21 @@
 package com.github.slamdev.babyroutinetracker
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -25,19 +32,84 @@ import com.github.slamdev.babyroutinetracker.invitation.EditBabyProfileScreen
 import com.github.slamdev.babyroutinetracker.invitation.InvitationViewModel
 import com.github.slamdev.babyroutinetracker.history.ActivityHistoryScreen
 import com.github.slamdev.babyroutinetracker.offline.OfflineManager
+import com.github.slamdev.babyroutinetracker.notifications.NotificationSettingsScreen
+import com.github.slamdev.babyroutinetracker.service.UserService
 import com.github.slamdev.babyroutinetracker.ui.theme.BabyroutinetrackerTheme
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+    
+    companion object {
+        private const val TAG = "MainActivity"
+    }
+    
+    // Notification permission launcher for Android 13+
+    private val notificationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        Log.d(TAG, "Notification permission granted: $isGranted")
+        if (!isGranted) {
+            Log.w(TAG, "Notification permission denied by user")
+        }
+    }
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
         // Initialize offline manager
         OfflineManager.getInstance(this).initialize()
         
+        // Request notification permission for Android 13+
+        requestNotificationPermission()
+        
+        // Initialize FCM token
+        initializeFcmToken()
+        
         enableEdgeToEdge()
         setContent {
             BabyroutinetrackerTheme {
                 BabyRoutineTrackerApp()
+            }
+        }
+    }
+    
+    /**
+     * Request notification permission for Android 13+
+     */
+    private fun requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            when {
+                ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED -> {
+                    Log.d(TAG, "Notification permission already granted")
+                }
+                else -> {
+                    Log.d(TAG, "Requesting notification permission")
+                    notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
+            }
+        } else {
+            Log.d(TAG, "Android version < 13, notification permission not required")
+        }
+    }
+
+    /**
+     * Initialize Firebase Cloud Messaging token
+     */
+    private fun initializeFcmToken() {
+        lifecycleScope.launch {
+            try {
+                val userService = UserService()
+                val result = userService.initializeFcmToken()
+                if (result.isSuccess) {
+                    Log.d(TAG, "FCM token initialized successfully")
+                } else {
+                    Log.w(TAG, "Failed to initialize FCM token", result.exceptionOrNull())
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error initializing FCM token", e)
             }
         }
     }
@@ -90,6 +162,9 @@ fun BabyRoutineTrackerApp() {
                 },
                 onNavigateToEditBaby = { baby ->
                     navController.navigate("edit_baby/${baby.id}")
+                },
+                onNavigateToNotificationSettings = { baby ->
+                    navController.navigate("notification_settings/${baby.id}/${baby.name}")
                 },
                 authViewModel = authViewModel
             )
@@ -157,6 +232,24 @@ fun BabyRoutineTrackerApp() {
             val babyId = backStackEntry.arguments?.getString("babyId") ?: ""
             ActivityHistoryScreen(
                 babyId = babyId,
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+        
+        composable(
+            "notification_settings/{babyId}/{babyName}",
+            arguments = listOf(
+                navArgument("babyId") { type = NavType.StringType },
+                navArgument("babyName") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val babyId = backStackEntry.arguments?.getString("babyId") ?: ""
+            val babyName = backStackEntry.arguments?.getString("babyName") ?: ""
+            NotificationSettingsScreen(
+                babyId = babyId,
+                babyName = babyName,
                 onNavigateBack = {
                     navController.popBackStack()
                 }

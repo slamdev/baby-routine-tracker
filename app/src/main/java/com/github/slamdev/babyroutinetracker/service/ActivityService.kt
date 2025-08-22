@@ -3,6 +3,7 @@ package com.github.slamdev.babyroutinetracker.service
 import android.util.Log
 import com.github.slamdev.babyroutinetracker.model.Activity
 import com.github.slamdev.babyroutinetracker.model.ActivityType
+import com.github.slamdev.babyroutinetracker.model.Baby
 import com.github.slamdev.babyroutinetracker.model.OptionalUiState
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -18,6 +19,7 @@ import java.util.UUID
 class ActivityService {
     private val firestore = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
+    private val partnerNotificationService = PartnerNotificationService()
 
     companion object {
         private const val TAG = "ActivityService"
@@ -77,6 +79,18 @@ class ActivityService {
                 .await()
 
             Log.i(TAG, "Activity started successfully: ${type.displayName} for baby: $babyId")
+            
+            // Send partner notification for started activity
+            try {
+                val baby = getBaby(babyId)
+                if (baby != null) {
+                    partnerNotificationService.notifyPartnersOfActivity(activity, baby)
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "Failed to send partner notification for started activity", e)
+                // Don't fail the activity logging if notification fails
+            }
+            
             Result.success(activity)
         } catch (e: Exception) {
             Log.e(TAG, "Failed to start activity: ${type.displayName} for baby: $babyId", e)
@@ -130,6 +144,18 @@ class ActivityService {
             activityRef.set(updatedActivity).await()
 
             Log.i(TAG, "Activity ended successfully: ${activity.type.displayName} for baby: $babyId")
+            
+            // Send partner notification for completed activity
+            try {
+                val baby = getBaby(babyId)
+                if (baby != null) {
+                    partnerNotificationService.notifyPartnersOfActivity(updatedActivity, baby)
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "Failed to send partner notification for completed activity", e)
+                // Don't fail the activity logging if notification fails
+            }
+            
             Result.success(updatedActivity)
         } catch (e: Exception) {
             Log.e(TAG, "Failed to end activity: $activityId for baby: $babyId", e)
@@ -515,6 +541,18 @@ class ActivityService {
                 .await()
 
             Log.i(TAG, "Feeding activity logged successfully: $feedingType for baby: $babyId")
+            
+            // Send partner notification for feeding activity
+            try {
+                val baby = getBaby(babyId)
+                if (baby != null) {
+                    partnerNotificationService.notifyPartnersOfActivity(activity, baby)
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "Failed to send partner notification for feeding activity", e)
+                // Don't fail the activity logging if notification fails
+            }
+            
             Result.success(activity)
         } catch (e: Exception) {
             Log.e(TAG, "Failed to log feeding activity: $feedingType for baby: $babyId", e)
@@ -568,6 +606,18 @@ class ActivityService {
                 .await()
 
             Log.i(TAG, "Poop activity logged successfully for baby: $babyId")
+            
+            // Send partner notification for diaper activity
+            try {
+                val baby = getBaby(babyId)
+                if (baby != null) {
+                    partnerNotificationService.notifyPartnersOfActivity(activity, baby)
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "Failed to send partner notification for diaper activity", e)
+                // Don't fail the activity logging if notification fails
+            }
+            
             Result.success(activity)
         } catch (e: Exception) {
             Log.e(TAG, "Failed to log poop activity for baby: $babyId", e)
@@ -919,6 +969,23 @@ class ActivityService {
         } catch (e: Exception) {
             Log.e(TAG, "Failed to check baby access: $babyId", e)
             false
+        }
+    }
+
+    /**
+     * Get baby information for notifications
+     */
+    private suspend fun getBaby(babyId: String): Baby? {
+        return try {
+            val babyDoc = firestore.collection(BABIES_COLLECTION)
+                .document(babyId)
+                .get()
+                .await()
+            
+            babyDoc.toObject<Baby>()?.copy(id = babyDoc.id)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to get baby for notifications: $babyId", e)
+            null
         }
     }
 }

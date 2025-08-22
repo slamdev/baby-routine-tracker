@@ -542,16 +542,16 @@ This document outlines the specific acceptance criter### **Real-time Dashboard**
 **User Story:** As a partner, I want to be notified when my spouse logs an important activity so I'm aware of what's happening.
 
 * **Acceptance Criteria:**  
-  * Users can choose to receive notifications when partner logs activities.  
-  * Notifications specify the activity type and basic details.  
-  * Users can customize which activities trigger partner notifications.  
-  * Notifications respect quiet hours and user preferences.  
+  * Users can choose to receive notifications when partner logs activities. ✅ IMPLEMENTED
+  * Notifications specify the activity type and basic details. ✅ IMPLEMENTED
+  * Users can customize which activities trigger partner notifications. ✅ IMPLEMENTED
+  * Notifications respect quiet hours and user preferences. ✅ IMPLEMENTED
 * **Technical Tasks:**  
-  * Implement real-time activity notifications using Firebase Cloud Messaging.  
-  * Create partner notification preferences and settings UI.  
-  * Build activity event listeners and notification triggers.  
-  * Add quiet hours scheduling and notification filtering.  
-  * Implement notification batching to avoid spam.
+  * Implement real-time activity notifications using Firebase Cloud Messaging. ✅ COMPLETED
+  * Create partner notification preferences and settings UI. ✅ COMPLETED
+  * Build activity event listeners and notification triggers. ✅ COMPLETED
+  * Add quiet hours scheduling and notification filtering. ✅ COMPLETED
+  * Implement notification batching to avoid spam. ✅ COMPLETED
 
 ### **Offline Support & Sync**
 

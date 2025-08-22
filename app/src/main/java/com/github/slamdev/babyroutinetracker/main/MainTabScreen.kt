@@ -38,6 +38,7 @@ fun MainTabScreen(
     onNavigateToJoinInvitation: () -> Unit,
     onNavigateToCreateBaby: () -> Unit,
     onNavigateToEditBaby: (Baby) -> Unit,
+    onNavigateToNotificationSettings: (Baby) -> Unit,
     modifier: Modifier = Modifier,
     authViewModel: AuthenticationViewModel = viewModel(),
     invitationViewModel: InvitationViewModel = viewModel()
@@ -135,7 +136,8 @@ fun MainTabScreen(
                         onNavigateToCreateBaby = onNavigateToCreateBaby,
                         onNavigateToJoinInvitation = onNavigateToJoinInvitation,
                         onNavigateToInvitePartner = onNavigateToInvitePartner,
-                        onNavigateToEditBaby = onNavigateToEditBaby
+                        onNavigateToEditBaby = onNavigateToEditBaby,
+                        onNavigateToNotificationSettings = onNavigateToNotificationSettings
                     )
                 }
             )

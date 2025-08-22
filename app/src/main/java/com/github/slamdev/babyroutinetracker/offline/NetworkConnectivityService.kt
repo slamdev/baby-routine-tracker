@@ -47,8 +47,6 @@ class NetworkConnectivityService(private val context: Context) {
                 val hasInternet = networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
                 val isValidated = networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
                 
-                Log.d(TAG, "Network capabilities changed: hasInternet=$hasInternet, isValidated=$isValidated")
-                
                 if (hasInternet && isValidated) {
                     trySend(NetworkStatus.Available)
                 } else {

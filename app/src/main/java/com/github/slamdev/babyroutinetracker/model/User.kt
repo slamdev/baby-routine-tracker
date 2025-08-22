@@ -7,6 +7,7 @@ data class User(
     val displayName: String = "",
     val email: String = "",
     val profileImageUrl: String? = null,
+    val fcmToken: String? = null,  // Firebase Cloud Messaging token for push notifications
     val createdAt: Timestamp = Timestamp.now(),
     val lastActiveAt: Timestamp = Timestamp.now()
 )

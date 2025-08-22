@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
@@ -35,6 +36,7 @@ fun ProfileIcon(
     onNavigateToJoinInvitation: () -> Unit,
     onNavigateToInvitePartner: () -> Unit,
     onNavigateToEditBaby: (Baby) -> Unit,
+    onNavigateToNotificationSettings: (Baby) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var showDropdownMenu by remember { mutableStateOf(false) }
@@ -177,6 +179,26 @@ fun ProfileIcon(
                     onClick = {
                         showDropdownMenu = false
                         onNavigateToEditBaby(baby)
+                    }
+                )
+                
+                // Notification settings for selected baby
+                DropdownMenuItem(
+                    text = { 
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Notifications,
+                                contentDescription = "Notification Settings"
+                            )
+                            Text("Notifications")
+                        }
+                    },
+                    onClick = {
+                        showDropdownMenu = false
+                        onNavigateToNotificationSettings(baby)
                     }
                 )
             }
