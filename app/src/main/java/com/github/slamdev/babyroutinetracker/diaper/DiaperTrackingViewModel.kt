@@ -7,6 +7,7 @@ import com.github.slamdev.babyroutinetracker.model.Activity
 import com.github.slamdev.babyroutinetracker.model.ActivityType
 import com.github.slamdev.babyroutinetracker.model.OptionalUiState
 import com.github.slamdev.babyroutinetracker.service.ActivityService
+import com.github.slamdev.babyroutinetracker.util.ErrorUtils
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -114,18 +115,20 @@ class DiaperTrackingViewModel : ViewModel() {
                         )
                     },
                     onFailure = { exception ->
-                        Log.e(TAG, "Failed to log poop", exception)
+                        ErrorUtils.logError(TAG, "log poop", exception, mapOf("babyId" to babyId))
+                        val userMessage = ErrorUtils.getFirebaseErrorMessage(exception, "log poop")
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
-                            errorMessage = exception.message ?: "Failed to log poop"
+                            errorMessage = userMessage
                         )
                     }
                 )
             } catch (e: Exception) {
-                Log.e(TAG, "Unexpected error logging poop", e)
+                ErrorUtils.logError(TAG, "log poop (unexpected)", e, mapOf("babyId" to babyId))
+                val userMessage = ErrorUtils.getFirebaseErrorMessage(e, "log poop")
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    errorMessage = "Unexpected error: ${e.message}"
+                    errorMessage = userMessage
                 )
             }
         }
@@ -172,18 +175,20 @@ class DiaperTrackingViewModel : ViewModel() {
                         )
                     },
                     onFailure = { exception ->
-                        Log.e(TAG, "Failed to update diaper activity", exception)
+                        ErrorUtils.logError(TAG, "update diaper activity", exception, mapOf("babyId" to babyId, "activityId" to activity.id))
+                        val userMessage = ErrorUtils.getFirebaseErrorMessage(exception, "update activity")
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
-                            errorMessage = exception.message ?: "Failed to update diaper activity"
+                            errorMessage = userMessage
                         )
                     }
                 )
             } catch (e: Exception) {
-                Log.e(TAG, "Unexpected error updating diaper activity", e)
+                ErrorUtils.logError(TAG, "update diaper activity (unexpected)", e, mapOf("babyId" to babyId, "activityId" to activity.id))
+                val userMessage = ErrorUtils.getFirebaseErrorMessage(e, "update activity")
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    errorMessage = "Unexpected error: ${e.message}"
+                    errorMessage = userMessage
                 )
             }
         }

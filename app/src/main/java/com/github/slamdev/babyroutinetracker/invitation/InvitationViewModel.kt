@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.github.slamdev.babyroutinetracker.model.Baby
 import com.github.slamdev.babyroutinetracker.model.Invitation
 import com.github.slamdev.babyroutinetracker.service.InvitationService
+import com.github.slamdev.babyroutinetracker.util.ErrorUtils
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -166,9 +167,11 @@ class InvitationViewModel : ViewModel() {
                     // Real-time listener will automatically update the babies list
                 }
                 .onFailure { error ->
+                    ErrorUtils.logError("InvitationViewModel", "join invitation", error, mapOf("invitationCode" to invitationCode))
+                    val userMessage = ErrorUtils.getFirebaseErrorMessage(error, "join profile")
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        errorMessage = error.message
+                        errorMessage = userMessage
                     )
                 }
         }

@@ -5,6 +5,7 @@ import com.github.slamdev.babyroutinetracker.model.Activity
 import com.github.slamdev.babyroutinetracker.model.ActivityType
 import com.github.slamdev.babyroutinetracker.model.Baby
 import com.github.slamdev.babyroutinetracker.model.OptionalUiState
+import com.github.slamdev.babyroutinetracker.util.ErrorUtils
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -39,14 +40,14 @@ class ActivityService {
             val currentUser = auth.currentUser
             if (currentUser == null) {
                 val error = Exception("User not authenticated")
-                Log.e(TAG, "Failed to start activity - user not authenticated", error)
+                ErrorUtils.logError(TAG, "start ${type.displayName} activity", error, mapOf("babyId" to babyId))
                 return Result.failure(error)
             }
 
             // Verify user has access to this baby
             if (!hasAccessToBaby(babyId)) {
                 val error = Exception("No access to baby profile")
-                Log.e(TAG, "Failed to start activity - no access to baby: $babyId", error)
+                ErrorUtils.logError(TAG, "start ${type.displayName} activity", error, mapOf("babyId" to babyId, "userId" to currentUser.uid))
                 return Result.failure(error)
             }
 
@@ -54,7 +55,7 @@ class ActivityService {
             val ongoingActivity = getOngoingActivity(babyId, type)
             if (ongoingActivity != null) {
                 val error = Exception("There is already an ongoing ${type.displayName.lowercase()} activity")
-                Log.w(TAG, "Attempted to start ${type.displayName} while one is already ongoing", error)
+                ErrorUtils.logError(TAG, "start ${type.displayName} activity", error, mapOf("babyId" to babyId, "existingActivityId" to ongoingActivity.id))
                 return Result.failure(error)
             }
 
@@ -93,7 +94,7 @@ class ActivityService {
             
             Result.success(activity)
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to start activity: ${type.displayName} for baby: $babyId", e)
+            ErrorUtils.logError(TAG, "start ${type.displayName} activity", e, mapOf("babyId" to babyId))
             Result.failure(e)
         }
     }
@@ -295,16 +296,8 @@ class ActivityService {
             .whereEqualTo("endTime", null)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
-                    Log.e(TAG, "Error listening to ongoing ${type.displayName} activity", error)
-                    val userMessage = when {
-                        error.message?.contains("PERMISSION_DENIED") == true -> 
-                            "You don't have permission to view this baby's activities"
-                        error.message?.contains("UNAVAILABLE") == true -> 
-                            "Unable to connect to server. Please check your internet connection"
-                        error.message?.contains("index") == true ->
-                            "Database configuration issue. Please contact support"
-                        else -> "Unable to load ${type.displayName.lowercase()} activities"
-                    }
+                    ErrorUtils.logError(TAG, "listen to ongoing ${type.displayName} activity", error, mapOf("babyId" to babyId))
+                    val userMessage = ErrorUtils.getFirebaseErrorMessage(error, "view baby activities", "ongoing ${type.displayName}")
                     trySend(OptionalUiState.Error(error, userMessage))
                     return@addSnapshotListener
                 }
@@ -375,16 +368,8 @@ class ActivityService {
             .limit(1)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
-                    Log.e(TAG, "Error listening to last ${type.displayName} activity", error)
-                    val userMessage = when {
-                        error.message?.contains("PERMISSION_DENIED") == true -> 
-                            "You don't have permission to view this baby's activities"
-                        error.message?.contains("UNAVAILABLE") == true -> 
-                            "Unable to connect to server. Please check your internet connection"
-                        error.message?.contains("index") == true || error.message?.contains("FAILED_PRECONDITION") == true ->
-                            "Database is being set up. Please try again in a few minutes"
-                        else -> "Unable to load last ${type.displayName.lowercase()} activity"
-                    }
+                    ErrorUtils.logError(TAG, "listen to last ${type.displayName} activity", error, mapOf("babyId" to babyId))
+                    val userMessage = ErrorUtils.getFirebaseErrorMessage(error, "view baby activities", "last ${type.displayName}")
                     trySend(OptionalUiState.Error(error, userMessage))
                     return@addSnapshotListener
                 }
@@ -451,16 +436,8 @@ class ActivityService {
             .limit(limit.toLong())
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
-                    Log.e(TAG, "Error listening to recent activities", error)
-                    val userMessage = when {
-                        error.message?.contains("PERMISSION_DENIED") == true -> 
-                            "You don't have permission to view this baby's activities"
-                        error.message?.contains("UNAVAILABLE") == true -> 
-                            "Unable to connect to server. Please check your internet connection"
-                        error.message?.contains("index") == true || error.message?.contains("FAILED_PRECONDITION") == true ->
-                            "Database is being set up. Please try again in a few minutes"
-                        else -> "Unable to load activity history"
-                    }
+                    ErrorUtils.logError(TAG, "listen to recent activities", error, mapOf("babyId" to babyId, "limit" to limit))
+                    val userMessage = ErrorUtils.getFirebaseErrorMessage(error, "view baby activities", "activity history")
                     trySend(OptionalUiState.Error(error, userMessage))
                     return@addSnapshotListener
                 }

@@ -7,6 +7,7 @@ import com.github.slamdev.babyroutinetracker.model.Activity
 import com.github.slamdev.babyroutinetracker.model.ActivityType
 import com.github.slamdev.babyroutinetracker.model.OptionalUiState
 import com.github.slamdev.babyroutinetracker.service.ActivityService
+import com.github.slamdev.babyroutinetracker.util.ErrorUtils
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -160,18 +161,20 @@ class SleepTrackingViewModel : ViewModel() {
                         _uiState.value = _uiState.value.copy(isLoading = false)
                     },
                     onFailure = { exception ->
-                        Log.e(TAG, "Failed to start sleep session", exception)
+                        ErrorUtils.logError(TAG, "start sleep session", exception, mapOf("babyId" to babyId))
+                        val userMessage = ErrorUtils.getFirebaseErrorMessage(exception, "start sleep")
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
-                            errorMessage = exception.message ?: "Failed to start sleep session"
+                            errorMessage = userMessage
                         )
                     }
                 )
             } catch (e: Exception) {
-                Log.e(TAG, "Unexpected error starting sleep session", e)
+                ErrorUtils.logError(TAG, "start sleep session (unexpected)", e, mapOf("babyId" to babyId))
+                val userMessage = ErrorUtils.getFirebaseErrorMessage(e, "start sleep")
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    errorMessage = "Unexpected error: ${e.message}"
+                    errorMessage = userMessage
                 )
             }
         }
@@ -209,18 +212,20 @@ class SleepTrackingViewModel : ViewModel() {
                         _uiState.value = _uiState.value.copy(isLoading = false)
                     },
                     onFailure = { exception ->
-                        Log.e(TAG, "Failed to end sleep session", exception)
+                        ErrorUtils.logError(TAG, "end sleep session", exception, mapOf("babyId" to babyId, "activityId" to ongoingSleep.id))
+                        val userMessage = ErrorUtils.getFirebaseErrorMessage(exception, "end sleep")
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
-                            errorMessage = exception.message ?: "Failed to end sleep session"
+                            errorMessage = userMessage
                         )
                     }
                 )
             } catch (e: Exception) {
-                Log.e(TAG, "Unexpected error ending sleep session", e)
+                ErrorUtils.logError(TAG, "end sleep session (unexpected)", e, mapOf("babyId" to babyId, "activityId" to ongoingSleep.id))
+                val userMessage = ErrorUtils.getFirebaseErrorMessage(e, "end sleep")
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    errorMessage = "Unexpected error: ${e.message}"
+                    errorMessage = userMessage
                 )
             }
         }
@@ -300,18 +305,20 @@ class SleepTrackingViewModel : ViewModel() {
                         )
                     },
                     onFailure = { exception ->
-                        Log.e(TAG, "Failed to update sleep start time", exception)
+                        ErrorUtils.logError(TAG, "update sleep start time", exception, mapOf("babyId" to babyId, "activityId" to ongoingSleep.id))
+                        val userMessage = ErrorUtils.getFirebaseErrorMessage(exception, "update activity")
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
-                            errorMessage = exception.message ?: "Failed to update start time"
+                            errorMessage = userMessage
                         )
                     }
                 )
             } catch (e: Exception) {
-                Log.e(TAG, "Unexpected error updating sleep start time", e)
+                ErrorUtils.logError(TAG, "update sleep start time (unexpected)", e, mapOf("babyId" to babyId, "activityId" to ongoingSleep.id))
+                val userMessage = ErrorUtils.getFirebaseErrorMessage(e, "update activity")
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    errorMessage = "Unexpected error: ${e.message}"
+                    errorMessage = userMessage
                 )
             }
         }

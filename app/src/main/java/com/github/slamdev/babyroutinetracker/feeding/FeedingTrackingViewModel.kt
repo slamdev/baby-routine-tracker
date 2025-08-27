@@ -7,6 +7,7 @@ import com.github.slamdev.babyroutinetracker.model.Activity
 import com.github.slamdev.babyroutinetracker.model.ActivityType
 import com.github.slamdev.babyroutinetracker.model.OptionalUiState
 import com.github.slamdev.babyroutinetracker.service.ActivityService
+import com.github.slamdev.babyroutinetracker.util.ErrorUtils
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -168,18 +169,20 @@ class FeedingTrackingViewModel : ViewModel() {
                         _uiState.value = _uiState.value.copy(isLoading = false)
                     },
                     onFailure = { exception ->
-                        Log.e(TAG, "Failed to start breast milk feeding", exception)
+                        ErrorUtils.logError(TAG, "start breast feeding session", exception, mapOf("babyId" to babyId))
+                        val userMessage = ErrorUtils.getFirebaseErrorMessage(exception, "start feeding")
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
-                            errorMessage = exception.message ?: "Failed to start breast milk feeding"
+                            errorMessage = userMessage
                         )
                     }
                 )
             } catch (e: Exception) {
-                Log.e(TAG, "Unexpected error starting breast milk feeding", e)
+                ErrorUtils.logError(TAG, "start breast feeding session (unexpected)", e, mapOf("babyId" to babyId))
+                val userMessage = ErrorUtils.getFirebaseErrorMessage(e, "start feeding")
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    errorMessage = "Unexpected error: ${e.message}"
+                    errorMessage = userMessage
                 )
             }
         }
@@ -217,18 +220,20 @@ class FeedingTrackingViewModel : ViewModel() {
                         _uiState.value = _uiState.value.copy(isLoading = false)
                     },
                     onFailure = { exception ->
-                        Log.e(TAG, "Failed to end breast milk feeding", exception)
+                        ErrorUtils.logError(TAG, "end breast feeding session", exception, mapOf("babyId" to babyId, "activityId" to ongoingBreastFeeding.id))
+                        val userMessage = ErrorUtils.getFirebaseErrorMessage(exception, "end feeding")
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
-                            errorMessage = exception.message ?: "Failed to end breast milk feeding"
+                            errorMessage = userMessage
                         )
                     }
                 )
             } catch (e: Exception) {
-                Log.e(TAG, "Unexpected error ending breast milk feeding", e)
+                ErrorUtils.logError(TAG, "end breast feeding session (unexpected)", e, mapOf("babyId" to babyId, "activityId" to ongoingBreastFeeding.id))
+                val userMessage = ErrorUtils.getFirebaseErrorMessage(e, "end feeding")
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    errorMessage = "Unexpected error: ${e.message}"
+                    errorMessage = userMessage
                 )
             }
         }
@@ -267,18 +272,20 @@ class FeedingTrackingViewModel : ViewModel() {
                         )
                     },
                     onFailure = { exception ->
-                        Log.e(TAG, "Failed to log bottle feeding", exception)
+                        ErrorUtils.logError(TAG, "log bottle feeding", exception, mapOf("babyId" to babyId, "amount" to amount))
+                        val userMessage = ErrorUtils.getFirebaseErrorMessage(exception, "log bottle")
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
-                            errorMessage = exception.message ?: "Failed to log bottle feeding"
+                            errorMessage = userMessage
                         )
                     }
                 )
             } catch (e: Exception) {
-                Log.e(TAG, "Unexpected error logging bottle feeding", e)
+                ErrorUtils.logError(TAG, "log bottle feeding (unexpected)", e, mapOf("babyId" to babyId, "amount" to amount))
+                val userMessage = ErrorUtils.getFirebaseErrorMessage(e, "log bottle")
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    errorMessage = "Unexpected error: ${e.message}"
+                    errorMessage = userMessage
                 )
             }
         }

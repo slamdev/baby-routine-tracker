@@ -3,6 +3,7 @@ package com.github.slamdev.babyroutinetracker.auth
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.slamdev.babyroutinetracker.util.ErrorUtils
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
@@ -65,16 +66,18 @@ class AuthenticationViewModel : ViewModel() {
                 )
                 Log.i(TAG, "Google Sign-In successful for user: ${user?.email}")
             } catch (e: ApiException) {
-                Log.w(TAG, "Google Sign-In failed with API exception", e)
+                ErrorUtils.logError(TAG, "Google sign-in", e)
+                val userMessage = ErrorUtils.getFirebaseErrorMessage(e, "sign in")
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    errorMessage = "Google Sign-In failed: ${e.message}"
+                    errorMessage = userMessage
                 )
             } catch (e: Exception) {
-                Log.e(TAG, "Authentication failed with unexpected error", e)
+                ErrorUtils.logError(TAG, "authentication", e)
+                val userMessage = ErrorUtils.getFirebaseErrorMessage(e, "sign in")
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    errorMessage = "Authentication failed: ${e.message}"
+                    errorMessage = userMessage
                 )
             }
         }

@@ -65,7 +65,9 @@ data class ActivityCardState(
     val successMessage: String? = null,
     val currentElapsedTime: Long = 0L, // For ongoing activities timer
     val isLoadingContent: Boolean = false,
-    val contentError: String? = null
+    val contentError: String? = null,
+    val contentErrorException: Throwable? = null, // NEW: Store the original exception for better error handling
+    val errorException: Throwable? = null // NEW: Store the main error exception
 )
 
 /**
@@ -214,7 +216,9 @@ fun ActivityCard(
                     CompactErrorDisplay(
                         errorMessage = state.contentError,
                         onDismiss = onDismissError,
-                        modifier = Modifier.padding(vertical = 4.dp)
+                        modifier = Modifier.padding(vertical = 4.dp),
+                        exception = state.contentErrorException,
+                        operation = config.title.lowercase()
                     )
                 }
                 state.isLoadingContent -> {
@@ -259,22 +263,13 @@ fun ActivityCard(
             
             // Error message (for general activity errors, not content errors)
             state.errorMessage?.let { errorMessage ->
-                Card(
+                CompactErrorDisplay(
+                    errorMessage = errorMessage,
+                    onDismiss = onDismissError,
                     modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.errorContainer
-                    )
-                ) {
-                    Text(
-                        text = errorMessage,
-                        fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onErrorContainer,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(12.dp),
-                        textAlign = TextAlign.Center
-                    )
-                }
+                    exception = state.errorException,
+                    operation = config.title.lowercase()
+                )
 
                 // Clear error after showing it
                 LaunchedEffect(errorMessage) {

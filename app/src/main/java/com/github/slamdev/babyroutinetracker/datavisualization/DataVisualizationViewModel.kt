@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.github.slamdev.babyroutinetracker.model.Activity
 import com.github.slamdev.babyroutinetracker.model.ActivityType
 import com.github.slamdev.babyroutinetracker.service.ActivityService
+import com.github.slamdev.babyroutinetracker.util.ErrorUtils
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -138,15 +139,11 @@ class DataVisualizationViewModel(
                     Log.d(TAG, "Data loaded successfully: ${sleepData.size} sleep days, ${feedingData.size} feeding days, ${diaperData.size} diaper days")
                 } else {
                     val error = sleepResult.exceptionOrNull() ?: feedingResult.exceptionOrNull() ?: diaperResult.exceptionOrNull()
-                    Log.e(TAG, "Failed to load activity data", error)
+                    ErrorUtils.logError(TAG, "load activity data for visualization", error ?: Exception("Unknown error"), mapOf("babyId" to babyId, "dateRange" to _uiState.value.selectedDateRange.name))
                     
-                    val userMessage = when {
-                        error?.message?.contains("PERMISSION_DENIED") == true -> 
-                            "You don't have permission to view this data"
-                        error?.message?.contains("UNAVAILABLE") == true -> 
-                            "Unable to connect to server. Check your internet connection"
-                        else -> "Unable to load activity data"
-                    }
+                    val userMessage = error?.let { 
+                        ErrorUtils.getFirebaseErrorMessage(it, "view baby activities", "activity data") 
+                    } ?: "Unable to load activity data"
                     
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,

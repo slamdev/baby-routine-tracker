@@ -658,16 +658,24 @@ This document outlines the specific acceptance criter### **Real-time Dashboard**
 **User Story:** As a user, I want clear, helpful error messages when something goes wrong so I know how to fix the issue.
 
 * **Acceptance Criteria:**  
-  * Error messages are user-friendly and avoid technical jargon.  
-  * Messages include specific actions users can take to resolve issues.  
-  * Critical errors are distinguished from minor warnings.  
-  * Error reporting includes context about what the user was trying to do.  
+  * Error messages are user-friendly and avoid technical jargon. ✅ IMPLEMENTED
+  * Messages include specific actions users can take to resolve issues. ✅ IMPLEMENTED
+  * Critical errors are distinguished from minor warnings. ✅ IMPLEMENTED
+  * Error reporting includes context about what the user was trying to do. ✅ IMPLEMENTED
+  * Error messages provide helpful suggestions for resolution when applicable. ✅ IMPLEMENTED
+  * Retry buttons are only shown for errors that can actually be retried. ✅ IMPLEMENTED
+  * Firebase and network errors are converted to user-friendly language. ✅ IMPLEMENTED
 * **Technical Tasks:**  
-  * Implement centralized error handling and messaging system.  
-  * Create error message repository with context-aware responses.  
-  * Build error classification system (critical, warning, info).  
-  * Add automatic error context collection and logging.  
-  * Implement user-friendly error display components.
+  * Implement centralized error handling and messaging system. ✅ COMPLETED
+  * Create error message repository with context-aware responses. ✅ COMPLETED
+  * Build error classification system (critical, warning, info). ✅ COMPLETED
+  * Add automatic error context collection and logging. ✅ COMPLETED
+  * Implement user-friendly error display components. ✅ COMPLETED
+  * **NEW**: Created `ErrorUtils` class with comprehensive Firebase error message mapping. ✅ COMPLETED
+  * **NEW**: Enhanced `ErrorStateComponent` and `CompactErrorDisplay` with suggestion system. ✅ COMPLETED
+  * **NEW**: Updated all service layers to use centralized error handling. ✅ COMPLETED
+  * **NEW**: Integrated smart retry logic based on error type classification. ✅ COMPLETED
+  * **NEW**: Updated all ViewModels (Sleep, Feeding, Diaper, History, Visualization, Auth, Invitation) with centralized error handling. ✅ COMPLETED
 
 **User Story:** As a parent, I want the app to recover gracefully from errors without losing the activity I was logging.
 

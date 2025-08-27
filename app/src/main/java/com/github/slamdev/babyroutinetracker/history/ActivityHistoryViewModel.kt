@@ -7,6 +7,7 @@ import com.github.slamdev.babyroutinetracker.model.Activity
 import com.github.slamdev.babyroutinetracker.model.ActivityType
 import com.github.slamdev.babyroutinetracker.model.OptionalUiState
 import com.github.slamdev.babyroutinetracker.service.ActivityService
+import com.github.slamdev.babyroutinetracker.util.ErrorUtils
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -140,16 +141,18 @@ class ActivityHistoryViewModel : ViewModel() {
                         // Real-time listener will automatically update the UI
                     },
                     onFailure = { exception ->
-                        Log.e(TAG, "Failed to update activity times", exception)
+                        ErrorUtils.logError(TAG, "update activity times", exception, mapOf("babyId" to babyId, "activityId" to activity.id))
+                        val userMessage = ErrorUtils.getFirebaseErrorMessage(exception, "update activity")
                         _uiState.value = _uiState.value.copy(
-                            errorMessage = exception.message ?: "Failed to update activity times"
+                            errorMessage = userMessage
                         )
                     }
                 )
             } catch (e: Exception) {
-                Log.e(TAG, "Unexpected error updating activity times", e)
+                ErrorUtils.logError(TAG, "update activity times (unexpected)", e, mapOf("babyId" to babyId, "activityId" to activity.id))
+                val userMessage = ErrorUtils.getFirebaseErrorMessage(e, "update activity")
                 _uiState.value = _uiState.value.copy(
-                    errorMessage = "Unexpected error: ${e.message}"
+                    errorMessage = userMessage
                 )
             }
         }
