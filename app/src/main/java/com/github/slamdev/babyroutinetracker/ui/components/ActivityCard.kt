@@ -201,8 +201,15 @@ fun ActivityCard(
                 }
             }
 
-            // Content area with error handling
+            // Content area with state handling
             when {
+                state.successMessage != null -> {
+                    // Show success message as main content (replaces normal content)
+                    SuccessContentDisplay(
+                        successMessage = state.successMessage,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                }
                 state.contentError != null -> {
                     CompactErrorDisplay(
                         errorMessage = state.contentError,
@@ -242,33 +249,15 @@ fun ActivityCard(
                 }
             }
 
-            // Success message
+            // Auto-clear success message after showing
             state.successMessage?.let { successMessage ->
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer
-                    )
-                ) {
-                    Text(
-                        text = successMessage,
-                        fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(12.dp),
-                        textAlign = TextAlign.Center
-                    )
-                }
-                
-                // Clear success after showing it
                 LaunchedEffect(successMessage) {
-                    kotlinx.coroutines.delay(3000)
+                    kotlinx.coroutines.delay(3000) // Show success for 3 seconds
                     onDismissSuccess()
                 }
             }
             
-            // Error message
+            // Error message (for general activity errors, not content errors)
             state.errorMessage?.let { errorMessage ->
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -425,5 +414,40 @@ private fun ActivityCardContentDisplay(
                 overflow = TextOverflow.Ellipsis
             )
         }
+    }
+}
+
+/**
+ * Success content display component for showing success messages as main card content
+ */
+@Composable
+fun SuccessContentDisplay(
+    successMessage: String,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        // Success icon
+        Icon(
+            imageVector = Icons.Default.Check,
+            contentDescription = "Success",
+            tint = MaterialTheme.colorScheme.extended.success,
+            modifier = Modifier.size(32.dp)
+        )
+        
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        // Success message
+        Text(
+            text = successMessage,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.extended.success,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }

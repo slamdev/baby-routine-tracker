@@ -247,7 +247,7 @@ class FeedingTrackingViewModel : ViewModel() {
 
         viewModelScope.launch {
             try {
-                _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+                _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null, successMessage = null)
                 
                 Log.i(TAG, "Logging bottle feeding for baby: $babyId, amount: ${amount}ml")
                 val result = activityService.logCompletedFeeding(
@@ -261,7 +261,10 @@ class FeedingTrackingViewModel : ViewModel() {
                 result.fold(
                     onSuccess = { activity ->
                         Log.i(TAG, "Bottle feeding logged successfully: ${activity.id}")
-                        _uiState.value = _uiState.value.copy(isLoading = false)
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                            successMessage = "Bottle feeding logged successfully!"
+                        )
                     },
                     onFailure = { exception ->
                         Log.e(TAG, "Failed to log bottle feeding", exception)

@@ -1372,6 +1372,141 @@ When implementing new features, ensure:
 "Failed to process [activity type] data"
 ```
 
+## 🎉 Success Message Implementation
+
+### Enhanced UX for Activity Confirmations
+
+The app uses a sophisticated success message system that provides prominent feedback when activities are logged successfully, addressing the user story: *"As a parent, I want confirmation when important actions are completed (like successfully logging an activity) so I know it worked."*
+
+#### Key UX Improvements
+
+**Before**: Success messages appeared as small overlay cards at the bottom of activity cards, competing with main content and often partially visible.
+
+**After**: Success messages replace the main card content temporarily, providing clear, prominent confirmation that actions were successful.
+
+#### Success Message Implementation Pattern
+
+##### 1. SuccessContentDisplay Component
+```kotlin
+@Composable
+fun SuccessContentDisplay(
+    successMessage: String,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        // Success icon
+        Icon(
+            imageVector = Icons.Default.Check,
+            contentDescription = "Success",
+            tint = MaterialTheme.colorScheme.extended.success,
+            modifier = Modifier.size(32.dp)
+        )
+        
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        // Success message
+        Text(
+            text = successMessage,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.extended.success,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
+}
+```
+
+##### 2. ActivityCard Content State Priority
+```kotlin
+// In ActivityCard component - success messages take priority over normal content
+when {
+    state.successMessage != null -> {
+        // Show success message as main content (replaces normal content)
+        SuccessContentDisplay(
+            successMessage = state.successMessage,
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
+    }
+    state.contentError != null -> {
+        CompactErrorDisplay(/* ... */)
+    }
+    else -> {
+        // Normal card content
+        ActivityCardContentDisplay(config = config, content = content)
+    }
+}
+```
+
+##### 3. ViewModel Success State Management
+```kotlin
+// In activity ViewModels (e.g., DiaperTrackingViewModel, FeedingTrackingViewModel)
+result.fold(
+    onSuccess = { activity ->
+        Log.i(TAG, "Activity logged successfully: ${activity.id}")
+        _uiState.value = _uiState.value.copy(
+            isLoading = false,
+            successMessage = "Activity logged successfully!"
+        )
+    },
+    onFailure = { exception ->
+        // Error handling...
+    }
+)
+
+// Auto-clear success messages after 3 seconds
+LaunchedEffect(successMessage) {
+    kotlinx.coroutines.delay(3000)
+    onDismissSuccess()
+}
+
+// Clear success when starting new operations
+fun logActivity() {
+    _uiState.value = _uiState.value.copy(
+        isLoading = true, 
+        errorMessage = null, 
+        successMessage = null  // Clear previous success
+    )
+}
+```
+
+#### Success Message Usage Guidelines
+
+**Use success messages for:**
+- ✅ Instant activities (bottle feeding, diaper changes) - immediate completion confirmation
+- ✅ Actions where users need confirmation that data was saved
+- ✅ Activities where timing/forgetfulness could be an issue
+
+**Don't use success messages for:**
+- ❌ Ending ongoing activities (sleep, breast feeding) - state change is sufficient feedback
+- ❌ Navigation actions or other UI state changes
+- ❌ Real-time updates from other users
+
+#### Visual Design Principles
+
+- **Prominence**: Success messages replace main content temporarily, ensuring visibility
+- **Clarity**: Large check icon and clear text with success theme colors
+- **Non-intrusive**: Auto-dismiss after 3 seconds to avoid blocking user workflow
+- **Consistency**: Same visual treatment across all activity types
+- **Theme Integration**: Uses `MaterialTheme.colorScheme.extended.success` colors
+
+#### Implementation Checklist for New Activities
+
+When adding success messages to new activity types:
+
+- [ ] Add `successMessage: String?` to ViewModel UI state
+- [ ] Set success message in `onSuccess` callback when logging activity
+- [ ] Clear success message when starting new activity logging
+- [ ] Add `clearSuccessMessage()` function to ViewModel
+- [ ] Pass success message to ActivityCard component
+- [ ] Use `onDismissSuccess` callback in UI component
+- [ ] Test auto-dismissal timing (3 seconds)
+- [ ] Verify success message doesn't interfere with error handling
+
 ## ✏️ Activity Editing Implementation
 
 ### Overview
