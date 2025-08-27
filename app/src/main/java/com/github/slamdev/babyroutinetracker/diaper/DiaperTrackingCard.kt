@@ -8,11 +8,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.github.slamdev.babyroutinetracker.R
 import com.github.slamdev.babyroutinetracker.ui.components.*
 import com.github.slamdev.babyroutinetracker.ui.components.helpers.diaperActivityConfig
 import com.github.slamdev.babyroutinetracker.ui.components.helpers.diaperActivityContent
@@ -57,7 +59,7 @@ fun DiaperTrackingCard(
             
             diaperActivityContent(
                 lastDiaper = lastDiaper,
-                lastDiaperText = "Last poop",
+                lastDiaperText = stringResource(R.string.activity_last_poop),
                 timeAgo = timeAgo,
                 diaperTime = lastDiaper.startTime.toDate(),
                 notes = lastDiaper.notes

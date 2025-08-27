@@ -1,7 +1,9 @@
 package com.github.slamdev.babyroutinetracker
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -33,7 +35,9 @@ import com.github.slamdev.babyroutinetracker.invitation.EditBabyProfileScreen
 import com.github.slamdev.babyroutinetracker.invitation.InvitationViewModel
 import com.github.slamdev.babyroutinetracker.history.ActivityHistoryScreen
 import com.github.slamdev.babyroutinetracker.notifications.NotificationSettingsScreen
+import com.github.slamdev.babyroutinetracker.preferences.getLanguagePreferences
 import com.github.slamdev.babyroutinetracker.service.UserService
+import com.github.slamdev.babyroutinetracker.settings.LanguageSettingsScreen
 import com.github.slamdev.babyroutinetracker.ui.theme.BabyroutinetrackerTheme
 import kotlinx.coroutines.launch
 
@@ -41,6 +45,23 @@ class MainActivity : ComponentActivity() {
     
     companion object {
         private const val TAG = "MainActivity"
+    }
+    
+    override fun attachBaseContext(newBase: Context) {
+        val languagePreferences = newBase.getLanguagePreferences()
+        val locale = languagePreferences.getLocale()
+        
+        val config = Configuration(newBase.resources.configuration)
+        config.setLocale(locale)
+        
+        val context = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            newBase.createConfigurationContext(config)
+        } else {
+            newBase.resources.updateConfiguration(config, newBase.resources.displayMetrics)
+            newBase
+        }
+        
+        super.attachBaseContext(context)
     }
     
     // Notification permission launcher for Android 13+
@@ -55,6 +76,9 @@ class MainActivity : ComponentActivity() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        // Initialize language preferences
+        getLanguagePreferences().initializeLanguage()
         
         // Request notification permission for Android 13+
         requestNotificationPermission()
@@ -166,6 +190,9 @@ fun BabyRoutineTrackerApp() {
                 onNavigateToAccountDeletion = {
                     navController.navigate("account_deletion")
                 },
+                onNavigateToLanguageSettings = {
+                    navController.navigate("language_settings")
+                },
                 authViewModel = authViewModel
             )
         }
@@ -267,6 +294,14 @@ fun BabyRoutineTrackerApp() {
                         popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
+                }
+            )
+        }
+        
+        composable("language_settings") {
+            LanguageSettingsScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
                 }
             )
         }

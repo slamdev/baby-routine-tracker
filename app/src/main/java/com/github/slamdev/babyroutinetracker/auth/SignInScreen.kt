@@ -14,11 +14,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.github.slamdev.babyroutinetracker.R
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 
@@ -71,7 +73,7 @@ fun SignInScreen(
     ) {
         // App title and welcome message
         Text(
-            text = "Baby Routine Tracker",
+            text = stringResource(R.string.auth_welcome_message),
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary,
@@ -81,7 +83,7 @@ fun SignInScreen(
         Spacer(modifier = Modifier.height(16.dp))
         
         Text(
-            text = "Track your baby's sleep, feeding, and diaper changes with your partner in real-time",
+            text = stringResource(R.string.auth_sign_in_description),
             fontSize = 16.sp,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
             textAlign = TextAlign.Center,
@@ -119,7 +121,7 @@ fun SignInScreen(
                         color = MaterialTheme.colorScheme.primary
                     )
                     Spacer(modifier = Modifier.width(12.dp))
-                    Text("Signing in...")
+                    Text(stringResource(R.string.invitation_joining))
                 } else {
                     // Google icon would go here - for now using a placeholder
                     Icon(
@@ -130,7 +132,7 @@ fun SignInScreen(
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
-                        text = "Sign in with Google",
+                        text = stringResource(R.string.auth_sign_in_with_google),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium
                     )
@@ -159,7 +161,7 @@ fun SignInScreen(
                     TextButton(
                         onClick = { viewModel.clearError() }
                     ) {
-                        Text("Dismiss")
+                        Text(stringResource(R.string.action_dismiss))
                     }
                 }
             }

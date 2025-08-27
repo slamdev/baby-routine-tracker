@@ -78,6 +78,11 @@ This document outlines the project plan for a personal Android application desig
   * Sleep schedule notifications.  
   * Partner activity updates.  
   * AI routine suggestion alerts.
+* **Internationalization (i18n):**  
+  * Support for multiple languages.  
+  * English (default) and Russian localization.  
+  * Language switching from app settings.  
+  * Automatic system language detection.
 
 ## **4\. Target Audience**
 

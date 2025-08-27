@@ -15,6 +15,7 @@ The Newborn Tracker App is a collaborative tool for parents to monitor their bab
 * **Smart Notifications:** Customizable reminders and alerts for feeding times, sleep schedules, and partner activity updates.  
 * **Offline Support:** Continue logging activities even without internet connection, with automatic sync when connection is restored.  
 * **User Preferences:** Customizable app settings for notifications, default values, and user interface preferences.
+* **Internationalization:** Multi-language support with English and Russian localization, automatic language detection, and language switching capability.
 
 ## **User Stories**
 
@@ -111,6 +112,14 @@ Here is a list of user stories broken down by feature for a developer to follow.
 
 * **As a parent,** I want to set default feeding amounts and types to speed up logging routine activities.  
 * **As a user,** I want to control notification settings for different types of alerts and reminders.  
+
+### **Internationalization & Localization**
+
+* **As a user,** I want the app to automatically detect my system language and display content in my preferred language (English or Russian) so I can use the app comfortably.
+* **As a Russian-speaking parent,** I want to use the app in Russian so I can understand all the interface elements, button labels, and messages without language barriers.
+* **As a user,** I want to manually change the app language from the settings screen so I can switch between English and Russian regardless of my system language.
+* **As a bilingual family,** I want to switch the app language easily so both parents can use the app in their preferred language.
+* **As a user,** I want all activity types, time formats, and age calculations to be properly localized so the information is presented in a culturally appropriate format.
 
 ### **Error Handling & User Feedback**
 

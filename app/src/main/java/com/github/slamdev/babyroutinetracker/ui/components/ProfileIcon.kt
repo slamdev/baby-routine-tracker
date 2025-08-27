@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -19,11 +20,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.github.slamdev.babyroutinetracker.R
 import com.github.slamdev.babyroutinetracker.model.Baby
 import com.google.firebase.auth.FirebaseUser
 
@@ -39,6 +42,7 @@ fun ProfileIcon(
     onNavigateToEditBaby: (Baby) -> Unit,
     onNavigateToNotificationSettings: (Baby) -> Unit,
     onNavigateToAccountDeletion: () -> Unit,
+    onNavigateToLanguageSettings: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var showDropdownMenu by remember { mutableStateOf(false) }
@@ -135,7 +139,7 @@ fun ProfileIcon(
                             imageVector = Icons.Default.Add,
                             contentDescription = "Create Baby Profile"
                         )
-                        Text("Create Baby Profile")
+                        Text(stringResource(R.string.profile_menu_create_baby))
                     }
                 },
                 onClick = {
@@ -154,7 +158,7 @@ fun ProfileIcon(
                             imageVector = Icons.Default.Person,
                             contentDescription = "Join Profile"
                         )
-                        Text("Join Profile")
+                        Text(stringResource(R.string.profile_menu_join_profile))
                     }
                 },
                 onClick = {
@@ -175,7 +179,7 @@ fun ProfileIcon(
                                 imageVector = Icons.Default.Person, // Using Person for edit as Edit icon may not be available
                                 contentDescription = "Edit Baby Profile"
                             )
-                            Text("Edit ${baby.name}")
+                            Text(stringResource(R.string.profile_menu_edit_baby, baby.name))
                         }
                     },
                     onClick = {
@@ -195,7 +199,7 @@ fun ProfileIcon(
                                 imageVector = Icons.Default.Notifications,
                                 contentDescription = "Notification Settings"
                             )
-                            Text("Notifications")
+                            Text(stringResource(R.string.profile_menu_notification_settings))
                         }
                     },
                     onClick = {
@@ -217,7 +221,7 @@ fun ProfileIcon(
                                 imageVector = Icons.Default.Share,
                                 contentDescription = "Invite Partner"
                             )
-                            Text("Invite Partner")
+                            Text(stringResource(R.string.profile_menu_invite_partner))
                         }
                     },
                     onClick = {
@@ -228,6 +232,26 @@ fun ProfileIcon(
             }
             
             HorizontalDivider()
+            
+            // Language settings option
+            DropdownMenuItem(
+                text = { 
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Language Settings"
+                        )
+                        Text(stringResource(R.string.profile_menu_language_settings))
+                    }
+                },
+                onClick = {
+                    showDropdownMenu = false
+                    onNavigateToLanguageSettings()
+                }
+            )
             
             // Account deletion option
             DropdownMenuItem(
@@ -242,7 +266,7 @@ fun ProfileIcon(
                             tint = MaterialTheme.colorScheme.error
                         )
                         Text(
-                            text = "Delete Account",
+                            text = stringResource(R.string.profile_menu_account_deletion),
                             color = MaterialTheme.colorScheme.error
                         )
                     }
@@ -266,7 +290,7 @@ fun ProfileIcon(
                             imageVector = Icons.AutoMirrored.Filled.ExitToApp,
                             contentDescription = "Sign Out"
                         )
-                        Text("Sign Out")
+                        Text(stringResource(R.string.profile_menu_sign_out))
                     }
                 },
                 onClick = {

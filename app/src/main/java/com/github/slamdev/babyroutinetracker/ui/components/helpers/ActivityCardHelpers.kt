@@ -1,5 +1,8 @@
 package com.github.slamdev.babyroutinetracker.ui.components.helpers
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.github.slamdev.babyroutinetracker.R
 import com.github.slamdev.babyroutinetracker.ui.components.ActivityCardConfig
 import com.github.slamdev.babyroutinetracker.ui.components.ActivityCardContent
 import com.github.slamdev.babyroutinetracker.ui.theme.ActivityColors
@@ -8,8 +11,9 @@ import java.util.Date
 /**
  * Helper function to create configuration for sleep activity
  */
+@Composable
 fun sleepActivityConfig(): ActivityCardConfig = ActivityCardConfig(
-    title = "Sleep",
+    title = stringResource(R.string.activity_sleep),
     icon = "😴",
     isImmediateActivity = false,
     cardBackgroundColor = { isOngoing -> ActivityColors.getSleepColor(isOngoing) }
@@ -18,8 +22,9 @@ fun sleepActivityConfig(): ActivityCardConfig = ActivityCardConfig(
 /**
  * Helper function to create configuration for breast feeding activity
  */
+@Composable
 fun breastFeedingActivityConfig(): ActivityCardConfig = ActivityCardConfig(
-    title = "Boob",
+    title = stringResource(R.string.activity_breast),
     icon = "🤱",
     isImmediateActivity = false,
     cardBackgroundColor = { isOngoing -> ActivityColors.getFeedingColor(isOngoing) }
@@ -28,8 +33,9 @@ fun breastFeedingActivityConfig(): ActivityCardConfig = ActivityCardConfig(
 /**
  * Helper function to create configuration for bottle feeding activity
  */
+@Composable
 fun bottleFeedingActivityConfig(): ActivityCardConfig = ActivityCardConfig(
-    title = "Bottle",
+    title = stringResource(R.string.activity_bottle),
     icon = "🍼",
     isImmediateActivity = true,
     cardBackgroundColor = { isOngoing -> ActivityColors.getFeedingColor(isOngoing) }
@@ -38,8 +44,9 @@ fun bottleFeedingActivityConfig(): ActivityCardConfig = ActivityCardConfig(
 /**
  * Helper function to create configuration for diaper activity
  */
+@Composable
 fun diaperActivityConfig(): ActivityCardConfig = ActivityCardConfig(
-    title = "Poop",
+    title = stringResource(R.string.activity_poop),
     icon = "💩",
     isImmediateActivity = true,
     cardBackgroundColor = { isOngoing -> ActivityColors.getDiaperColor(isOngoing) }
@@ -50,6 +57,7 @@ fun diaperActivityConfig(): ActivityCardConfig = ActivityCardConfig(
 /**
  * Helper function to create content for sleep activity
  */
+@Composable
 fun sleepActivityContent(
     ongoingSleep: Any? = null,
     ongoingStartTime: Date? = null,
@@ -66,12 +74,13 @@ fun sleepActivityContent(
     lastActivityText = lastSleepText,
     lastActivityTimeAgo = timeAgo,
     lastActivityTime = endTime,
-    noActivityText = "No recent sleep"
+    noActivityText = stringResource(R.string.activity_no_recent_sleep)
 )
 
 /**
  * Helper function to create content for breast feeding activity
  */
+@Composable
 fun breastFeedingActivityContent(
     ongoingFeeding: Any? = null,
     ongoingStartTime: Date? = null,
@@ -88,12 +97,13 @@ fun breastFeedingActivityContent(
     lastActivityText = lastFeedingText,
     lastActivityTimeAgo = timeAgo,
     lastActivityTime = endTime,
-    noActivityText = "No recent feeding"
+    noActivityText = stringResource(R.string.activity_no_recent_feeding)
 )
 
 /**
  * Helper function to create content for bottle feeding activity
  */
+@Composable
 fun bottleFeedingActivityContent(
     lastFeeding: Any? = null,
     lastFeedingText: String? = null,
@@ -106,12 +116,13 @@ fun bottleFeedingActivityContent(
     lastActivityTimeAgo = timeAgo,
     lastActivityTime = feedingTime,
     lastActivityNotes = notes,
-    noActivityText = "No recent feeding"
+    noActivityText = stringResource(R.string.activity_no_recent_feeding)
 )
 
 /**
  * Helper function to create content for diaper activity
  */
+@Composable
 fun diaperActivityContent(
     lastDiaper: Any? = null,
     lastDiaperText: String? = null,
@@ -124,5 +135,5 @@ fun diaperActivityContent(
     lastActivityTimeAgo = timeAgo,
     lastActivityTime = diaperTime,
     lastActivityNotes = notes,
-    noActivityText = "No poops logged yet"
+    noActivityText = stringResource(R.string.activity_no_poops_logged)
 )

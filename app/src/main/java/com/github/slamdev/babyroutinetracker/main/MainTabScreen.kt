@@ -37,6 +37,7 @@ fun MainTabScreen(
     onNavigateToEditBaby: (Baby) -> Unit,
     onNavigateToNotificationSettings: (Baby) -> Unit,
     onNavigateToAccountDeletion: () -> Unit,
+    onNavigateToLanguageSettings: () -> Unit,
     modifier: Modifier = Modifier,
     authViewModel: AuthenticationViewModel = viewModel(),
     invitationViewModel: InvitationViewModel = viewModel()
@@ -136,7 +137,8 @@ fun MainTabScreen(
                         onNavigateToInvitePartner = onNavigateToInvitePartner,
                         onNavigateToEditBaby = onNavigateToEditBaby,
                         onNavigateToNotificationSettings = onNavigateToNotificationSettings,
-                        onNavigateToAccountDeletion = onNavigateToAccountDeletion
+                        onNavigateToAccountDeletion = onNavigateToAccountDeletion,
+                        onNavigateToLanguageSettings = onNavigateToLanguageSettings
                     )
                 }
             )

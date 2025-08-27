@@ -1250,6 +1250,344 @@ BabyAgeDisplay(
 4. **Navigation Safety**: Load baby data in edit screens rather than relying on cached lists
 5. **Real-time Sync**: All profile updates sync automatically across devices
 
+## 🌍 Internationalization Implementation
+
+### Overview
+The app supports multiple languages starting with English (default) and Russian. The implementation follows Android's standard localization patterns with Jetpack Compose integration.
+
+### String Resources Structure
+
+#### English (Default) - `res/values/strings.xml`
+```xml
+<resources>
+    <!-- App Basic -->
+    <string name="app_name">Baby Routine Tracker</string>
+    
+    <!-- Activity Types -->
+    <string name="activity_sleep">Sleep</string>
+    <string name="activity_feeding">Feeding</string>
+    <string name="activity_diaper">Diaper</string>
+    
+    <!-- Dashboard -->
+    <string name="dashboard_title">%s (%s)</string>
+    <string name="dashboard_fallback_title">Baby Routine Tracker</string>
+    
+    <!-- Common Actions -->
+    <string name="action_save">Save</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_edit">Edit</string>
+</resources>
+```
+
+#### Russian Translation - `res/values-ru/strings.xml`
+```xml
+<resources>
+    <!-- App Basic -->
+    <string name="app_name">Трекер режима малыша</string>
+    
+    <!-- Activity Types -->
+    <string name="activity_sleep">Сон</string>
+    <string name="activity_feeding">Кормление</string>
+    <string name="activity_diaper">Памперс</string>
+    
+    <!-- Dashboard -->
+    <string name="dashboard_title">%s (%s)</string>
+    <string name="dashboard_fallback_title">Трекер режима малыша</string>
+    
+    <!-- Common Actions -->
+    <string name="action_save">Сохранить</string>
+    <string name="action_cancel">Отмена</string>
+    <string name="action_delete">Удалить</string>
+    <string name="action_edit">Редактировать</string>
+</resources>
+```
+
+### Localization Utility
+
+#### LocalizationManager
+```kotlin
+object LocalizationManager {
+    
+    /**
+     * Get string resource with proper locale handling
+     */
+    @Composable
+    fun getString(@StringRes resId: Int): String {
+        return stringResource(id = resId)
+    }
+    
+    /**
+     * Get formatted string resource with arguments
+     */
+    @Composable
+    fun getString(@StringRes resId: Int, vararg formatArgs: Any): String {
+        return stringResource(id = resId, formatArgs = formatArgs)
+    }
+    
+    /**
+     * Format time according to current locale
+     */
+    fun formatTime(date: Date, use24Hour: Boolean = true): String {
+        val locale = Locale.getDefault()
+        val pattern = if (use24Hour) "HH:mm" else "h:mm a"
+        return SimpleDateFormat(pattern, locale).format(date)
+    }
+    
+    /**
+     * Format date according to current locale
+     */
+    fun formatDate(date: Date): String {
+        val locale = Locale.getDefault()
+        return DateFormat.getDateInstance(DateFormat.SHORT, locale).format(date)
+    }
+    
+    /**
+     * Format time ago in localized format
+     */
+    fun formatTimeAgo(pastDate: Date): String {
+        // Implementation similar to TimeUtils but with locale-aware strings
+        val now = Date()
+        val diffMillis = abs(now.time - pastDate.time)
+        val diffMinutes = diffMillis / (1000 * 60)
+        
+        return when {
+            diffMinutes < 1 -> getString(R.string.time_ago_now)
+            diffMinutes < 60 -> getString(R.string.time_ago_minutes, diffMinutes)
+            // ... more cases with proper pluralization
+        }
+    }
+}
+```
+
+### Usage in Compose Components
+
+#### String Resource Usage Pattern
+```kotlin
+@Composable
+fun ActivityCard(
+    activityType: ActivityType,
+    modifier: Modifier = Modifier
+) {
+    Card(modifier = modifier) {
+        Column {
+            // Use stringResource for localization
+            Text(
+                text = when (activityType) {
+                    ActivityType.SLEEP -> stringResource(R.string.activity_sleep)
+                    ActivityType.FEEDING -> stringResource(R.string.activity_feeding)
+                    ActivityType.DIAPER -> stringResource(R.string.activity_diaper)
+                },
+                style = MaterialTheme.typography.headlineSmall
+            )
+            
+            // Format with parameters
+            Text(
+                text = stringResource(
+                    R.string.last_activity_time,
+                    LocalizationManager.formatTimeAgo(lastActivity.startTime)
+                )
+            )
+        }
+    }
+}
+```
+
+#### ✅ **DO**: Use string resources
+```kotlin
+// Correct localization usage
+Text(text = stringResource(R.string.welcome_message))
+Button(
+    onClick = onSave,
+    text = { Text(stringResource(R.string.action_save)) }
+)
+```
+
+#### ❌ **DON'T**: Hardcode strings
+```kotlin
+// Wrong - hardcoded strings
+Text(text = "Welcome!")  // ❌ Not localizable
+Button(
+    onClick = onSave,
+    text = { Text("Save") }  // ❌ Not localizable
+)
+```
+
+### Language Switching Implementation
+
+#### LanguagePreferences (SharedPreferences/DataStore)
+```kotlin
+class LanguagePreferences(private val context: Context) {
+    private val prefs = context.getSharedPreferences("language_prefs", Context.MODE_PRIVATE)
+    
+    companion object {
+        private const val KEY_LANGUAGE = "selected_language"
+        const val LANGUAGE_SYSTEM = "system"
+        const val LANGUAGE_ENGLISH = "en"
+        const val LANGUAGE_RUSSIAN = "ru"
+    }
+    
+    fun getSelectedLanguage(): String {
+        return prefs.getString(KEY_LANGUAGE, LANGUAGE_SYSTEM) ?: LANGUAGE_SYSTEM
+    }
+    
+    fun setSelectedLanguage(language: String) {
+        prefs.edit().putString(KEY_LANGUAGE, language).apply()
+    }
+}
+```
+
+#### Language Selection UI
+```kotlin
+@Composable
+fun LanguageSelector(
+    selectedLanguage: String,
+    onLanguageSelected: (String) -> Unit
+) {
+    Column {
+        Text(
+            text = stringResource(R.string.settings_language),
+            style = MaterialTheme.typography.titleMedium
+        )
+        
+        LanguageOption(
+            label = stringResource(R.string.language_system_default),
+            isSelected = selectedLanguage == LanguagePreferences.LANGUAGE_SYSTEM,
+            onClick = { onLanguageSelected(LanguagePreferences.LANGUAGE_SYSTEM) }
+        )
+        
+        LanguageOption(
+            label = "English",
+            isSelected = selectedLanguage == LanguagePreferences.LANGUAGE_ENGLISH,
+            onClick = { onLanguageSelected(LanguagePreferences.LANGUAGE_ENGLISH) }
+        )
+        
+        LanguageOption(
+            label = "Русский",
+            isSelected = selectedLanguage == LanguagePreferences.LANGUAGE_RUSSIAN,
+            onClick = { onLanguageSelected(LanguagePreferences.LANGUAGE_RUSSIAN) }
+        )
+    }
+}
+```
+
+### Pluralization Support
+
+#### String Resources with Plurals
+```xml
+<!-- English plurals -->
+<plurals name="sleep_hours">
+    <item quantity="one">%d hour</item>
+    <item quantity="other">%d hours</item>
+</plurals>
+
+<!-- Russian plurals (more complex) -->
+<plurals name="sleep_hours">
+    <item quantity="one">%d час</item>
+    <item quantity="few">%d часа</item>
+    <item quantity="many">%d часов</item>
+    <item quantity="other">%d часов</item>
+</plurals>
+```
+
+#### Usage in Code
+```kotlin
+@Composable
+fun SleepDuration(hours: Int) {
+    Text(
+        text = pluralStringResource(
+            R.plurals.sleep_hours,
+            hours,
+            hours
+        )
+    )
+}
+```
+
+### Cultural Formatting
+
+#### Locale-Aware Formatting Utilities
+```kotlin
+object CulturalFormatting {
+    
+    /**
+     * Format decimal numbers according to locale (comma vs period)
+     */
+    fun formatDecimal(value: Double): String {
+        return NumberFormat.getNumberInstance().format(value)
+    }
+    
+    /**
+     * Format feeding amount with proper units
+     */
+    @Composable
+    fun formatFeedingAmount(amountMl: Double): String {
+        val formattedAmount = formatDecimal(amountMl)
+        return stringResource(R.string.feeding_amount_ml, formattedAmount)
+    }
+    
+    /**
+     * Format age with cultural preferences
+     */
+    @Composable
+    fun formatAge(months: Int, weeks: Int): String {
+        val locale = Locale.getDefault()
+        return when (locale.language) {
+            "ru" -> {
+                // Russian preference: use months more often
+                if (months > 0) {
+                    pluralStringResource(R.plurals.age_months, months, months)
+                } else {
+                    pluralStringResource(R.plurals.age_weeks, weeks, weeks)
+                }
+            }
+            else -> {
+                // English: more detailed with weeks when young
+                if (months < 3) {
+                    pluralStringResource(R.plurals.age_weeks, weeks, weeks)
+                } else {
+                    pluralStringResource(R.plurals.age_months, months, months)
+                }
+            }
+        }
+    }
+}
+```
+
+### Implementation Checklist
+
+When adding new text to the app:
+
+- [ ] Add English string to `res/values/strings.xml`
+- [ ] Add Russian translation to `res/values-ru/strings.xml`
+- [ ] Use `stringResource()` in Compose components
+- [ ] Consider pluralization needs for countable items
+- [ ] Test with different locales to verify layout doesn't break
+- [ ] Verify cultural appropriateness of translations
+- [ ] Test language switching functionality
+- [ ] Ensure proper formatting for numbers, dates, and times
+
+### Testing Localization
+
+```kotlin
+// Test string extraction
+@Test
+fun testStringResources() {
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    
+    // Test English (default)
+    val englishName = context.getString(R.string.app_name)
+    assertEquals("Baby Routine Tracker", englishName)
+    
+    // Test Russian
+    val russianConfig = Configuration(context.resources.configuration)
+    russianConfig.setLocale(Locale("ru"))
+    val russianContext = context.createConfigurationContext(russianConfig)
+    val russianName = russianContext.getString(R.string.app_name)
+    assertEquals("Трекер режима малыша", russianName)
+}
+```
+
 ## 🧪 Testing Guidelines
 
 ### Always Test These Scenarios

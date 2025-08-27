@@ -3,7 +3,9 @@ package com.github.slamdev.babyroutinetracker.sleep
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.github.slamdev.babyroutinetracker.R
 import com.github.slamdev.babyroutinetracker.ui.components.ActivityCard
 import com.github.slamdev.babyroutinetracker.ui.components.ActivityCardState
 import com.github.slamdev.babyroutinetracker.ui.components.EditActivityDialog
@@ -72,7 +74,7 @@ fun SleepTrackingCard(
 
             sleepActivityContent(
                 lastSleep = lastSleep,
-                lastSleepText = "Last slept $durationText",
+                lastSleepText = stringResource(R.string.activity_last_slept, durationText),
                 timeAgo = timeAgo,
                 endTime = lastSleep.endTime.toDate()
             )

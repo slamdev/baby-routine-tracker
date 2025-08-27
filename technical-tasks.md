@@ -653,6 +653,90 @@ This document outlines the specific acceptance criter### **Real-time Dashboard**
   * Update BottleFeedingDialog to pre-populate with default amount. ✅ COMPLETED
   * Pass baby object to BottleFeedingCard for access to default amount. ✅ COMPLETED
 
+### **Internationalization & Localization**
+
+**User Story:** As a user, I want the app to automatically detect my system language and display content in my preferred language (English or Russian) so I can use the app comfortably.
+
+* **Acceptance Criteria:**  
+  * App automatically detects system language on first launch and sets appropriate language
+  * Supports English (default) and Russian localization with complete string translations
+  * All UI text, button labels, error messages, and placeholders are properly localized
+  * Time and date formats follow locale-specific conventions
+  * Age calculations and formatting respect cultural norms (months vs weeks preference)
+* **Technical Tasks:**  
+  * Create string resources for English (default) in `res/values/strings.xml`
+  * Create Russian string resources in `res/values-ru/strings.xml`
+  * Set up localization utility class for Compose with stringResource() integration
+  * Replace all hardcoded strings in UI components with string resource references
+  * Implement locale-aware date/time formatting utilities
+  * Add locale detection and automatic language setup on app first launch
+
+**User Story:** As a Russian-speaking parent, I want to use the app in Russian so I can understand all the interface elements, button labels, and messages without language barriers.
+
+* **Acceptance Criteria:**  
+  * Complete Russian translation for all user-facing text including:
+    * Activity types and descriptions (Sleep 😴, Feeding 🍼🤱, Diaper 💩)
+    * Dashboard cards and action buttons
+    * Form labels, placeholders, and validation messages
+    * Error messages and success confirmations
+    * Settings screens and menu options
+    * Age calculations and time formatting
+  * Culturally appropriate translations that feel natural to Russian speakers
+  * Proper grammar handling for pluralization and gender agreements
+* **Technical Tasks:**  
+  * Create comprehensive Russian translation strings covering all app features
+  * Implement proper pluralization rules for Russian language
+  * Test Russian translations for natural feel and cultural appropriateness
+  * Handle longer Russian text strings with responsive UI layouts
+  * Verify emoji and icon compatibility with Russian text
+
+**User Story:** As a user, I want to manually change the app language from the settings screen so I can switch between English and Russian regardless of my system language.
+
+* **Acceptance Criteria:**  
+  * Language selection option available in app settings/preferences screen
+  * Immediate language switching without requiring app restart
+  * Selected language persists between app sessions
+  * Language change affects all UI elements immediately and comprehensively
+  * Option to revert to "System Default" language setting
+* **Technical Tasks:**  
+  * Create language preference storage using SharedPreferences or DataStore
+  * Implement LanguageManager service for runtime locale switching
+  * Add language selection UI component with English/Russian/System Default options
+  * Create language switching mechanism that updates Compose string resources
+  * Implement app-wide locale context management
+  * Add language preference persistence and restoration on app startup
+
+**User Story:** As a bilingual family, I want to switch the app language easily so both parents can use the app in their preferred language.
+
+* **Acceptance Criteria:**  
+  * Quick language switching accessible from main settings or profile menu
+  * Language change takes effect immediately across all app screens
+  * No data loss or app restart required when changing languages
+  * Both parents can use different language preferences on their devices
+  * Language preference is device-specific, not synced across user accounts
+* **Technical Tasks:**  
+  * Implement quick language toggle in profile menu or settings
+  * Ensure language changes don't affect Firebase data or user account settings
+  * Test multi-device scenarios with different language preferences
+  * Verify real-time sync continues working properly across different languages
+  * Implement language-independent data storage and retrieval
+
+**User Story:** As a user, I want all activity types, time formats, and age calculations to be properly localized so the information is presented in a culturally appropriate format.
+
+* **Acceptance Criteria:**  
+  * Time displays follow locale conventions (12/24 hour format based on locale)
+  * Date formatting respects cultural preferences (DD.MM.YYYY for Russian, MM/DD/YYYY for US English)
+  * Age calculations use culturally appropriate units (preference for months vs weeks)
+  * Number formatting follows locale rules (decimal separators, thousand separators)
+  * Activity duration displays use natural language appropriate for each locale
+* **Technical Tasks:**  
+  * Implement locale-aware DateTimeFormatter for time and date displays
+  * Create locale-specific age formatting utilities
+  * Add locale-aware number formatting for feeding amounts and durations
+  * Implement culturally appropriate time ago formatting ("2 часа назад" vs "2 hours ago")
+  * Test time zone handling and locale-specific calendar systems
+  * Create utility classes for consistent locale-aware formatting across the app
+
 ### **Error Handling & User Feedback**
 
 **User Story:** As a user, I want clear, helpful error messages when something goes wrong so I know how to fix the issue.

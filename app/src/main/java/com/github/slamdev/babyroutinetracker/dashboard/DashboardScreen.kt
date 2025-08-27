@@ -21,6 +21,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -28,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.github.slamdev.babyroutinetracker.R
 import com.github.slamdev.babyroutinetracker.auth.AuthenticationViewModel
 import com.github.slamdev.babyroutinetracker.invitation.InvitationViewModel
 import com.github.slamdev.babyroutinetracker.invitation.InvitationUiState
@@ -51,6 +53,7 @@ fun DashboardScreen(
     onNavigateToEditBaby: (Baby) -> Unit,
     onNavigateToNotificationSettings: (Baby) -> Unit,
     onNavigateToAccountDeletion: () -> Unit,
+    onNavigateToLanguageSettings: () -> Unit,
     onNavigateToHistory: (String) -> Unit,
     modifier: Modifier = Modifier,
     authViewModel: AuthenticationViewModel = viewModel(),
@@ -68,13 +71,13 @@ fun DashboardScreen(
                 title = { 
                     Column {
                         Text(
-                            text = selectedBaby?.name ?: "Baby Routine Tracker"
+                            text = selectedBaby?.name ?: stringResource(R.string.dashboard_fallback_title)
                         )
                         selectedBaby?.let { baby ->
                             Text(
                                 text = baby.getFormattedRealAge() + (
                                     baby.getFormattedAdjustedAge()?.let { corrected ->
-                                        if (baby.wasBornEarly()) " (corrected: $corrected)" else ""
+                                        if (baby.wasBornEarly()) stringResource(R.string.dashboard_corrected_age, corrected) else ""
                                     } ?: ""
                                 ),
                                 fontSize = 12.sp,
@@ -94,7 +97,8 @@ fun DashboardScreen(
                         onNavigateToInvitePartner = onNavigateToInvitePartner,
                         onNavigateToEditBaby = onNavigateToEditBaby,
                         onNavigateToNotificationSettings = onNavigateToNotificationSettings,
-                        onNavigateToAccountDeletion = onNavigateToAccountDeletion
+                        onNavigateToAccountDeletion = onNavigateToAccountDeletion,
+                        onNavigateToLanguageSettings = onNavigateToLanguageSettings
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -220,19 +224,11 @@ fun DashboardContent(
             )
             
             Text(
-                text = "To start tracking your baby's activities, create a new baby profile or join an existing one using an invitation code.",
+                text = stringResource(R.string.dashboard_no_baby_selected),
                 fontSize = 16.sp,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                 lineHeight = 22.sp
-            )
-            
-            Text(
-                text = "Use the profile menu in the top-right corner to access baby profile options.",
-                fontSize = 14.sp,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
-                lineHeight = 20.sp
             )
             
             Spacer(modifier = Modifier.height(16.dp))
@@ -253,13 +249,13 @@ fun DashboardContent(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     FeatureCard(
-                        title = "Data Visualization",
-                        description = "Coming soon",
+                        title = stringResource(R.string.feature_data_visualization),
+                        description = stringResource(R.string.coming_soon_short),
                         modifier = Modifier.weight(1f)
                     )
                     FeatureCard(
-                        title = "AI Sleep Plans",
-                        description = "Coming soon",
+                        title = stringResource(R.string.feature_ai_sleep_plans),
+                        description = stringResource(R.string.coming_soon_short),
                         modifier = Modifier.weight(1f)
                     )
                 }

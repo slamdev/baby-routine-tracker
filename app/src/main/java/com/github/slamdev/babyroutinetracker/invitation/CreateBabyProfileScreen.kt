@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -19,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.github.slamdev.babyroutinetracker.R
 import com.github.slamdev.babyroutinetracker.ui.theme.extended
 import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
@@ -92,7 +94,7 @@ fun CreateBabyProfileScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Create Your Baby's Profile",
+                        text = stringResource(R.string.baby_profile_create_title),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
@@ -100,7 +102,7 @@ fun CreateBabyProfileScreen(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Enter your baby's information including birthdate and optional due date for age tracking.",
+                        text = stringResource(R.string.baby_profile_create_description),
                         fontSize = 14.sp,
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f)
@@ -164,7 +166,7 @@ fun CreateBabyProfileScreen(
                             enabled = !uiState.isLoading
                         )
                         Text(
-                            text = "Include due date (for corrected age calculation)",
+                            text = stringResource(R.string.baby_profile_due_date_checkbox),
                             fontSize = 14.sp,
                             color = MaterialTheme.colorScheme.onSurface
                         )
