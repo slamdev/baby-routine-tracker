@@ -424,6 +424,82 @@ class ActivityService {
     }
 
     /**
+     * Get real-time updates for recent activities for a baby (for activity history)
+     */
+    fun getRecentActivitiesFlow(
+        babyId: String,
+        limit: Int = 50
+    ): Flow<OptionalUiState<List<Activity>>> = callbackFlow {
+        val currentUser = auth.currentUser
+        if (currentUser == null) {
+            val error = Exception("User not authenticated")
+            Log.e(TAG, "Failed to get recent activities flow - user not authenticated", error)
+            trySend(OptionalUiState.Error(error, "Please sign in to view activities"))
+            close()
+            return@callbackFlow
+        }
+
+        Log.d(TAG, "Setting up real-time listener for recent activities: $babyId (limit: $limit)")
+        
+        // Emit loading state initially
+        trySend(OptionalUiState.Loading)
+        
+        val listenerRegistration = firestore.collection(BABIES_COLLECTION)
+            .document(babyId)
+            .collection(ACTIVITIES_SUBCOLLECTION)
+            .orderBy("startTime", Query.Direction.DESCENDING)
+            .limit(limit.toLong())
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    Log.e(TAG, "Error listening to recent activities", error)
+                    val userMessage = when {
+                        error.message?.contains("PERMISSION_DENIED") == true -> 
+                            "You don't have permission to view this baby's activities"
+                        error.message?.contains("UNAVAILABLE") == true -> 
+                            "Unable to connect to server. Please check your internet connection"
+                        error.message?.contains("index") == true || error.message?.contains("FAILED_PRECONDITION") == true ->
+                            "Database is being set up. Please try again in a few minutes"
+                        else -> "Unable to load activity history"
+                    }
+                    trySend(OptionalUiState.Error(error, userMessage))
+                    return@addSnapshotListener
+                }
+
+                if (snapshot != null) {
+                    try {
+                        val activities = snapshot.documents.mapNotNull { document ->
+                            try {
+                                document.toObject<Activity>()
+                            } catch (e: Exception) {
+                                Log.w(TAG, "Failed to parse activity document: ${document.id}", e)
+                                null
+                            }
+                        }
+                        
+                        Log.d(TAG, "Real-time update for recent activities: ${activities.size} activities found")
+                        
+                        if (activities.isNotEmpty()) {
+                            trySend(OptionalUiState.Success(activities))
+                        } else {
+                            trySend(OptionalUiState.Empty)
+                        }
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error processing recent activities snapshot", e)
+                        trySend(OptionalUiState.Error(e, "Failed to process activity history data"))
+                    }
+                } else {
+                    Log.d(TAG, "Received null snapshot for recent activities")
+                    trySend(OptionalUiState.Empty)
+                }
+            }
+
+        awaitClose { 
+            Log.d(TAG, "Removing real-time listener for recent activities")
+            listenerRegistration.remove() 
+        }
+    }
+
+    /**
      * Start a breast milk feeding session (ongoing activity)
      */
     suspend fun startBreastMilkFeeding(

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.slamdev.babyroutinetracker.model.Activity
 import com.github.slamdev.babyroutinetracker.model.ActivityType
+import com.github.slamdev.babyroutinetracker.model.OptionalUiState
 import com.github.slamdev.babyroutinetracker.service.ActivityService
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,46 +46,62 @@ class ActivityHistoryViewModel : ViewModel() {
         currentBabyId = babyId
         Log.d(TAG, "Initializing activity history for baby: $babyId")
         
-        loadActivities()
+        setupRealtimeActivitiesListener()
     }
     
     /**
-     * Load recent activities for the baby
+     * Set up real-time listener for activities
      */
-    private fun loadActivities() {
+    private fun setupRealtimeActivitiesListener() {
         val babyId = currentBabyId
         if (babyId == null) {
-            Log.e(TAG, "Cannot load activities - no baby selected")
+            Log.e(TAG, "Cannot setup activities listener - no baby selected")
             _uiState.value = _uiState.value.copy(errorMessage = "No baby profile selected")
             return
         }
 
         viewModelScope.launch {
             try {
-                _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+                Log.i(TAG, "Setting up real-time activities listener for baby: $babyId")
                 
-                Log.i(TAG, "Loading recent activities for baby: $babyId")
-                val result = activityService.getRecentActivities(babyId, limit = 50)
-                
-                result.fold(
-                    onSuccess = { activities ->
-                        Log.i(TAG, "Loaded ${activities.size} activities successfully")
-                        _uiState.value = _uiState.value.copy(
-                            isLoading = false,
-                            activities = activities,
-                            filteredActivities = filterActivities(activities, _uiState.value.selectedActivityType)
-                        )
-                    },
-                    onFailure = { exception ->
-                        Log.e(TAG, "Failed to load activities", exception)
-                        _uiState.value = _uiState.value.copy(
-                            isLoading = false,
-                            errorMessage = exception.message ?: "Failed to load activities"
-                        )
+                activityService.getRecentActivitiesFlow(babyId, limit = 50)
+                    .collect { activitiesState ->
+                        when (activitiesState) {
+                            is OptionalUiState.Loading -> {
+                                _uiState.value = _uiState.value.copy(
+                                    isLoading = true,
+                                    errorMessage = null
+                                )
+                            }
+                            is OptionalUiState.Success -> {
+                                Log.i(TAG, "Real-time activities update: ${activitiesState.data.size} activities")
+                                _uiState.value = _uiState.value.copy(
+                                    isLoading = false,
+                                    activities = activitiesState.data,
+                                    filteredActivities = filterActivities(activitiesState.data, _uiState.value.selectedActivityType),
+                                    errorMessage = null
+                                )
+                            }
+                            is OptionalUiState.Empty -> {
+                                Log.i(TAG, "Real-time activities update: no activities found")
+                                _uiState.value = _uiState.value.copy(
+                                    isLoading = false,
+                                    activities = emptyList(),
+                                    filteredActivities = emptyList(),
+                                    errorMessage = null
+                                )
+                            }
+                            is OptionalUiState.Error -> {
+                                Log.e(TAG, "Real-time activities error", activitiesState.exception)
+                                _uiState.value = _uiState.value.copy(
+                                    isLoading = false,
+                                    errorMessage = activitiesState.message
+                                )
+                            }
+                        }
                     }
-                )
             } catch (e: Exception) {
-                Log.e(TAG, "Unexpected error loading activities", e)
+                Log.e(TAG, "Unexpected error in activities listener", e)
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     errorMessage = "Unexpected error: ${e.message}"
@@ -106,8 +123,6 @@ class ActivityHistoryViewModel : ViewModel() {
 
         viewModelScope.launch {
             try {
-                _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
-                
                 val newStartTimestamp = Timestamp(newStartTime)
                 val newEndTimestamp = Timestamp(newEndTime)
                 
@@ -122,13 +137,11 @@ class ActivityHistoryViewModel : ViewModel() {
                 result.fold(
                     onSuccess = { updatedActivity ->
                         Log.i(TAG, "Activity times updated successfully: ${updatedActivity.id}")
-                        // Reload activities to get fresh data
-                        loadActivities()
+                        // Real-time listener will automatically update the UI
                     },
                     onFailure = { exception ->
                         Log.e(TAG, "Failed to update activity times", exception)
                         _uiState.value = _uiState.value.copy(
-                            isLoading = false,
                             errorMessage = exception.message ?: "Failed to update activity times"
                         )
                     }
@@ -136,7 +149,6 @@ class ActivityHistoryViewModel : ViewModel() {
             } catch (e: Exception) {
                 Log.e(TAG, "Unexpected error updating activity times", e)
                 _uiState.value = _uiState.value.copy(
-                    isLoading = false,
                     errorMessage = "Unexpected error: ${e.message}"
                 )
             }
@@ -156,8 +168,6 @@ class ActivityHistoryViewModel : ViewModel() {
 
         viewModelScope.launch {
             try {
-                _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
-                
                 val newTimestamp = Timestamp(newTime)
                 Log.i(TAG, "Updating instant activity time: ${activity.id}")
                 val result = activityService.updateInstantActivityTime(activity.id, babyId, newTimestamp)
@@ -165,13 +175,11 @@ class ActivityHistoryViewModel : ViewModel() {
                 result.fold(
                     onSuccess = { updatedActivity ->
                         Log.i(TAG, "Instant activity time updated successfully: ${updatedActivity.id}")
-                        // Reload activities to get fresh data
-                        loadActivities()
+                        // Real-time listener will automatically update the UI
                     },
                     onFailure = { exception ->
                         Log.e(TAG, "Failed to update instant activity time", exception)
                         _uiState.value = _uiState.value.copy(
-                            isLoading = false,
                             errorMessage = exception.message ?: "Failed to update activity time"
                         )
                     }
@@ -179,7 +187,6 @@ class ActivityHistoryViewModel : ViewModel() {
             } catch (e: Exception) {
                 Log.e(TAG, "Unexpected error updating instant activity time", e)
                 _uiState.value = _uiState.value.copy(
-                    isLoading = false,
                     errorMessage = "Unexpected error: ${e.message}"
                 )
             }
@@ -199,21 +206,17 @@ class ActivityHistoryViewModel : ViewModel() {
 
         viewModelScope.launch {
             try {
-                _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
-                
                 Log.i(TAG, "Updating activity notes: ${activity.id}")
                 val result = activityService.updateActivityNotes(activity.id, babyId, newNotes)
                 
                 result.fold(
                     onSuccess = { updatedActivity ->
                         Log.i(TAG, "Activity notes updated successfully: ${updatedActivity.id}")
-                        // Reload activities to get fresh data
-                        loadActivities()
+                        // Real-time listener will automatically update the UI
                     },
                     onFailure = { exception ->
                         Log.e(TAG, "Failed to update activity notes", exception)
                         _uiState.value = _uiState.value.copy(
-                            isLoading = false,
                             errorMessage = exception.message ?: "Failed to update activity notes"
                         )
                     }
@@ -221,7 +224,6 @@ class ActivityHistoryViewModel : ViewModel() {
             } catch (e: Exception) {
                 Log.e(TAG, "Unexpected error updating activity notes", e)
                 _uiState.value = _uiState.value.copy(
-                    isLoading = false,
                     errorMessage = "Unexpected error: ${e.message}"
                 )
             }
@@ -241,21 +243,17 @@ class ActivityHistoryViewModel : ViewModel() {
 
         viewModelScope.launch {
             try {
-                _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
-
                 Log.i(TAG, "Updating activity: ${activity.id}")
                 val result = activityService.updateActivity(babyId, activity)
 
                 result.fold(
                     onSuccess = { updatedActivity ->
                         Log.i(TAG, "Activity updated successfully: ${updatedActivity.id}")
-                        // Reload activities to get fresh data
-                        loadActivities()
+                        // Real-time listener will automatically update the UI
                     },
                     onFailure = { exception ->
                         Log.e(TAG, "Failed to update activity", exception)
                         _uiState.value = _uiState.value.copy(
-                            isLoading = false,
                             errorMessage = exception.message ?: "Failed to update activity"
                         )
                     }
@@ -263,7 +261,6 @@ class ActivityHistoryViewModel : ViewModel() {
             } catch (e: Exception) {
                 Log.e(TAG, "Unexpected error updating activity", e)
                 _uiState.value = _uiState.value.copy(
-                    isLoading = false,
                     errorMessage = "Unexpected error: ${e.message}"
                 )
             }
@@ -300,21 +297,17 @@ class ActivityHistoryViewModel : ViewModel() {
 
         viewModelScope.launch {
             try {
-                _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
-
                 Log.i(TAG, "Deleting activity: ${activity.id}")
                 val result = activityService.deleteActivity(activity.id, babyId)
 
                 result.fold(
                     onSuccess = {
                         Log.i(TAG, "Activity deleted successfully: ${activity.id}")
-                        // Reload activities to get fresh data
-                        loadActivities()
+                        // Real-time listener will automatically update the UI
                     },
                     onFailure = { exception ->
                         Log.e(TAG, "Failed to delete activity", exception)
                         _uiState.value = _uiState.value.copy(
-                            isLoading = false,
                             errorMessage = exception.message ?: "Failed to delete activity"
                         )
                     }
@@ -322,7 +315,6 @@ class ActivityHistoryViewModel : ViewModel() {
             } catch (e: Exception) {
                 Log.e(TAG, "Unexpected error deleting activity", e)
                 _uiState.value = _uiState.value.copy(
-                    isLoading = false,
                     errorMessage = "Unexpected error: ${e.message}"
                 )
             }

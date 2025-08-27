@@ -979,6 +979,13 @@ class MyViewModel : ViewModel() {
 - **Solution**: Use `OptionalUiState` pattern to emit proper error states
 - **Pattern**: Always emit Loading → Success/Empty/Error states in flows
 
+### Real-time Synchronization Issues ✅ **FIXED**
+- **Problem**: Partner devices not seeing edits/deletions in activity history until app restart
+- **Root Cause**: Using one-time data fetch (`getRecentActivities()`) instead of real-time listeners
+- **Solution**: Replace with `getRecentActivitiesFlow()` using Firebase `addSnapshotListener`
+- **Implementation**: Use `OptionalUiState<List<Activity>>` flow pattern for real-time list updates
+- **Result**: Changes now appear on all devices within seconds without manual refresh
+
 ### Icon Import Errors
 - **Problem**: Material icons not found (e.g., `ContentCopy`, `CalendarToday`, `ErrorOutline`)
 - **Solution**: Use available icons like `Icons.Default.Warning` or text-only buttons
@@ -1631,7 +1638,58 @@ All activity updates trigger real-time synchronization:
 - **Data Consistency**: Transaction-based updates ensure data integrity
 - **Activity Type Detection**: Automatic detection of instant vs. duration activities for appropriate UI
 
-## �️ Enhanced Activity History Screen
+## ��️ Enhanced Activity History Screen
+
+### Real-time Synchronization Fix ✅ **IMPLEMENTED**
+
+**Issue Fixed**: Activity history screen was using one-time data loading instead of real-time listeners, causing partner devices to not see edits/deletions until app restart.
+
+**Solution**: Replaced `getRecentActivities()` one-time fetch with `getRecentActivitiesFlow()` real-time listener.
+
+#### Key Changes Made:
+- **New Service Method**: Added `getRecentActivitiesFlow(babyId: String, limit: Int): Flow<OptionalUiState<List<Activity>>>` to ActivityService
+- **Real-time Listener**: Uses Firebase Firestore `addSnapshotListener` for automatic updates
+- **ViewModel Update**: ActivityHistoryViewModel now uses `setupRealtimeActivitiesListener()` instead of `loadActivities()`
+- **Removed Manual Reloads**: Update/delete methods no longer call `loadActivities()` since real-time listener handles updates
+- **State Management**: Proper loading/success/error states handled by the flow
+
+```kotlin
+// New real-time flow in ActivityService
+fun getRecentActivitiesFlow(babyId: String, limit: Int = 50): Flow<OptionalUiState<List<Activity>>> = callbackFlow {
+    // Emit loading state initially
+    trySend(OptionalUiState.Loading)
+    
+    val listenerRegistration = firestore.collection(BABIES_COLLECTION)
+        .document(babyId)
+        .collection(ACTIVITIES_SUBCOLLECTION)
+        .orderBy("startTime", Query.Direction.DESCENDING)
+        .limit(limit.toLong())
+        .addSnapshotListener { snapshot, error ->
+            // Handle real-time updates for all activity changes
+        }
+    
+    awaitClose { listenerRegistration.remove() }
+}
+
+// Updated ViewModel pattern
+class ActivityHistoryViewModel : ViewModel() {
+    private fun setupRealtimeActivitiesListener() {
+        viewModelScope.launch {
+            activityService.getRecentActivitiesFlow(babyId, limit = 50)
+                .collect { activitiesState ->
+                    when (activitiesState) {
+                        is OptionalUiState.Success -> {
+                            // Automatically update UI with latest data
+                        }
+                        // Handle loading, empty, error states
+                    }
+                }
+        }
+    }
+}
+```
+
+**Result**: Partner devices now see activity edits and deletions in real-time without requiring app restart.
 
 ### Overview
 The activity history screen has been significantly enhanced with deletion, advanced date/time editing, and filtering capabilities.
