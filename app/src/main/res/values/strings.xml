@@ -6,6 +6,7 @@
     <string name="auth_sign_in_with_google">Sign in with Google</string>
     <string name="auth_welcome_message">Welcome to Baby Routine Tracker</string>
     <string name="auth_sign_in_description">Track your baby\'s sleep, feeding, and diaper activities together with your partner.</string>
+    <string name="data_security_message">Your data is secure and synchronized across all your devices</string>
     
     <!-- Activity Types -->
     <string name="activity_sleep">Sleep</string>
@@ -22,6 +23,7 @@
     <string name="dashboard_fallback_title">Baby Routine Tracker</string>
     <string name="dashboard_corrected_age">(corrected: %s)</string>
     <string name="dashboard_no_baby_selected">To start tracking activities, please create or join a baby profile from the profile menu in the top-right corner.</string>
+    <string name="create_or_join_baby_profile">Create or Join a Baby Profile</string>
     
     <!-- Activity Actions -->
     <string name="sleep_start">Start Sleep</string>
@@ -48,245 +50,364 @@
     
     <!-- Time formatting -->
     <string name="time_ago_now">now</string>
-    <string name="time_ago_minutes">%dm</string>
-    <string name="time_ago_hours_minutes">%1$dh %2$dm</string>
-    <string name="time_ago_hours">%dh</string>
-    <string name="time_ago_days">%dd</string>
-    <string name="time_ago_weeks">%dw</string>
-    
-    <!-- Duration formatting -->
-    <string name="duration_minutes">%d min</string>
-    <string name="duration_hours_minutes">%1$dh %2$dm</string>
-    
-    <!-- Baby Profile -->
-    <string name="baby_profile_create">Create Baby Profile</string>
-    <string name="baby_profile_create_title">Create Your Baby\'s Profile</string>
-    <string name="baby_profile_create_description">Enter your baby\'s information including birthdate and optional due date for age tracking.</string>
-    <string name="baby_profile_edit">Edit Baby Profile</string>
-    <string name="baby_profile_join">Join Profile</string>
-    <string name="baby_profile_invite">Invite Partner</string>
-    <string name="baby_profile_name">Baby\'s Name</string>
-    <string name="baby_profile_birth_date">Birth Date</string>
-    <string name="baby_profile_due_date">Due Date (Optional)</string>
-    <string name="baby_profile_due_date_help">For premature babies to calculate corrected age</string>
-    <string name="baby_profile_due_date_checkbox">Include due date (for corrected age calculation)</string>
-    <string name="baby_profile_feeding_preferences">Feeding Preferences</string>
-    <string name="baby_profile_default_bottle_amount">Default Bottle Amount (ml)</string>
-    <string name="baby_profile_default_bottle_placeholder">e.g., 120</string>
-    
-    <!-- Age Display -->
-    <string name="age_real">Real age: %s</string>
-    <string name="age_corrected">Corrected age: %s</string>
+    <string name="time_ago_minutes">%dm ago</string>
+    <string name="time_ago_hours">%dh ago</string>
+    <string name="time_ago_hours_minutes">%1$dh %2$dm ago</string>
+    <string name="time_ago_days">%dd ago</string>
+    <string name="time_ago_weeks">%dw ago</string>
+    <string name="activity_duration_minutes">%d min</string>
+    <string name="activity_duration_hours_minutes">%1$dh %2$dm</string>
     
     <!-- Common Actions -->
     <string name="action_save">Save</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_delete">Delete</string>
     <string name="action_edit">Edit</string>
-    <string name="action_ok">OK</string>
-    <string name="action_yes">Yes</string>
-    <string name="action_no">No</string>
-    <string name="action_done">Done</string>
+    <string name="action_confirm">Confirm</string>
     <string name="action_retry">Retry</string>
-    <string name="action_dismiss">Dismiss</string>
-    <string name="action_continue">Continue</string>
-    <string name="action_back">Back</string>
+    <string name="action_close">Close</string>
+    <string name="loading">Loading…</string>
+    <string name="error">Error</string>
     
-    <!-- Dialogs -->
-    <string name="dialog_bottle_feeding_title">Log Bottle Feeding</string>
-    <string name="dialog_bottle_feeding_amount">Amount (ml)</string>
-    <string name="dialog_bottle_feeding_notes">Notes (optional)</string>
-    <string name="dialog_poop_title">Log Diaper Change</string>
-    <string name="dialog_poop_notes">Notes (optional)</string>
-    <string name="dialog_edit_activity_title">Edit Activity</string>
-    <string name="dialog_delete_activity_title">Delete Activity</string>
-        <!-- Dialog Messages -->
-    <string name="dialog_delete_title">Delete Activity</string>
-    <string name="dialog_delete_activity_message">Are you sure you want to delete this activity? This action cannot be undone.</string>
+    <!-- Profile Management -->
+    <string name="profile_create_baby">Create Baby Profile</string>
+    <string name="profile_join_baby">Join Profile</string>
+    <string name="profile_invite_partner">Invite Partner</string>
+    <string name="profile_edit_baby">Edit %s</string>
+    <string name="profile_sign_out">Sign Out</string>
+    <string name="profile_manage_account">Manage Account</string>
+    <string name="profile_delete_account">Delete Account</string>
     
-    <!-- Form Fields and Labels -->
-    <string name="label_baby_name">Baby\'s Name</string>
-    <string name="placeholder_baby_name">Enter baby\'s name</string>
-    <string name="label_birth_date">Birth Date</string>
-    <string name="label_due_date">Due Date</string>
-    <string name="placeholder_due_date">Select due date</string>
-    <string name="label_default_bottle_amount">Default Bottle Amount (ml)</string>
-    <string name="placeholder_default_bottle_amount">e.g., 120</string>
-    <string name="label_amount">Amount</string>
-    <string name="placeholder_amount">e.g., 120</string>
-    <string name="suffix_ml">ml</string>
-    <string name="label_notes">Notes</string>
-    <string name="placeholder_notes">Any additional details...</string>
-    <string name="label_invitation_code">Enter 6-character code</string>
-    <string name="placeholder_invitation_code">ABC123</string>
+    <!-- Baby Profile -->
+    <string name="baby_name_label">Baby\'s Name</string>
+    <string name="baby_birth_date_label">Birth Date</string>
+    <string name="baby_due_date_label">Due Date (optional)</string>
+    <string name="baby_due_date_help">For premature babies, enter expected due date to calculate corrected age</string>
+    <string name="baby_default_bottle_amount_label">Default Bottle Amount (ml)</string>
+    <string name="baby_default_bottle_amount_help">This amount will be automatically filled when logging bottle feeding (optional)</string>
+    <string name="baby_age_real">Real age: %s</string>
+    <string name="baby_age_corrected">Corrected age: %s</string>
+    <string name="baby_born_early">Born at ~%d weeks gestation</string>
     
-    <!-- Dialog Titles -->
-    <string name="title_select_birth_date">Select Birth Date</string>
-    <string name="title_select_due_date">Select Due Date</string>
-    <string name="title_join_baby_profile">Join Baby Profile</string>
-    <string name="title_invite_partner">Invite Partner</string>
-    <string name="title_edit_activity">Edit %s</string>
+    <!-- Invitations -->
+    <string name="invitation_title">Partner Invitation</string>
+    <string name="invitation_description">Share this code with your partner so they can join %s\'s profile</string>
+    <string name="invitation_code_label">Invitation Code</string>
+    <string name="invitation_copy_code">Copy Code</string>
+    <string name="invitation_share_code">Share Code</string>
+    <string name="invitation_code_copied">Code copied to clipboard</string>
+    <string name="invitation_expiry_notice">This code expires in 24 hours</string>
     
-    <!-- Button Actions -->
-    <string name="action_log_bottle">Log Bottle</string>
-    <string name="action_copy_code">Copy Code</string>
-    <string name="action_share">Share</string>
-    <string name="action_view_history">View Activity History</string>
+    <!-- Join Invitation -->
+    <string name="join_invitation_title">Join Baby Profile</string>
+    <string name="join_invitation_description">Enter the invitation code your partner shared with you</string>
+    <string name="join_invitation_code_hint">Enter 6-character code</string>
+    <string name="join_invitation_success">Successfully joined %s\'s profile!</string>
+    <string name="join_invitation_help_title">How to get an invitation code</string>
+    <string name="join_invitation_help_text">Ask your partner to:\n• Open the app\n• Tap the profile icon (top-right)\n• Select \"Invite Partner\"\n• Share the 6-character code with you</string>
+    
+    <!-- Activity History -->
+    <string name="history_title">Activity History</string>
+    <string name="history_view_all">View Activity History</string>
+    <string name="no_activities_found">No activities found for the selected filter</string>
+    <string name="activity_amount_ml">%1$d ml</string>
+    <string name="activity_notes_format">"%1$s"</string>
+    <string name="filter_all">All</string>
+    <string name="filter_sleep">😴 Sleep</string>
+    <string name="filter_feeding">🍼 Feeding</string>
+    <string name="filter_diaper">💩 Diaper</string>
+    
+    <!-- Data Visualization -->
+    <string name="data_visualization_title">📊 Data Visualization</string>
+    <string name="loading_data">Loading data…</string>
+    <string name="summary_title">📈 Summary (%1$s)</string>
+    <string name="time_period_label">📅 Time Period</string>
+    <string name="chart_icon">📊</string>
+    <string name="date_range_last_week">Last Week</string>
+    <string name="date_range_last_2_weeks">Last 2 Weeks</string>
+    <string name="date_range_last_month">Last Month</string>
+    
+    <!-- AI Sleep Plans -->
+    <string name="ai_sleep_plans_title">AI Sleep Plans</string>
+    <string name="coming_soon">Coming Soon</string>
+    <string name="ai_sleep_description">AI-powered sleep routine suggestions based on your baby\'s sleep patterns and age.</string>
+    <string name="ai_icon">🤖</string>
+    
+    <!-- Feeding -->
+    <string name="feeding_title">🍼 Feeding</string>
+    <string name="breast_feeding_title">🤱 Breast Milk</string>
+    <string name="bottle_feeding_title">🍼 Bottle</string>
+    <string name="last_fed_format">Last fed %1$s</string>
+    <string name="loading_last_feeding">Loading last feeding…</string>
+    <string name="last_feeding_format">Last feeding: %1$s</string>
+    <string name="no_recent_feeding">No recent feeding</string>
+    <string name="started_at_format">Started at %1$s</string>
+    <string name="stop_feeding">Stop Feeding</string>
+    <string name="start_feeding">Start Feeding</string>
+    <string name="log_bottle">Log Bottle</string>
+    <string name="log_bottle_feeding_title">🍼 Log Bottle Feeding</string>
+    <string name="amount_ml_label">Amount (ml)</string>
+    <string name="notes_optional_label">Notes (optional)</string>
+    
+    <!-- Sleep -->
+    <string name="sleep_title">😴 Sleep</string>
+    <string name="sleep_last_format">Last slept %1$s for %2$s</string>
+    <string name="sleep_no_recent">No recent sleep</string>
+    
+    <!-- Diaper -->
+    <string name="diaper_title">💩 Diaper</string>
+    <string name="diaper_last_format">Last diaper change %1$s</string>
+    <string name="diaper_no_recent">No recent diaper changes</string>
+    <string name="log_poop_title">💩 Log Poop</string>
+    
+    <!-- Edit Activity Dialog -->
+    <string name="date_time_label">Date &amp; Time</string>
+    <string name="date_label">Date</string>
+    <string name="time_label">Time</string>
+    <string name="start_label">Start</string>
+    <string name="end_label">End</string>
+    <string name="start_time_after_end_error">Start time cannot be after end time</string>
+    <string name="notes_label">Notes</string>
+    <string name="ongoing_activity_edit_notice">Only start time can be edited for ongoing activities. Use the edit icon on the main card.</string>
+    
+    <!-- Baby Age Display -->
+    <string name="corrected_age_format">Corrected: %1$s</string>
+    <string name="gestation_weeks_format">Born at ~%1$d weeks gestation</string>
+    
+    <!-- Time Picker -->
+    <string name="current_time_format">Current: %1$s</string>
+    
+    <!-- Error Handling -->
+    <string name="try_these_solutions">Try these solutions:</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="error_network">Please check your internet connection</string>
+    <string name="error_permission">You don\'t have permission to access this data</string>
+    <string name="error_generic">Something went wrong. Please try again.</string>
+    
+    <!-- Account Deletion -->
+    <string name="delete_my_account">Delete My Account</string>
+    <string name="account_deletion_title">Delete Account</string>
+    <string name="account_deletion_warning">⚠️ Warning: This action is permanent</string>
+    <string name="account_deletion_description">This will permanently delete your account and all associated data. This action cannot be undone.</string>
+    <string name="account_deletion_what_will_be_deleted">What will be deleted:</string>
+    <string name="account_deletion_your_account">Your account and profile</string>
+    <string name="account_deletion_baby_profiles">Baby profiles where you are the only parent</string>
+    <string name="account_deletion_all_activities">All activity logs (sleep, feeding, diaper)</string>
+    <string name="account_deletion_sleep_plans">Sleep plans and AI suggestions</string>
+    <string name="account_deletion_invitations">Invitation codes you created</string>
+    <string name="account_deletion_shared_removal">Removal from shared baby profiles</string>
+    <string name="account_deletion_important_notes">⚠️ Important Notes:</string>
+    <string name="account_deletion_permanent_action">This action is PERMANENT and CANNOT be undone</string>
+    <string name="account_deletion_shared_profiles">Shared baby profiles will remain for other parents</string>
+    <string name="account_deletion_backup_data">Make sure to backup any important data first</string>
+    <string name="account_deletion_gdpr_notice">This complies with GDPR data protection regulations</string>
+    <string name="final_confirmation">Final Confirmation</string>
+    <string name="permanent_action_warning">This action is PERMANENT and CANNOT be undone.</string>
+    <string name="type_delete_confirmation">Type \"DELETE\" below to confirm:</string>
+    <string name="delete_account_button">DELETE ACCOUNT</string>
+    
+    <!-- Language Settings -->
+    <string name="language_information">Language Information</string>
+    <string name="language_info_text">• Language changes take effect immediately\n• Your data and settings remain the same\n• Language preference is stored on this device only</string>
+    <string name="language_system_default">System Default</string>
+    <string name="language_english">English</string>
+    <string name="language_russian">Русский</string>
+    
+    <!-- Notification Settings -->
+    <string name="notification_settings_title">Notification Settings</string>
+    <string name="notification_preferences_saved">Notification preferences saved successfully!</string>
+    <string name="notify_me_for_activities">Notify me for these activities:</string>
+    <string name="sleep_emoji">😴</string>
+    <string name="feeding_emoji">🍼</string>
+    <string name="diaper_emoji">💩</string>
+    <string name="dont_notify_during_hours">Don\'t notify during certain hours</string>
+    <string name="quiet_hours_format">From %1$s to %2$s</string>
+    <string name="test_notifications">Test Notifications</string>
+    <string name="test_notifications_desc">Send a test notification to make sure everything is working</string>
+    
+    <!-- Success Messages -->
+    <string name="activity_logged_successfully">Activity logged successfully!</string>
+    <string name="sleep_started_successfully">Sleep tracking started!</string>
+    <string name="feeding_started_successfully">Feeding tracking started!</string>
+    <string name="profile_created_successfully">Baby profile created successfully!</string>
+    <string name="profile_updated_successfully">Profile updated successfully!</string>
+    
+    <!-- Validation Messages -->
+    <string name="please_select_baby_profile">Please select a baby profile first</string>
+    <string name="please_enter_invitation_code">Please enter an invitation code</string>
+    <string name="please_enter_baby_name">Please enter baby\'s name</string>
+    <string name="please_select_birth_date">Please select birth date</string>
+    <string name="please_enter_valid_amount">Please enter a valid amount</string>
     
     <!-- Account Deletion -->
     <string name="title_delete_account">Delete Account</string>
-    <string name="account_deletion_confirmation">Are you absolutely sure you want to delete your account?</string>
-    <string name="placeholder_type_delete">Type DELETE here</string>
+    <string name="account_deletion_warning_title">⚠️ This action cannot be undone!</string>
+    <string name="what_will_be_deleted">What will be deleted:</string>
+    <string name="deletion_item_account">• Your user account and authentication data</string>
+    <string name="deletion_item_baby_profiles">• Baby profiles where you are the only parent</string>
+    <string name="deletion_item_activities">• All activity logs (sleep, feeding, diaper changes)</string>
+    <string name="deletion_item_sleep_plans">• Sleep plans and AI-generated suggestions</string>
+    <string name="deletion_item_invitations">• Invitation codes you created</string>
+    <string name="deletion_item_settings">• Your notification preferences and app settings</string>
+    <string name="deletion_item_shared_access">• Your access to baby profiles shared with partners</string>
+    <string name="important_notes">📋 Important Notes:</string>
+    <string name="note_cannot_undo">• This action cannot be undone</string>
+    <string name="note_partner_retains_access">• Your partner will retain access to shared baby profiles</string>
+    <string name="note_multiple_parents">• Baby profiles with multiple parents will not be deleted</string>
+    <string name="note_takes_time">• Deletion may take a few minutes to complete</string>
+    <string name="note_auto_signout">• You will be automatically signed out after deletion</string>
+    <string name="data_protection">🔒 Data Protection</string>
+    <string name="gdpr_compliance">This deletion process complies with GDPR and other data protection regulations. All your personal data will be permanently removed from our systems.</string>
+    <string name="account_deletion_confirmation">Final Confirmation</string>
+    <string name="placeholder_type_delete">Type DELETE to confirm</string>
     
-    <!-- Loading States -->
-    <string name="loading_activities">Loading activities...</string>
-    
-    <!-- Success Messages -->
-    <string name="success_activity_logged">Activity logged successfully!</string>
-    <string name="success_profile_created">Baby profile created successfully!</string>
-    <string name="success_profile_updated">Profile updated successfully!</string>
-    <string name="success_invitation_sent">Invitation sent successfully!</string>
-    
-    <!-- Error Messages -->
-    <string name="error_network_connection">Unable to connect to server. Please check your internet connection.</string>
-    <string name="error_permission_denied">You don\'t have permission to view this data.</string>
-    <string name="error_authentication_required">Please sign in to continue.</string>
-    <string name="error_baby_profile_required">Please create or join a baby profile first.</string>
-    <string name="error_invalid_invitation_code">Invalid invitation code. Please check and try again.</string>
-    <string name="error_general">Something went wrong. Please try again.</string>
-    
-    <!-- Navigation -->
-    <string name="nav_dashboard">Dashboard</string>
-    <string name="nav_history">History</string>
-    <string name="nav_data_visualization">Charts</string>
-    <string name="nav_ai_sleep_plans">AI Sleep Plans</string>
-    
-    <!-- History Screen -->
-    <string name="history_title">Activity History</string>
+    <!-- Missing Common Strings -->
+    <string name="invitation_joining">Joining invitation…</string>
+    <string name="action_dismiss">Dismiss</string>
+    <string name="action_view_history">View Activity History</string>
+    <string name="feature_data_visualization">Data Visualization</string>
+    <string name="feature_ai_sleep_plans">AI Sleep Plans</string>
+    <string name="coming_soon_short">Coming Soon</string>
+    <string name="dialog_poop_title">Log Poop</string>
+    <string name="dialog_poop_notes">Notes (optional)</string>
+    <string name="log">Log</string>
+    <string name="dialog_bottle_feeding_title">Log Bottle Feeding</string>
+    <string name="dialog_bottle_feeding_amount">Amount (ml)</string>
+    <string name="dialog_bottle_feeding_notes">Notes (optional)</string>
+    <string name="label_amount">Amount (ml)</string>
+    <string name="placeholder_amount">e.g., 120</string>
+    <string name="suffix_ml">ml</string>
+    <string name="label_notes">Notes (optional)</string>
+    <string name="placeholder_notes">Any notes about this activity…</string>
+    <string name="action_log_bottle">Log Bottle</string>
+    <string name="action_back">Back</string>
+    <string name="loading_activities">Loading activities…</string>
+    <string name="dialog_delete_title">Delete Activity</string>
+    <string name="dialog_delete_activity_message">Are you sure you want to delete this activity? This action cannot be undone.</string>
+    <string name="filter_by_activity_type">Filter by activity type</string>
     <string name="history_filter_all">All</string>
     <string name="history_filter_sleep">😴 Sleep</string>
     <string name="history_filter_feeding">🍼 Feeding</string>
     <string name="history_filter_diaper">💩 Diaper</string>
-    <string name="history_no_activities">No activities found for the selected filter.</string>
-    <string name="history_edit_time">Edit Time</string>
-    <string name="history_start_time">Start Time</string>
-    <string name="history_end_time">End Time</string>
-    <string name="history_activity_time">Activity Time</string>
+    
+    <!-- Baby Profile Strings -->
+    <string name="baby_profile_create_title">Create Baby Profile</string>
+    <string name="baby_profile_create_description">Create your baby\'s profile to start tracking activities.</string>
+    <string name="baby_profile_name">Baby\'s Name</string>
+    <string name="enter_baby_name">Enter baby\'s name</string>
+    <string name="baby_profile_birth_date">Birth Date</string>
+    <string name="baby_profile_due_date_checkbox">Born early? Set due date for corrected age</string>
+    <string name="baby_profile_due_date">Due Date (for corrected age)</string>
+    <string name="select_due_date">Select due date</string>
+    <string name="ok">OK</string>
+    <string name="select_birth_date">Select birth date</string>
+    <string name="select_due_date_title">Select Due Date</string>
+    <string name="baby_profile_edit">Edit Baby Profile</string>
+    <string name="edit_baby_profile_title">Edit Baby Profile</string>
+    <string name="edit_baby_profile_description">Update your baby\'s information and preferences.</string>
+    <string name="current_age_information">Current Age Information</string>
+    <string name="real_age_format">Real age: %s</string>
+    <string name="born_at_gestation">Born at %d weeks gestation</string>
+    <string name="label_baby_name">Baby\'s Name</string>
+    <string name="placeholder_baby_name">Enter baby\'s name</string>
+    <string name="label_birth_date">Birth Date</string>
+    <string name="select_birth_date_icon">Select birth date</string>
+    <string name="label_due_date">Due Date</string>
+    <string name="placeholder_due_date">Select due date</string>
+    <string name="select_due_date_icon">Select due date</string>
+    <string name="baby_profile_feeding_preferences">Feeding Preferences</string>
+    <string name="label_default_bottle_amount">Default Bottle Amount (ml)</string>
+    <string name="placeholder_default_bottle_amount">e.g., 120</string>
+    <string name="feeding_preferences_help">Set a default amount to pre-fill bottle feeding logs.</string>
+    <string name="updating">Updating…</string>
+    <string name="update">Update</string>
+    <string name="action_ok">OK</string>
+    <string name="title_select_birth_date">Select Birth Date</string>
+    <string name="title_select_due_date">Select Due Date</string>
+    
+    <!-- Invitation Strings -->
+    <string name="title_invite_partner">Invite Partner</string>
+    <string name="share_baby_profile">Share Baby Profile</string>
+    <string name="share_baby_description">Generate an invitation code to share access to your baby\'s profile with your partner.</string>
+    <string name="select_baby_profile">Select Baby Profile</string>
+    <string name="code_expires_7_days">Code expires in 7 days</string>
+    <string name="action_copy_code">Copy Code</string>
+    <string name="action_share">Share</string>
+    <string name="invite_partner_generate_code">Generate Invitation Code</string>
+    <string name="invite_partner_generating">Generating...</string>
+    <string name="join_invitation_join_profile">Join Profile</string>
+    <string name="join_invitation_joining">Joining...</string>
+    <string name="create_baby_create_profile">Create Profile</string>
+    <string name="create_baby_creating">Creating...</string>
+    <string name="no_baby_profiles_found">No baby profiles found</string>
+    <string name="create_baby_first">Please create a baby profile first.</string>
+    <string name="title_join_baby_profile">Join Baby Profile</string>
+    <string name="join_baby_profile_title">Join Baby Profile</string>
+    <string name="join_baby_description">Enter your partner\'s invitation code to gain access to your baby\'s activity tracking.</string>
+    <string name="label_invitation_code">Invitation Code</string>
+    <string name="placeholder_invitation_code">Enter 6-character code</string>
+    <string name="invitation_code_help_text">Ask your partner for the 6-character invitation code they generated.</string>
+    <string name="join_success_message">Successfully joined baby profile!</string>
+    <string name="how_it_works">How it works</string>
+    
+    <!-- Notification Settings -->
+    <string name="notification_settings_title_full">Notification Settings</string>
+    <string name="partner_notifications_for">Partner Notifications for %s</string>
+    <string name="configure_notifications_desc">Choose which activities will send notifications to your partner when you log them.</string>
+    <string name="no_preferences_found">No notification preferences found for this baby.</string>
+    <string name="partner_notifications">Partner Notifications</string>
+    <string name="receive_notifications_desc">Receive notifications when your partner logs activities for this baby.</string>
+    <string name="sleep_activities">Sleep Activities</string>
+    <string name="feeding_activities">Feeding Activities</string>
+    <string name="diaper_changes">Diaper Changes</string>
+    <string name="quiet_hours">Quiet Hours</string>
+    <string name="time_picker_coming_soon">(Time picker coming soon)</string>
+    <string name="send_test_notification">Send Test Notification</string>
+    <string name="saving_preferences">Saving preferences…</string>
+    
+    <!-- Settings -->
+    <string name="settings_language">Language</string>
+    
+    <!-- UI Components -->
+    <string name="title_edit_activity">Edit Activity</string>
     
     <!-- Profile Menu -->
     <string name="profile_menu_create_baby">Create Baby Profile</string>
     <string name="profile_menu_join_profile">Join Profile</string>
     <string name="profile_menu_edit_baby">Edit %s</string>
-    <string name="profile_menu_invite_partner">Invite Partner</string>
     <string name="profile_menu_notification_settings">Notification Settings</string>
+    <string name="profile_menu_invite_partner">Invite Partner</string>
     <string name="profile_menu_language_settings">Language Settings</string>
     <string name="profile_menu_account_deletion">Delete Account</string>
     <string name="profile_menu_sign_out">Sign Out</string>
     
-    <!-- Coming Soon -->
-    <string name="coming_soon_title">Coming Soon</string>
-    <string name="coming_soon_short">Coming soon</string>
-    <string name="feature_data_visualization">Data Visualization</string>
-    <string name="feature_ai_sleep_plans">AI Sleep Plans</string>
-    <string name="coming_soon_data_visualization">Data visualization and charts will be available in a future update.</string>
-    <string name="coming_soon_ai_sleep_plans">AI-powered sleep plans and suggestions will be available in a future update.</string>
+    <!-- Data Visualization -->
+    <string name="chart_sleep_title">Sleep Duration per Day</string>
+    <string name="chart_feeding_title">Feeding Sessions per Day</string>
+    <string name="chart_diaper_title">Diaper Changes per Day</string>
+    <string name="chart_loading_error">Failed to load chart data</string>
+    <string name="range_last_week">Last Week</string>
+    <string name="range_last_2_weeks">Last 2 Weeks</string>
+    <string name="range_last_month">Last Month</string>
     
-    <!-- Charts and Data Visualization -->
-    <string name="chart_sleep_title">😴 Daily Sleep Hours</string>
-    <string name="chart_sleep_subtitle">Total sleep time per day</string>
-    <string name="chart_feeding_title">🍼 Daily Feedings</string>
-    <string name="chart_feeding_subtitle">Number of feedings per day</string>
-    <string name="chart_diaper_title">💩 Daily Poops</string>
-    <string name="chart_diaper_subtitle">Number of poop diapers per day</string>
-    <string name="chart_section_sleep">Sleep</string>
-    <string name="chart_section_feeding">Feeding</string>
-    <string name="chart_section_poops">Poops</string>
+    <!-- Bullet Points and Symbols -->
+    <string name="bullet_point">•</string>
+    <string name="warning_emoji">⚠️</string>
+    <string name="summary_bullet_format">• %1$s</string>
     
-    <!-- Invitation -->
-    <string name="invitation_join_title">Join a Baby Profile</string>
-    <string name="invitation_join_description">Enter the invitation code shared by your partner to access their baby\'s profile.</string>
-    <string name="invitation_invite_title">Share Your Baby\'s Profile</string>
-    <string name="invitation_invite_description">Generate an invitation code to share with your partner so they can view and log activities for your baby.</string>
-    <string name="invitation_select_baby">Select Baby Profile</string>
-    <string name="invitation_code_label">Invitation Code</string>
-    <string name="invitation_code_placeholder">ABC123</string>
-    <string name="invitation_code_hint">Enter 6-character code</string>
-    <string name="invitation_code_help">Ask your partner to share their invitation code with you</string>
-    <string name="invitation_code_expires">This code expires in 7 days</string>
-    <string name="invitation_join_button">Join Profile</string>
-    <string name="invitation_joining">Joining...</string>
-    <string name="invitation_success_message">You can now track %s\'s activities together!</string>
-    <string name="invitation_no_babies_found">No Baby Profiles Found</string>
-    <string name="invitation_no_babies_description">Create a baby profile first before generating invitations.</string>
-    <string name="invitation_how_it_works">How it works:</string>
     
-    <!-- Account Deletion -->
-    <string name="account_deletion_title">Delete Account</string>
-    <string name="account_deletion_warning">⚠️ This action is permanent and cannot be undone</string>
-    <string name="account_deletion_description">This will permanently delete your account and all associated data including baby profiles, activity logs, and settings.</string>
-    <string name="account_deletion_confirm">Type DELETE to confirm</string>
-    <string name="account_deletion_button">Delete My Account</string>
-    <string name="account_deletion_deleting">Deleting account...</string>
+    <!-- Edit Activity Dialog -->
+    <string name="edit_activity_time">Time</string>
+    <string name="edit_activity_start">Start</string>
+    <string name="edit_activity_end">End</string>
+    <string name="edit_activity_date">Date</string>
+    <string name="edit_activity_notes">Notes</string>
+    <string name="edit_activity_validation_start_after_end">Start time cannot be after end time</string>
+    <string name="edit_activity_ongoing_note">Only start time can be edited for ongoing activities. Use the edit icon on the main card.</string>
     
-    <!-- Notification Settings -->
-    <string name="notification_settings_title">Notification Settings</string>
-    <string name="notification_partner_activities">Partner Activities</string>
-    <string name="notification_partner_activities_description">Get notified when your partner logs activities</string>
-    
-    <!-- Language Settings -->
-    <string name="settings_language">Language</string>
-    <string name="language_system_default">System Default</string>
-    <string name="language_english">English</string>
-    <string name="language_russian">Русский</string>
-    
-    <!-- Missing UI Strings -->
-    <string name="ok">OK</string>
-    <string name="log">Log</string>
-    <string name="share">Share</string>
-    <string name="copy_code">Copy Code</string>
-    <string name="enter_baby_name">Enter baby\'s name</string>
-    <string name="select_due_date">Select due date</string>
-    <string name="select_birth_date">Select Birth Date</string>
-    <string name="select_due_date_title">Select Due Date</string>
-    <string name="amount">Amount</string>
-    <string name="amount_ml">Amount (ml)</string>
-    <string name="ml">ml</string>
-    <string name="eg_120">e.g., 120</string>
-    <string name="notes">Notes</string>
-    <string name="any_additional_details">Any additional details...</string>
-    <string name="log_bottle">Log Bottle</string>
-    <string name="edit_activity_format">Edit %s</string>
-    <string name="view_activity_history">View Activity History</string>
-    <string name="all">All</string>
-    
-    <!-- Account Deletion Strings -->
-    <string name="are_you_absolutely_sure">Are you absolutely sure you want to delete your account?</string>
-    <string name="type_delete_below">Type \"DELETE\" below to confirm:</string>
-    <string name="type_delete_here">Type DELETE here</string>
-    
-    <!-- Notification Settings Strings -->
-    <string name="notification_settings_title_full">Notification Settings</string>
-    <string name="no_preferences_found">No preferences found</string>
-    <string name="sleep_activities">Sleep activities</string>
-    <string name="feeding_activities">Feeding activities</string>
-    <string name="diaper_changes">Diaper changes</string>
-    <string name="send_test_notification">Send Test Notification</string>
-    <string name="saving_preferences">Saving preferences...</string>
-    <string name="partner_notifications">Partner Notifications</string>
-    <string name="partner_notifications_for">Partner Notifications for %s</string>
-    <string name="configure_notifications_desc">Configure when you want to be notified about your partner\'s activity logs.</string>
-    <string name="receive_notifications_desc">Receive notifications when your partner logs activities</string>
-    <string name="quiet_hours">Quiet Hours</string>
-    <string name="time_picker_coming_soon">Time picker integration coming soon</string>
-    <string name="test_notifications">Test Notifications</string>
-    <string name="test_notifications_desc">Send a test notification to verify everything is working</string>
-    <string name="error">Error</string>
-    
-    <!-- ViewModel Error Messages -->
-    <string name="please_select_baby_profile">Please select a baby profile first</string>
-    <string name="please_enter_invitation_code">Please enter an invitation code</string>
-    
-    <!-- Other Missing Strings -->
+    <!-- Other -->
     <string name="abc123">ABC123</string>
     <string name="enter_6_character_code">Enter 6-character code</string>
+    <string name="date_format_pattern">MMMM d, yyyy</string>
+    <string name="warning_icon">Warning</string>
 </resources>

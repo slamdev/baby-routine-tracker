@@ -68,7 +68,7 @@ fun FeedingTrackingCard(
         ) {
             // Header
             Text(
-                text = "🍼 Feeding",
+                text = stringResource(R.string.feeding_title),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
@@ -98,7 +98,7 @@ fun FeedingTrackingCard(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Loading last feeding...",
+                            text = stringResource(R.string.loading_last_feeding),
                             fontSize = 14.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                         )
@@ -129,7 +129,7 @@ fun FeedingTrackingCard(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Last feeding: $feedingDetails",
+                                text = stringResource(R.string.last_feeding_format, feedingDetails),
                                 fontSize = 14.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
                                 textAlign = TextAlign.Center
@@ -159,7 +159,7 @@ fun FeedingTrackingCard(
                         // Show notes if available for bottle feeding
                         if (lastFeeding.feedingType == "bottle" && lastFeeding.notes.isNotBlank()) {
                             Text(
-                                text = "\"${lastFeeding.notes}\"",
+                                text = stringResource(R.string.activity_notes_format, lastFeeding.notes),
                                 fontSize = 12.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                                 textAlign = TextAlign.Center,
@@ -170,7 +170,7 @@ fun FeedingTrackingCard(
                 }
                 else -> {
                     Text(
-                        text = "No recent feeding",
+                        text = stringResource(R.string.no_recent_feeding),
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                         textAlign = TextAlign.Center
@@ -286,7 +286,7 @@ private fun BreastMilkFeedingSection(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
-            text = "🤱 Breast Milk",
+            text = stringResource(R.string.breast_feeding_title),
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -310,7 +310,7 @@ private fun BreastMilkFeedingSection(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Loading...",
+                    text = stringResource(R.string.loading),
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                 )
@@ -341,7 +341,7 @@ private fun BreastMilkFeedingSection(
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "Started at ${formatTime(ongoingBreastFeeding!!.startTime.toDate())}",
+                    text = stringResource(R.string.started_at_format, formatTime(ongoingBreastFeeding!!.startTime.toDate())),
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                 )
@@ -389,7 +389,7 @@ private fun BreastMilkFeedingSection(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Stop Feeding",
+                        text = stringResource(R.string.stop_feeding),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium
                     )
@@ -401,7 +401,7 @@ private fun BreastMilkFeedingSection(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Start Feeding",
+                        text = stringResource(R.string.start_feeding),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium
                     )
@@ -421,7 +421,7 @@ private fun BottleFeedingSection(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
-            text = "🍼 Bottle",
+            text = stringResource(R.string.bottle_feeding_title),
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -444,7 +444,7 @@ private fun BottleFeedingSection(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Log Bottle",
+                text = stringResource(R.string.log_bottle),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium
             )
@@ -466,7 +466,7 @@ private fun BottleFeedingDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = "🍼 Log Bottle Feeding",
+                text = stringResource(R.string.log_bottle_feeding_title),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -476,7 +476,7 @@ private fun BottleFeedingDialog(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Text(
-                    text = "Amount (ml)",
+                    text = stringResource(R.string.amount_ml_label),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium
                 )
@@ -496,7 +496,7 @@ private fun BottleFeedingDialog(
                 
                 // Notes (optional)
                 Text(
-                    text = "Notes (optional)",
+                    text = stringResource(R.string.notes_optional_label),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium
                 )

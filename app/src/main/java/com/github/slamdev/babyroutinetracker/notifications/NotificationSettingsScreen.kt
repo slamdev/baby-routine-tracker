@@ -175,7 +175,7 @@ fun NotificationPreferencesContent(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "Notification preferences saved successfully!",
+                text = stringResource(R.string.notification_preferences_saved),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier.padding(16.dp)
@@ -219,7 +219,7 @@ fun NotificationPreferencesContent(
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    text = "Notify me for these activities:",
+                    text = stringResource(R.string.notify_me_for_activities),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 12.dp)
@@ -232,7 +232,7 @@ fun NotificationPreferencesContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("😴", style = MaterialTheme.typography.titleMedium)
+                        Text(stringResource(R.string.sleep_emoji), style = MaterialTheme.typography.titleMedium)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(stringResource(R.string.sleep_activities), style = MaterialTheme.typography.bodyMedium)
                     }
@@ -254,7 +254,7 @@ fun NotificationPreferencesContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("🍼", style = MaterialTheme.typography.titleMedium)
+                        Text(stringResource(R.string.feeding_emoji), style = MaterialTheme.typography.titleMedium)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(stringResource(R.string.feeding_activities), style = MaterialTheme.typography.bodyMedium)
                     }
@@ -276,7 +276,7 @@ fun NotificationPreferencesContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("💩", style = MaterialTheme.typography.titleMedium)
+                        Text(stringResource(R.string.diaper_emoji), style = MaterialTheme.typography.titleMedium)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(stringResource(R.string.diaper_changes), style = MaterialTheme.typography.bodyMedium)
                     }
@@ -306,7 +306,7 @@ fun NotificationPreferencesContent(
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = "Don't notify during specific hours",
+                            text = stringResource(R.string.dont_notify_during_hours),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -323,7 +323,7 @@ fun NotificationPreferencesContent(
                 if (currentPreferences.quietHoursEnabled) {
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        text = "From ${currentPreferences.quietHoursStart} to ${currentPreferences.quietHoursEnd}",
+                        text = stringResource(R.string.quiet_hours_format, currentPreferences.quietHoursStart, currentPreferences.quietHoursEnd),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

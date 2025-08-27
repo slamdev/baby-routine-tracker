@@ -217,7 +217,7 @@ fun DashboardContent(
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             Text(
-                text = "Create or Join a Baby Profile",
+                text = stringResource(R.string.create_or_join_baby_profile),
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary

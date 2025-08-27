@@ -5,7 +5,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import com.github.slamdev.babyroutinetracker.R
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,14 +44,14 @@ fun AISleepPlansScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "🤖",
+                        text = stringResource(R.string.ai_icon),
                         fontSize = if (isLandscape) 40.sp else 48.sp
                     )
                     
                     Spacer(modifier = Modifier.height(if (isLandscape) 12.dp else 16.dp))
                     
                     Text(
-                        text = "AI Sleep Plans",
+                        text = stringResource(R.string.ai_sleep_plans_title),
                         fontSize = if (isLandscape) 20.sp else 24.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -58,7 +60,7 @@ fun AISleepPlansScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                     
                     Text(
-                        text = "Coming Soon",
+                        text = stringResource(R.string.coming_soon),
                         fontSize = 16.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                         textAlign = TextAlign.Center
@@ -67,7 +69,7 @@ fun AISleepPlansScreen(
                     Spacer(modifier = Modifier.height(12.dp))
                     
                     Text(
-                        text = "AI-powered sleep routine suggestions based on your baby's sleep patterns and age.",
+                        text = stringResource(R.string.ai_sleep_description),
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                         textAlign = TextAlign.Center,

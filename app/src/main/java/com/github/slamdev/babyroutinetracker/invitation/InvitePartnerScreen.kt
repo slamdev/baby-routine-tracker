@@ -84,7 +84,7 @@ fun InvitePartnerScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Share Your Baby's Profile",
+                        text = stringResource(R.string.share_baby_profile),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
@@ -92,7 +92,7 @@ fun InvitePartnerScreen(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Generate an invitation code to share with your partner so they can view and log activities for your baby.",
+                        text = stringResource(R.string.share_baby_description),
                         fontSize = 14.sp,
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f)
@@ -107,7 +107,7 @@ fun InvitePartnerScreen(
                         modifier = Modifier.padding(16.dp)
                     ) {
                         Text(
-                            text = "Select Baby Profile",
+                            text = stringResource(R.string.select_baby_profile),
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Medium,
                             modifier = Modifier.padding(bottom = 8.dp)
@@ -145,7 +145,12 @@ fun InvitePartnerScreen(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                 }
-                Text(if (uiState.isLoading) "Generating..." else "Generate Invitation Code")
+                Text(
+                    if (uiState.isLoading) 
+                        stringResource(R.string.invite_partner_generating)
+                    else 
+                        stringResource(R.string.invite_partner_generate_code)
+                )
             }
 
             // Display generated invitation
@@ -160,7 +165,7 @@ fun InvitePartnerScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Invitation Code",
+                            text = stringResource(R.string.invitation_code_label),
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Medium,
                             color = MaterialTheme.colorScheme.onTertiaryContainer
@@ -189,7 +194,7 @@ fun InvitePartnerScreen(
                         Spacer(modifier = Modifier.height(12.dp))
                         
                         Text(
-                            text = "This code expires in 7 days",
+                            text = stringResource(R.string.code_expires_7_days),
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.7f)
                         )
@@ -295,14 +300,14 @@ fun InvitePartnerScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "No Baby Profiles Found",
+                            text = stringResource(R.string.no_baby_profiles_found),
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Medium,
                             textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Create a baby profile first before generating invitations.",
+                            text = stringResource(R.string.create_baby_first),
                             fontSize = 14.sp,
                             textAlign = TextAlign.Center,
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)

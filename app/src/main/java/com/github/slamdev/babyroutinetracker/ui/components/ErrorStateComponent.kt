@@ -89,7 +89,7 @@ fun ErrorStateComponent(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Try these solutions:",
+                                text = stringResource(R.string.try_these_solutions),
                                 style = MaterialTheme.typography.bodySmall,
                                 fontWeight = FontWeight.Medium,
                                 color = MaterialTheme.colorScheme.onErrorContainer
@@ -100,7 +100,7 @@ fun ErrorStateComponent(
                         
                         suggestions.forEach { suggestion ->
                             Text(
-                                text = "• $suggestion",
+                                text = stringResource(R.string.summary_bullet_format, suggestion),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onErrorContainer,
                                 modifier = Modifier.padding(start = 8.dp, bottom = 4.dp)
@@ -217,7 +217,7 @@ fun CompactErrorDisplay(
                         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
                     ) {
                         Text(
-                            text = "Dismiss",
+                            text = stringResource(R.string.dismiss),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.error
                         )

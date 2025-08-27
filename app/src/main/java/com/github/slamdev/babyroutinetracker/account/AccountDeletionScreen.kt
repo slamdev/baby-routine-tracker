@@ -72,12 +72,12 @@ fun AccountDeletionScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Warning,
-                        contentDescription = "Warning",
+                        contentDescription = stringResource(R.string.warning_icon),
                         tint = MaterialTheme.colorScheme.onErrorContainer,
                         modifier = Modifier.size(48.dp)
                     )
                     Text(
-                        text = "Account Deletion Warning",
+                        text = stringResource(R.string.account_deletion_warning_title),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onErrorContainer,
@@ -95,20 +95,20 @@ fun AccountDeletionScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Text(
-                        text = "What will be deleted:",
+                        text = stringResource(R.string.what_will_be_deleted),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     
                     val deletionItems = listOf(
-                        "Your user account and profile information",
-                        "All baby profiles where you are the only parent",
-                        "All activity logs (sleep, feeding, diaper changes) for your baby profiles", 
-                        "All sleep plans and AI-generated suggestions",
-                        "All invitation codes you've created",
-                        "Your notification preferences and settings",
-                        "Access to shared baby profiles (you'll be removed as a parent)"
+                        stringResource(R.string.deletion_item_account),
+                        stringResource(R.string.deletion_item_baby_profiles),
+                        stringResource(R.string.deletion_item_activities),
+                        stringResource(R.string.deletion_item_sleep_plans),
+                        stringResource(R.string.deletion_item_invitations),
+                        stringResource(R.string.deletion_item_settings),
+                        stringResource(R.string.deletion_item_shared_access)
                     )
                     
                     deletionItems.forEach { item ->
@@ -117,7 +117,7 @@ fun AccountDeletionScreen(
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Text(
-                                text = "•",
+                                text = stringResource(R.string.bullet_point),
                                 color = MaterialTheme.colorScheme.onSurface,
                                 modifier = Modifier.padding(top = 2.dp)
                             )
@@ -143,18 +143,18 @@ fun AccountDeletionScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Text(
-                        text = "Important Notes:",
+                        text = stringResource(R.string.important_notes),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     
                     val importantNotes = listOf(
-                        "This action cannot be undone",
-                        "If you share baby profiles with a partner, they will retain access to the shared data",
-                        "Baby profiles with multiple parents will NOT be deleted - only your access will be removed",
-                        "This process may take a few minutes to complete",
-                        "You will be automatically signed out after deletion"
+                        stringResource(R.string.note_cannot_undo),
+                        stringResource(R.string.note_partner_retains_access),
+                        stringResource(R.string.note_multiple_parents),
+                        stringResource(R.string.note_takes_time),
+                        stringResource(R.string.note_auto_signout)
                     )
                     
                     importantNotes.forEach { note ->
@@ -163,7 +163,7 @@ fun AccountDeletionScreen(
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Text(
-                                text = "⚠️",
+                                text = stringResource(R.string.warning_emoji),
                                 modifier = Modifier.padding(top = 2.dp)
                             )
                             Text(
@@ -188,13 +188,13 @@ fun AccountDeletionScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "Data Protection",
+                        text = stringResource(R.string.data_protection),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = "This deletion process complies with GDPR (General Data Protection Regulation) and other privacy laws. All your personal data will be permanently removed from our systems.",
+                        text = stringResource(R.string.gdpr_compliance),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 14.sp
                     )
@@ -230,7 +230,7 @@ fun AccountDeletionScreen(
                         )
                     } else {
                         Text(
-                            text = "Delete My Account",
+                            text = stringResource(R.string.delete_my_account),
                             color = Color.White,
                             fontWeight = FontWeight.Bold
                         )
@@ -261,7 +261,7 @@ fun AccountDeletionScreen(
             },
             title = {
                 Text(
-                    text = "Final Confirmation",
+                    text = stringResource(R.string.final_confirmation),
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.error
                 )
@@ -272,11 +272,11 @@ fun AccountDeletionScreen(
                 ) {
                     Text(stringResource(R.string.account_deletion_confirmation))
                     Text(
-                        text = "This action is PERMANENT and CANNOT be undone.",
+                        text = stringResource(R.string.permanent_action_warning),
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.error
                     )
-                    Text("Type \"DELETE\" below to confirm:")
+                    Text(stringResource(R.string.type_delete_confirmation))
                     
                     OutlinedTextField(
                         value = confirmationText,
@@ -299,7 +299,7 @@ fun AccountDeletionScreen(
                     )
                 ) {
                     Text(
-                        text = "DELETE ACCOUNT",
+                        text = stringResource(R.string.delete_account_button),
                         color = Color.White,
                         fontWeight = FontWeight.Bold
                     )

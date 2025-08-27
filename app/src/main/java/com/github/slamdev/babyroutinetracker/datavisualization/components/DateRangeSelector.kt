@@ -7,7 +7,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import com.github.slamdev.babyroutinetracker.R
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.slamdev.babyroutinetracker.datavisualization.DateRange
@@ -22,7 +24,7 @@ fun DateRangeSelector(
         modifier = modifier.fillMaxWidth()
     ) {
         Text(
-            text = "📅 Time Period",
+            text = stringResource(R.string.time_period_label),
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.onSurface,

@@ -84,7 +84,7 @@ fun EditActivityDialog(
                 // Only show time editing for completed activities
                 if (activity.endTime != null) {
                     Text(
-                        text = "Date & Time",
+                        text = stringResource(R.string.date_time_label),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.primary
@@ -108,7 +108,7 @@ fun EditActivityDialog(
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     Text(
-                                        text = "Date",
+                                        text = stringResource(R.string.date_label),
                                         fontSize = 12.sp,
                                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                                     )
@@ -132,7 +132,7 @@ fun EditActivityDialog(
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     Text(
-                                        text = "Time",
+                                        text = stringResource(R.string.edit_activity_time),
                                         fontSize = 12.sp,
                                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                                     )
@@ -148,7 +148,7 @@ fun EditActivityDialog(
                         // For duration activities (sleep, breast feeding), show start and end date/time pickers
                         // Start date/time
                         Text(
-                            text = "Start",
+                            text = stringResource(R.string.edit_activity_start),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Medium,
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
@@ -168,7 +168,7 @@ fun EditActivityDialog(
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     Text(
-                                        text = "Date",
+                                        text = stringResource(R.string.edit_activity_date),
                                         fontSize = 12.sp,
                                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                                     )
@@ -265,7 +265,7 @@ fun EditActivityDialog(
                         // Validation error
                         if (!isValidTimes) {
                             Text(
-                                text = "Start time cannot be after end time",
+                                text = stringResource(R.string.edit_activity_validation_start_after_end),
                                 fontSize = 12.sp,
                                 color = MaterialTheme.colorScheme.error,
                                 textAlign = TextAlign.Center,
@@ -282,7 +282,7 @@ fun EditActivityDialog(
                     }
 
                     Text(
-                        text = "Notes",
+                        text = stringResource(R.string.edit_activity_notes),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.primary
@@ -301,7 +301,7 @@ fun EditActivityDialog(
                 // Show message if no editable fields
                 if (activity.endTime == null && !supportsNotes) {
                     Text(
-                        text = "Only start time can be edited for ongoing activities. Use the edit icon on the main card.",
+                        text = stringResource(R.string.edit_activity_ongoing_note),
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                         textAlign = TextAlign.Center,

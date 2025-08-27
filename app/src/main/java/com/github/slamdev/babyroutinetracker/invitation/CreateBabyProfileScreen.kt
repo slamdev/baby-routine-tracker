@@ -215,7 +215,12 @@ fun CreateBabyProfileScreen(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                 }
-                Text(if (uiState.isLoading) "Creating..." else "Create Profile")
+                Text(
+                    if (uiState.isLoading) 
+                        stringResource(R.string.create_baby_creating)
+                    else 
+                        stringResource(R.string.create_baby_create_profile)
+                )
             }
 
             // Error message

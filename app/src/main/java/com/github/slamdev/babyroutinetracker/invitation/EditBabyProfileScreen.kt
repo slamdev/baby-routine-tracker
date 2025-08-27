@@ -119,7 +119,7 @@ fun EditBabyProfileScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Edit ${baby.name}'s Profile",
+                        text = stringResource(R.string.edit_baby_profile_title, baby.name),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
@@ -127,7 +127,7 @@ fun EditBabyProfileScreen(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Update your baby's information and age calculation settings.",
+                        text = stringResource(R.string.edit_baby_profile_description),
                         fontSize = 14.sp,
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f)
@@ -147,7 +147,7 @@ fun EditBabyProfileScreen(
                         .padding(16.dp)
                 ) {
                     Text(
-                        text = "Current Age Information",
+                        text = stringResource(R.string.current_age_information),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.onSurface
@@ -155,14 +155,14 @@ fun EditBabyProfileScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                     
                     Text(
-                        text = "Real Age: ${baby.getFormattedRealAge()}",
+                        text = stringResource(R.string.real_age_format, baby.getFormattedRealAge()),
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
                     )
                     
                     baby.getFormattedAdjustedAge()?.let { adjustedAge ->
                         Text(
-                            text = "Corrected Age: $adjustedAge",
+                            text = stringResource(R.string.corrected_age_format, adjustedAge),
                             fontSize = 14.sp,
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
                         )
@@ -171,7 +171,7 @@ fun EditBabyProfileScreen(
                     if (baby.wasBornEarly()) {
                         baby.getGestationWeeks()?.let { weeks ->
                             Text(
-                                text = "Born at approximately $weeks weeks gestation",
+                                text = stringResource(R.string.born_at_gestation, weeks),
                                 fontSize = 12.sp,
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                             )
@@ -204,7 +204,7 @@ fun EditBabyProfileScreen(
 
                     // Birth date input
                     OutlinedTextField(
-                        value = SimpleDateFormat("MMMM d, yyyy", Locale.getDefault())
+                        value = SimpleDateFormat(stringResource(R.string.date_format_pattern), Locale.getDefault())
                             .format(uiState.babyBirthDate.toDate()),
                         onValueChange = { },
                         label = { Text(stringResource(R.string.label_birth_date)) },
@@ -215,7 +215,7 @@ fun EditBabyProfileScreen(
                             IconButton(
                                 onClick = { showBirthDatePicker = true }
                             ) {
-                                Icon(Icons.Default.DateRange, contentDescription = "Select Birth Date")
+                                Icon(Icons.Default.DateRange, contentDescription = stringResource(R.string.select_birth_date_icon))
                             }
                         }
                     )
@@ -236,17 +236,17 @@ fun EditBabyProfileScreen(
                             enabled = !uiState.isLoading
                         )
                         Text(
-                            text = "Include due date (for corrected age calculation)",
+                            text = stringResource(R.string.baby_profile_due_date_checkbox),
                             fontSize = 14.sp,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                     }
 
-                    // Due date input (conditional)
+                        // Due date input (conditional)
                     if (includeDueDate) {
                         OutlinedTextField(
                             value = uiState.babyDueDate?.let { 
-                                SimpleDateFormat("MMMM d, yyyy", Locale.getDefault()).format(it.toDate())
+                                SimpleDateFormat(stringResource(R.string.date_format_pattern), Locale.getDefault()).format(it.toDate())
                             } ?: "",
                             onValueChange = { },
                             label = { Text(stringResource(R.string.label_due_date)) },
@@ -258,16 +258,14 @@ fun EditBabyProfileScreen(
                                 IconButton(
                                     onClick = { showDueDatePicker = true }
                                 ) {
-                                    Icon(Icons.Default.DateRange, contentDescription = "Select Due Date")
+                                    Icon(Icons.Default.DateRange, contentDescription = stringResource(R.string.select_due_date_icon))
                                 }
                             }
                         )
-                    }
-
-                    // Default bottle amount input
+                    }                    // Default bottle amount input
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Feeding Preferences",
+                        text = stringResource(R.string.baby_profile_feeding_preferences),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.primary
@@ -286,7 +284,7 @@ fun EditBabyProfileScreen(
                         singleLine = true,
                         supportingText = { 
                             Text(
-                                text = "This amount will be pre-filled when logging bottle feedings (optional)",
+                                text = stringResource(R.string.feeding_preferences_help),
                                 fontSize = 12.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -331,7 +329,7 @@ fun EditBabyProfileScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                     }
-                    Text(if (uiState.isLoading) "Updating..." else "Update")
+                    Text(if (uiState.isLoading) stringResource(R.string.updating) else stringResource(R.string.update))
                 }
             }
 
@@ -358,7 +356,7 @@ fun EditBabyProfileScreen(
                             onClick = { viewModel.clearError() }
                         ) {
                             Text(
-                                "Dismiss",
+                                stringResource(R.string.dismiss),
                                 color = MaterialTheme.colorScheme.onErrorContainer
                             )
                         }

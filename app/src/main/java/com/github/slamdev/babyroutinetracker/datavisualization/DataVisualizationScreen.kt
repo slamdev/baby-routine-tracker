@@ -7,7 +7,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import com.github.slamdev.babyroutinetracker.R
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,7 +48,7 @@ fun DataVisualizationScreen(
         ) {
             // Header
             Text(
-                text = "📊 Data Visualization",
+                text = stringResource(R.string.data_visualization_title),
                 fontSize = if (isLandscape) 20.sp else 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
@@ -82,7 +84,7 @@ fun DataVisualizationScreen(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Loading data...",
+                            text = stringResource(R.string.loading_data),
                             fontSize = 14.sp,
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                         )
@@ -150,7 +152,7 @@ private fun DataSummaryCard(
             modifier = Modifier.padding(16.dp)
         ) {
             Text(
-                text = "📈 Summary (${dateRange.displayName})",
+                text = stringResource(R.string.summary_title, dateRange.displayName),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -240,7 +242,7 @@ private fun SummaryRow(
             
             stats.forEach { stat ->
                 Text(
-                    text = "• $stat",
+                    text = stringResource(R.string.summary_bullet_format, stat),
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
                 )

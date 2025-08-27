@@ -6,14 +6,15 @@
     <string name="auth_sign_in_with_google">Войти через Google</string>
     <string name="auth_welcome_message">Добро пожаловать в Трекер режима малыша</string>
     <string name="auth_sign_in_description">Отслеживайте сон, кормление и смену подгузников вашего малыша вместе с партнёром.</string>
+    <string name="data_security_message">Ваши данные защищены и синхронизированы на всех ваших устройствах</string>
     
     <!-- Activity Types -->
     <string name="activity_sleep">Сон</string>
     <string name="activity_breast">Грудь</string>
     <string name="activity_bottle">Бутылочка</string>
-    <string name="activity_poop">Какашки</string>
+    <string name="activity_poop">Какашка</string>
     <string name="activity_feeding">Кормление</string>
-    <string name="activity_breast_feeding">Грудное вскармливание</string>
+    <string name="activity_breast_feeding">Грудное кормление</string>
     <string name="activity_bottle_feeding">Кормление из бутылочки</string>
     <string name="activity_diaper">Подгузник</string>
     
@@ -21,272 +22,261 @@
     <string name="dashboard_title_with_age">%1$s (%2$s)</string>
     <string name="dashboard_fallback_title">Трекер режима малыша</string>
     <string name="dashboard_corrected_age">(скорректированный: %s)</string>
-    <string name="dashboard_no_baby_selected">Чтобы начать отслеживание активности, создайте или присоединитесь к профилю малыша через меню профиля в правом верхнем углу.</string>
+    <string name="dashboard_no_baby_selected">Чтобы начать отслеживание активности, создайте или присоединитесь к профилю ребенка из меню профиля в правом верхнем углу.</string>
+    <string name="create_or_join_baby_profile">Создать или присоединиться к профилю ребенка</string>
     
     <!-- Activity Actions -->
     <string name="sleep_start">Начать сон</string>
     <string name="sleep_stop">Закончить сон</string>
-    <string name="sleep_started_at">Начали в %s</string>
+    <string name="sleep_started_at">Начал в %s</string>
     <string name="feeding_start_breast">Начать кормление</string>
     <string name="feeding_stop_breast">Закончить кормление</string>
     <string name="feeding_log_bottle">Записать бутылочку</string>
-    <string name="diaper_log_poop">Записать какашки</string>
+    <string name="diaper_log_poop">Записать какашку</string>
     
     <!-- Activity Status -->
-    <string name="sleep_ongoing">Спит: %s</string>
-    <string name="feeding_ongoing">Кормление: %s</string>
+    <string name="sleep_ongoing">Сон в процессе: %s</string>
+    <string name="feeding_ongoing">Кормление в процессе: %s</string>
     <string name="activity_last_completed">Последний: %1$s в течение %2$s</string>
     <string name="activity_last_instant">Последний: %s</string>
     <string name="activity_happened_ago">Было %s назад</string>
-    <string name="activity_no_data">Активность не записана</string>
-    <string name="activity_no_recent_sleep">Недавнего сна нет</string>
-    <string name="activity_no_recent_feeding">Недавнего кормления нет</string>
-    <string name="activity_no_poops_logged">Какашки ещё не записаны</string>
+    <string name="activity_no_data">Нет записей активности</string>
+    <string name="activity_no_recent_sleep">Нет недавнего сна</string>
+    <string name="activity_no_recent_feeding">Нет недавнего кормления</string>
+    <string name="activity_no_poops_logged">Какашки еще не записаны</string>
     <string name="activity_last_slept">Последний сон %s</string>
     <string name="activity_last_fed">Последнее кормление %s</string>
     <string name="activity_last_poop">Последняя какашка</string>
     
-    <!-- Time formatting -->
-    <string name="time_ago_now">сейчас</string>
-    <string name="time_ago_minutes">%dм</string>
-    <string name="time_ago_hours_minutes">%1$dч %2$dм</string>
-    <string name="time_ago_hours">%dч</string>
-    <string name="time_ago_days">%dд</string>
-    <string name="time_ago_weeks">%dн</string>
+    <!-- Time Formatting -->
+    <string name="time_ago_now">Только что</string>
+    <string name="time_ago_minutes">%d мин назад</string>
+    <string name="time_ago_hours">%d ч назад</string>
+    <string name="time_ago_hours_minutes">%1$d ч %2$d мин назад</string>
+    <string name="time_ago_days">%d дн назад</string>
+    <string name="time_ago_weeks">%d нед назад</string>
     
-    <!-- Duration formatting -->
+    <!-- Age Formatting -->
+    <string name="age_days_only">%d дней</string>
+    <string name="age_weeks_only">%d недель</string>
+    <string name="age_months_only">%d месяцев</string>
+    <string name="age_months_weeks">%1$d месяцев %2$d недель</string>
+    <string name="age_months_old">%d месяцев</string>
+    <string name="age_weeks_old">%d недель</string>
+    <string name="age_format_short">%s</string>
+    
+    <!-- Duration Formatting -->
     <string name="duration_minutes">%d мин</string>
-    <string name="duration_hours_minutes">%1$dч %2$dм</string>
-    
-    <!-- Baby Profile -->
-    <string name="baby_profile_create">Создать профиль малыша</string>
-    <string name="baby_profile_create_title">Создайте профиль Вашего малыша</string>
-    <string name="baby_profile_create_description">Введите информацию о Вашем малыше, включая дату рождения и необязательную дату родов для отслеживания возраста.</string>
-    <string name="baby_profile_edit">Редактировать профиль малыша</string>
-    <string name="baby_profile_join">Присоединиться к профилю</string>
-    <string name="baby_profile_invite">Пригласить партнёра</string>
-    <string name="baby_profile_name">Имя малыша</string>
-    <string name="baby_profile_birth_date">Дата рождения</string>
-    <string name="baby_profile_due_date">Предполагаемая дата родов (необязательно)</string>
-    <string name="baby_profile_due_date_help">Для недоношенных детей для расчёта скорректированного возраста</string>
-    <string name="baby_profile_due_date_checkbox">Включить дату родов (для расчёта скорректированного возраста)</string>
-    <string name="baby_profile_feeding_preferences">Настройки кормления</string>
-    <string name="baby_profile_default_bottle_amount">Объём бутылочки по умолчанию (мл)</string>
-    <string name="baby_profile_default_bottle_placeholder">например, 120</string>
-    
-    <!-- Age Display -->
-    <string name="age_real">Реальный возраст: %s</string>
-    <string name="age_corrected">Скорректированный возраст: %s</string>
+    <string name="duration_hours">%d ч</string>
+    <string name="duration_hours_minutes">%1$d ч %2$d мин</string>
     
     <!-- Common Actions -->
     <string name="action_save">Сохранить</string>
-    <string name="action_cancel">Отмена</string>
+    <string name="action_cancel">Отменить</string>
     <string name="action_delete">Удалить</string>
     <string name="action_edit">Редактировать</string>
-    <string name="action_ok">ОК</string>
-    <string name="action_yes">Да</string>
-    <string name="action_no">Нет</string>
-    <string name="action_done">Готово</string>
     <string name="action_retry">Повторить</string>
-    <string name="action_dismiss">Закрыть</string>
-    <string name="action_continue">Продолжить</string>
-    <string name="action_back">Назад</string>
-    
-    <!-- Dialogs -->
-    <string name="dialog_bottle_feeding_title">Записать кормление из бутылочки</string>
-    <string name="dialog_bottle_feeding_amount">Объём (мл)</string>
-    <string name="dialog_bottle_feeding_notes">Заметки (необязательно)</string>
-    <string name="dialog_poop_title">Записать смену подгузника</string>
-    <string name="dialog_poop_notes">Заметки (необязательно)</string>
-    <string name="dialog_edit_activity_title">Редактировать активность</string>
-    <string name="dialog_delete_activity_title">Удалить активность</string>
-        <!-- Dialog Messages -->
-    <string name="dialog_delete_title">Удалить активность</string>
-    <string name="dialog_delete_activity_message">Вы уверены, что хотите удалить эту активность? Это действие нельзя отменить.</string>
-    
-    <!-- Form Fields and Labels -->
-    <string name="label_baby_name">Имя малыша</string>
-    <string name="placeholder_baby_name">Введите имя малыша</string>
-    <string name="label_birth_date">Дата рождения</string>
-    <string name="label_due_date">Дата родов</string>
-    <string name="placeholder_due_date">Выберите дату родов</string>
-    <string name="label_default_bottle_amount">Объём бутылочки по умолчанию (мл)</string>
-    <string name="placeholder_default_bottle_amount">напр., 120</string>
-    <string name="label_amount">Объём</string>
-    <string name="placeholder_amount">напр., 120</string>
-    <string name="suffix_ml">мл</string>
-    <string name="label_notes">Заметки</string>
-    <string name="placeholder_notes">Дополнительные детали...</string>
-    <string name="label_invitation_code">Введите 6-значный код</string>
-    <string name="placeholder_invitation_code">ABC123</string>
-    
-    <!-- Dialog Titles -->
-    <string name="title_select_birth_date">Выберите дату рождения</string>
-    <string name="title_select_due_date">Выберите дату родов</string>
-    <string name="title_join_baby_profile">Присоединиться к профилю малыша</string>
-    <string name="title_invite_partner">Пригласить партнёра</string>
-    <string name="title_edit_activity">Редактировать %s</string>
-    
-    <!-- Button Actions -->
-    <string name="action_log_bottle">Записать бутылочку</string>
-    <string name="action_copy_code">Копировать код</string>
+    <string name="action_create">Создать</string>
+    <string name="action_join">Присоединиться</string>
+    <string name="action_invite">Пригласить</string>
     <string name="action_share">Поделиться</string>
-    <string name="action_view_history">Посмотреть историю активности</string>
+    <string name="action_copy">Копировать</string>
+    <string name="action_close">Закрыть</string>
+    <string name="action_continue">Продолжить</string>
+    <string name="action_finish">Готово</string>
+    
+    <!-- Common States -->
+    <string name="loading">Загрузка…</string>
+    <string name="saving">Сохранение…</string>
+    <string name="creating">Создание…</string>
+    <string name="joining">Присоединение…</string>
+    <string name="sending">Отправка…</string>
+    <string name="error_generic">Произошла ошибка. Пожалуйста, попробуйте снова.</string>
+    <string name="error_network">Проблема с подключением к интернету. Проверьте ваше соединение.</string>
+    <string name="error_authentication">Ошибка аутентификации. Пожалуйста, войдите снова.</string>
+    <string name="error_permission">У вас нет разрешения на выполнение этого действия.</string>
+    <string name="success_generic">Операция выполнена успешно!</string>
+    
+    <!-- Form Validation -->
+    <string name="validation_required_field">Это поле обязательно</string>
+    <string name="validation_invalid_email">Неверный адрес электронной почты</string>
+    <string name="validation_min_length">Минимальная длина: %d символов</string>
+    <string name="validation_max_length">Максимальная длина: %d символов</string>
+    <string name="validation_invalid_code">Неверный код</string>
+    <string name="validation_code_expired">Код истек</string>
+    <string name="validation_code_not_found">Код не найден</string>
+    <string name="baby_name_required">Имя ребенка обязательно</string>
+    <string name="birth_date_required">Дата рождения обязательна</string>
+    <string name="please_enter_valid_amount">Пожалуйста, введите правильную сумму</string>
     
     <!-- Account Deletion -->
     <string name="title_delete_account">Удалить аккаунт</string>
-    <string name="account_deletion_confirmation">Вы абсолютно уверены, что хотите удалить свой аккаунт?</string>
-    <string name="placeholder_type_delete">Напишите УДАЛИТЬ здесь</string>
+    <string name="account_deletion_warning_title">⚠️ Это действие нельзя отменить!</string>
+    <string name="what_will_be_deleted">Что будет удалено:</string>
+    <string name="deletion_item_account">• Ваша учетная запись и данные аутентификации</string>
+    <string name="deletion_item_baby_profiles">• Профили детей, где вы единственный родитель</string>
+    <string name="deletion_item_activities">• Все записи активности (сон, кормление, смена подгузников)</string>
+    <string name="deletion_item_sleep_plans">• Планы сна и предложения ИИ</string>
+    <string name="deletion_item_invitations">• Коды приглашений, которые вы создали</string>
+    <string name="deletion_item_settings">• Ваши настройки уведомлений и приложения</string>
+    <string name="deletion_item_shared_access">• Ваш доступ к профилям детей, разделенным с партнерами</string>
+    <string name="important_notes">📋 Важные замечания:</string>
+    <string name="note_cannot_undo">• Это действие нельзя отменить</string>
+    <string name="note_partner_retains_access">• Ваш партнер сохранит доступ к общим профилям детей</string>
+    <string name="note_multiple_parents">• Профили детей с несколькими родителями не будут удалены</string>
+    <string name="note_takes_time">• Удаление может занять несколько минут</string>
+    <string name="note_auto_signout">• Вы будете автоматически выйдены из системы после удаления</string>
+    <string name="data_protection">🔒 Защита данных</string>
+    <string name="gdpr_compliance">Этот процесс удаления соответствует GDPR и другим правилам защиты данных. Все ваши персональные данные будут навсегда удалены из наших систем.</string>
+    <string name="account_deletion_confirmation">Окончательное подтверждение</string>
+    <string name="placeholder_type_delete">Введите DELETE для подтверждения</string>
     
-    <!-- Loading States -->
-    <string name="loading_activities">Загрузка активности...</string>
-    
-    <!-- Success Messages -->
-    <string name="success_activity_logged">Активность успешно записана!</string>
-    <string name="success_profile_created">Профиль малыша успешно создан!</string>
-    <string name="success_profile_updated">Профиль успешно обновлён!</string>
-    <string name="success_invitation_sent">Приглашение успешно отправлено!</string>
-    
-    <!-- Error Messages -->
-    <string name="error_network_connection">Не удалось подключиться к серверу. Проверьте подключение к интернету.</string>
-    <string name="error_permission_denied">У вас нет разрешения на просмотр этих данных.</string>
-    <string name="error_authentication_required">Пожалуйста, войдите в систему для продолжения.</string>
-    <string name="error_baby_profile_required">Пожалуйста, сначала создайте или присоединитесь к профилю малыша.</string>
-    <string name="error_invalid_invitation_code">Неверный код приглашения. Проверьте и попробуйте снова.</string>
-    <string name="error_general">Что-то пошло не так. Попробуйте ещё раз.</string>
-    
-    <!-- Navigation -->
-    <string name="nav_dashboard">Главная</string>
-    <string name="nav_history">История</string>
-    <string name="nav_data_visualization">Графики</string>
-    <string name="nav_ai_sleep_plans">ИИ планы сна</string>
-    
-    <!-- History Screen -->
-    <string name="history_title">История активности</string>
+    <!-- Missing Common Strings -->
+    <string name="invitation_joining">Присоединение к приглашению…</string>
+    <string name="action_dismiss">Закрыть</string>
+    <string name="action_view_history">Просмотр истории активности</string>
+    <string name="feature_data_visualization">Визуализация данных</string>
+    <string name="feature_ai_sleep_plans">ИИ планы сна</string>
+    <string name="coming_soon_short">Скоро</string>
+    <string name="dialog_poop_title">Записать какашку</string>
+    <string name="dialog_poop_notes">Заметки (необязательно)</string>
+    <string name="log">Записать</string>
+    <string name="dialog_bottle_feeding_title">Записать кормление из бутылочки</string>
+    <string name="dialog_bottle_feeding_amount">Количество (мл)</string>
+    <string name="dialog_bottle_feeding_notes">Заметки (необязательно)</string>
+    <string name="label_amount">Количество (мл)</string>
+    <string name="placeholder_amount">например, 120</string>
+    <string name="suffix_ml">мл</string>
+    <string name="label_notes">Заметки (необязательно)</string>
+    <string name="placeholder_notes">Любые заметки об этой активности…</string>
+    <string name="action_log_bottle">Записать бутылочку</string>
+    <string name="action_back">Назад</string>
+    <string name="loading_activities">Загрузка активности…</string>
+    <string name="dialog_delete_title">Удалить активность</string>
+    <string name="dialog_delete_activity_message">Вы уверены, что хотите удалить эту активность? Это действие нельзя отменить.</string>
+    <string name="filter_by_activity_type">Фильтр по типу активности</string>
     <string name="history_filter_all">Все</string>
     <string name="history_filter_sleep">😴 Сон</string>
     <string name="history_filter_feeding">🍼 Кормление</string>
     <string name="history_filter_diaper">💩 Подгузник</string>
-    <string name="history_no_activities">Не найдено активности для выбранного фильтра.</string>
-    <string name="history_edit_time">Изменить время</string>
-    <string name="history_start_time">Время начала</string>
-    <string name="history_end_time">Время окончания</string>
-    <string name="history_activity_time">Время активности</string>
+    
+    <!-- Baby Profile Strings -->
+    <string name="baby_profile_create_title">Создать профиль ребенка</string>
+    <string name="baby_profile_create_description">Создайте профиль вашего ребенка, чтобы начать отслеживать активности.</string>
+    <string name="baby_profile_name">Имя ребенка</string>
+    <string name="enter_baby_name">Введите имя ребенка</string>
+    <string name="baby_profile_birth_date">Дата рождения</string>
+    <string name="baby_profile_due_date_checkbox">Родился раньше срока? Установите срок для скорректированного возраста</string>
+    <string name="baby_profile_due_date">Срок родов (для скорректированного возраста)</string>
+    <string name="select_due_date">Выберите срок родов</string>
+    <string name="ok">ОК</string>
+    <string name="select_birth_date">Выберите дату рождения</string>
+    <string name="select_due_date_title">Выберите срок родов</string>
+    <string name="baby_profile_edit">Редактировать профиль ребенка</string>
+    <string name="edit_baby_profile_title">Редактировать профиль ребенка</string>
+    <string name="edit_baby_profile_description">Обновите информацию и предпочтения вашего ребенка.</string>
+    <string name="current_age_information">Информация о текущем возрасте</string>
+    <string name="real_age_format">Реальный возраст: %s</string>
+    <string name="born_at_gestation">Родился на %d неделе беременности</string>
+    <string name="label_baby_name">Имя ребенка</string>
+    <string name="placeholder_baby_name">Введите имя ребенка</string>
+    <string name="label_birth_date">Дата рождения</string>
+    <string name="select_birth_date_icon">Выберите дату рождения</string>
+    <string name="label_due_date">Срок родов</string>
+    <string name="placeholder_due_date">Выберите срок родов</string>
+    <string name="select_due_date_icon">Выберите срок родов</string>
+    <string name="baby_profile_feeding_preferences">Предпочтения кормления</string>
+    <string name="label_default_bottle_amount">Количество по умолчанию для бутылочки (мл)</string>
+    <string name="placeholder_default_bottle_amount">например, 120</string>
+    <string name="feeding_preferences_help">Установите количество по умолчанию для предварительного заполнения записей кормления из бутылочки.</string>
+    <string name="updating">Обновление…</string>
+    <string name="update">Обновить</string>
+    <string name="action_ok">ОК</string>
+    <string name="title_select_birth_date">Выберите дату рождения</string>
+    <string name="title_select_due_date">Выберите срок родов</string>
+    
+    <!-- Invitation Strings -->
+    <string name="title_invite_partner">Пригласить партнера</string>
+    <string name="share_baby_profile">Поделиться профилем ребенка</string>
+    <string name="share_baby_description">Создайте код приглашения, чтобы поделиться доступом к профилю вашего ребенка с партнером.</string>
+    <string name="select_baby_profile">Выберите профиль ребенка</string>
+    <string name="code_expires_7_days">Код истекает через 7 дней</string>
+    <string name="action_copy_code">Копировать код</string>
+    <string name="invite_partner_generate_code">Создать код приглашения</string>
+    <string name="invite_partner_generating">Создание...</string>
+    <string name="join_invitation_join_profile">Присоединиться к профилю</string>
+    <string name="join_invitation_joining">Присоединение...</string>
+    <string name="create_baby_create_profile">Создать профиль</string>
+    <string name="create_baby_creating">Создание...</string>
+    <string name="no_baby_profiles_found">Профили детей не найдены</string>
+    <string name="create_baby_first">Пожалуйста, сначала создайте профиль ребенка.</string>
+    <string name="title_join_baby_profile">Присоединиться к профилю ребенка</string>
+    <string name="join_baby_profile_title">Присоединиться к профилю ребенка</string>
+    <string name="join_baby_description">Введите код приглашения вашего партнера, чтобы получить доступ к отслеживанию активности вашего ребенка.</string>
+    <string name="label_invitation_code">Код приглашения</string>
+    <string name="placeholder_invitation_code">Введите 6-символьный код</string>
+    <string name="invitation_code_help_text">Попросите у вашего партнера 6-символьный код приглашения, который он создал.</string>
+    <string name="join_success_message">Успешно присоединились к профилю ребенка!</string>
+    <string name="how_it_works">Как это работает</string>
+    
+    <!-- Notification Settings -->
+    <string name="notification_settings_title_full">Настройки уведомлений</string>
+    <string name="partner_notifications_for">Уведомления партнера для %s</string>
+    <string name="configure_notifications_desc">Выберите, какие активности будут отправлять уведомления вашему партнеру, когда вы их записываете.</string>
+    <string name="no_preferences_found">Настройки уведомлений для этого ребенка не найдены.</string>
+    <string name="partner_notifications">Уведомления партнера</string>
+    <string name="receive_notifications_desc">Получать уведомления, когда ваш партнер записывает активности для этого ребенка.</string>
+    <string name="sleep_activities">Активности сна</string>
+    <string name="feeding_activities">Активности кормления</string>
+    <string name="diaper_changes">Смена подгузников</string>
+    <string name="quiet_hours">Тихие часы</string>
+    <string name="time_picker_coming_soon">(Выбор времени скоро)</string>
+    <string name="send_test_notification">Отправить тестовое уведомление</string>
+    <string name="saving_preferences">Сохранение настроек…</string>
+    
+    <!-- Settings -->
+    <string name="settings_language">Язык</string>
+    
+    <!-- UI Components -->
+    <string name="title_edit_activity">Редактировать активность</string>
     
     <!-- Profile Menu -->
-    <string name="profile_menu_create_baby">Создать профиль малыша</string>
+    <string name="profile_menu_create_baby">Создать профиль ребенка</string>
     <string name="profile_menu_join_profile">Присоединиться к профилю</string>
     <string name="profile_menu_edit_baby">Редактировать %s</string>
-    <string name="profile_menu_invite_partner">Пригласить партнёра</string>
     <string name="profile_menu_notification_settings">Настройки уведомлений</string>
+    <string name="profile_menu_invite_partner">Пригласить партнера</string>
     <string name="profile_menu_language_settings">Настройки языка</string>
     <string name="profile_menu_account_deletion">Удалить аккаунт</string>
     <string name="profile_menu_sign_out">Выйти</string>
     
-    <!-- Coming Soon -->
-    <string name="coming_soon_title">Скоро</string>
-    <string name="coming_soon_short">Скоро</string>
-    <string name="feature_data_visualization">Визуализация данных</string>
-    <string name="feature_ai_sleep_plans">ИИ-планы сна</string>
-    <string name="coming_soon_data_visualization">Визуализация данных и графики будут доступны в будущем обновлении.</string>
-    <string name="coming_soon_ai_sleep_plans">ИИ-планы сна и рекомендации будут доступны в будущем обновлении.</string>
+    <!-- Data Visualization -->
+    <string name="chart_sleep_title">Продолжительность сна в день</string>
+    <string name="chart_feeding_title">Сеансы кормления в день</string>
+    <string name="chart_diaper_title">Смена подгузников в день</string>
+    <string name="chart_loading_error">Не удалось загрузить данные графика</string>
+    <string name="range_last_week">Последняя неделя</string>
+    <string name="range_last_2_weeks">Последние 2 недели</string>
+    <string name="range_last_month">Последний месяц</string>
     
-    <!-- Charts and Data Visualization -->
-    <string name="chart_sleep_title">😴 Часы сна за день</string>
-    <string name="chart_sleep_subtitle">Общее время сна в день</string>
-    <string name="chart_feeding_title">🍼 Кормления за день</string>
-    <string name="chart_feeding_subtitle">Количество кормлений в день</string>
-    <string name="chart_diaper_title">💩 Пачканий за день</string>
-    <string name="chart_diaper_subtitle">Количество грязных подгузников в день</string>
-    <string name="chart_section_sleep">Сон</string>
-    <string name="chart_section_feeding">Кормление</string>
-    <string name="chart_section_poops">Покакания</string>
+    <!-- Bullet Points and Symbols -->
+    <string name="bullet_point">•</string>
+    <string name="warning_emoji">⚠️</string>
+    <string name="summary_bullet_format">• %1$s</string>
     
-    <!-- Invitation -->
-    <string name="invitation_join_title">Присоединиться к профилю малыша</string>
-    <string name="invitation_join_description">Введите код приглашения, которым поделился ваш партнёр, чтобы получить доступ к профилю их малыша.</string>
-    <string name="invitation_invite_title">Поделитесь профилем Вашего малыша</string>
-    <string name="invitation_invite_description">Создайте код приглашения, чтобы поделиться с партнёром, и он сможет просматривать и записывать активности Вашего малыша.</string>
-    <string name="invitation_select_baby">Выберите профиль малыша</string>
-    <string name="invitation_code_label">Код приглашения</string>
-    <string name="invitation_code_placeholder">ABC123</string>
-    <string name="invitation_code_hint">Введите код из 6 символов</string>
-    <string name="invitation_code_help">Попросите партнёра поделиться кодом приглашения</string>
-    <string name="invitation_code_expires">Этот код истекает через 7 дней</string>
-    <string name="invitation_join_button">Присоединиться к профилю</string>
-    <string name="invitation_joining">Присоединяемся...</string>
-    <string name="invitation_success_message">Теперь вы можете отслеживать активности %s вместе!</string>
-    <string name="invitation_no_babies_found">Профили малышей не найдены</string>
-    <string name="invitation_no_babies_description">Сначала создайте профиль малыша, чтобы создавать приглашения.</string>
-    <string name="invitation_how_it_works">Как это работает:</string>
     
-    <!-- Account Deletion -->
-    <string name="account_deletion_title">Удалить аккаунт</string>
-    <string name="account_deletion_warning">⚠️ Это действие необратимо и не может быть отменено</string>
-    <string name="account_deletion_description">Это навсегда удалит ваш аккаунт и все связанные с ним данные, включая профили малышей, записи активности и настройки.</string>
-    <string name="account_deletion_confirm">Введите УДАЛИТЬ для подтверждения</string>
-    <string name="account_deletion_button">Удалить мой аккаунт</string>
-    <string name="account_deletion_deleting">Удаляем аккаунт...</string>
+    <!-- Edit Activity Dialog -->
+    <string name="edit_activity_time">Время</string>
+    <string name="edit_activity_start">Начало</string>
+    <string name="edit_activity_end">Конец</string>
+    <string name="edit_activity_date">Дата</string>
+    <string name="edit_activity_notes">Заметки</string>
+    <string name="edit_activity_validation_start_after_end">Время начала не может быть позже времени окончания</string>
+    <string name="edit_activity_ongoing_note">Для текущих активностей можно редактировать только время начала. Используйте иконку редактирования на главной карточке.</string>
     
-    <!-- Notification Settings -->
-    <string name="notification_settings_title">Настройки уведомлений</string>
-    <string name="notification_partner_activities">Активности партнёра</string>
-    <string name="notification_partner_activities_description">Получать уведомления когда партнёр записывает активности</string>
-    
-    <!-- Language Settings -->
-    <string name="settings_language">Язык</string>
-    <string name="language_system_default">Системный</string>
-    <string name="language_english">English</string>
-    <string name="language_russian">Русский</string>
-    
-    <!-- Missing UI Strings -->
-    <string name="ok">ОК</string>
-    <string name="log">Записать</string>
-    <string name="share">Поделиться</string>
-    <string name="copy_code">Копировать код</string>
-    <string name="enter_baby_name">Введите имя малыша</string>
-    <string name="select_due_date">Выбрать дату родов</string>
-    <string name="select_birth_date">Выберите дату рождения</string>
-    <string name="select_due_date_title">Выберите дату родов</string>
-    <string name="amount">Объём</string>
-    <string name="amount_ml">Объём (мл)</string>
-    <string name="ml">мл</string>
-    <string name="eg_120">например, 120</string>
-    <string name="notes">Заметки</string>
-    <string name="any_additional_details">Любые дополнительные детали...</string>
-    <string name="log_bottle">Записать бутылочку</string>
-    <string name="edit_activity_format">Редактировать %s</string>
-    <string name="view_activity_history">Посмотреть историю активности</string>
-    <string name="all">Все</string>
-    
-    <!-- Account Deletion Strings -->
-    <string name="are_you_absolutely_sure">Вы абсолютно уверены, что хотите удалить свой аккаунт?</string>
-    <string name="type_delete_below">Введите \"УДАЛИТЬ\" ниже для подтверждения:</string>
-    <string name="type_delete_here">Введите УДАЛИТЬ здесь</string>
-    
-    <!-- Notification Settings Strings -->
-    <string name="notification_settings_title_full">Настройки уведомлений</string>
-    <string name="no_preferences_found">Настройки не найдены</string>
-    <string name="sleep_activities">Сон</string>
-    <string name="feeding_activities">Кормление</string>
-    <string name="diaper_changes">Смена подгузников</string>
-    <string name="send_test_notification">Отправить тестовое уведомление</string>
-    <string name="saving_preferences">Сохраняем настройки...</string>
-    <string name="partner_notifications">Уведомления партнёра</string>
-    <string name="partner_notifications_for">Уведомления партнёра для %s</string>
-    <string name="configure_notifications_desc">Настройте, когда вы хотите получать уведомления о записях активности вашего партнёра.</string>
-    <string name="receive_notifications_desc">Получать уведомления когда партнёр записывает активности</string>
-    <string name="quiet_hours">Тихие часы</string>
-    <string name="time_picker_coming_soon">Выбор времени скоро появится</string>
-    <string name="test_notifications">Тестовые уведомления</string>
-    <string name="test_notifications_desc">Отправить тестовое уведомление, чтобы проверить, что всё работает</string>
-    <string name="error">Ошибка</string>
-    
-    <!-- ViewModel Error Messages -->
-    <string name="please_select_baby_profile">Пожалуйста, сначала выберите профиль малыша</string>
-    <string name="please_enter_invitation_code">Пожалуйста, введите код приглашения</string>
-    
-    <!-- Other Missing Strings -->
+    <!-- Other -->
     <string name="abc123">ABC123</string>
-    <string name="enter_6_character_code">Введите код из 6 символов</string>
+    <string name="enter_6_character_code">Введите 6-символьный код</string>
+    <string name="date_format_pattern">d MMMM yyyy</string>
+    <string name="warning_icon">Предупреждение</string>
 </resources>

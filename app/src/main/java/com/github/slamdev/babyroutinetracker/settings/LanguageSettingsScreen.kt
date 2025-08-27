@@ -67,15 +67,13 @@ fun LanguageSettingsScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "Language Information",
+                        text = stringResource(R.string.language_information),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     
                     Text(
-                        text = "• Language changes take effect immediately\n" +
-                                "• Your data and settings remain the same\n" +
-                                "• Language preference is stored on this device only",
+                        text = stringResource(R.string.language_info_text),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

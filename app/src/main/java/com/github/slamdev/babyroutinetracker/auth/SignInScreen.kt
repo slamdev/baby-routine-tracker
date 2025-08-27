@@ -170,7 +170,7 @@ fun SignInScreen(
         Spacer(modifier = Modifier.height(32.dp))
         
         Text(
-            text = "Your data is secure and synchronized across all your devices",
+            text = stringResource(R.string.data_security_message),
             fontSize = 12.sp,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
             textAlign = TextAlign.Center

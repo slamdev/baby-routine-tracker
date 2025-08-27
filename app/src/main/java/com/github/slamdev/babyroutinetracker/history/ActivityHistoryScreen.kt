@@ -116,7 +116,7 @@ fun ActivityHistoryContent(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "No activities found",
+                        text = stringResource(R.string.no_activities_found),
                         fontSize = 16.sp,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
@@ -164,7 +164,7 @@ fun ActivityHistoryContent(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
-                                        text = "No activities found for the selected filter",
+                                        text = stringResource(R.string.no_activities_found),
                                         fontSize = 16.sp,
                                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                                         textAlign = TextAlign.Center
@@ -469,7 +469,7 @@ private fun ActivityDetailsInfo(
             ActivityType.FEEDING -> {
                 if (activity.feedingType == "bottle" && activity.amount > 0) {
                     Text(
-                        text = "${activity.amount.toInt()} ml",
+                        text = stringResource(R.string.activity_amount_ml, activity.amount.toInt()),
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                     )
@@ -481,7 +481,7 @@ private fun ActivityDetailsInfo(
         // Notes if available
         if (activity.notes.isNotBlank()) {
             Text(
-                text = "\"${activity.notes}\"",
+                text = stringResource(R.string.activity_notes_format, activity.notes),
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                 fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
@@ -502,7 +502,7 @@ private fun ActivityTypeFilter(
         modifier = modifier
     ) {
         Text(
-            text = "Filter by Activity Type",
+            text = stringResource(R.string.filter_by_activity_type),
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.primary,

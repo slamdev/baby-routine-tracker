@@ -8,6 +8,8 @@ package com.github.slamdev.babyroutinetracker.datavisualization.components
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.res.stringResource
+import com.github.slamdev.babyroutinetracker.R
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -376,7 +378,7 @@ private fun EmptyChartState(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "📊",
+                text = stringResource(R.string.chart_icon),
                 fontSize = 32.sp
             )
             

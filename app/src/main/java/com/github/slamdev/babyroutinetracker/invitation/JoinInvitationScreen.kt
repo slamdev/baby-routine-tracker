@@ -86,7 +86,7 @@ fun JoinInvitationScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Join a Baby Profile",
+                        text = stringResource(R.string.join_baby_profile_title),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
@@ -94,7 +94,7 @@ fun JoinInvitationScreen(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Enter the invitation code shared by your partner to access their baby's profile.",
+                        text = stringResource(R.string.join_baby_description),
                         fontSize = 14.sp,
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f)
@@ -109,7 +109,7 @@ fun JoinInvitationScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Text(
-                        text = "Invitation Code",
+                        text = stringResource(R.string.invitation_code_label),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium
                     )
@@ -135,7 +135,7 @@ fun JoinInvitationScreen(
                     )
                     
                     Text(
-                        text = "Ask your partner to share their invitation code with you",
+                        text = stringResource(R.string.invitation_code_help_text),
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
@@ -155,7 +155,12 @@ fun JoinInvitationScreen(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                 }
-                Text(if (uiState.isLoading) "Joining..." else "Join Profile")
+                Text(
+                    if (uiState.isLoading) 
+                        stringResource(R.string.join_invitation_joining)
+                    else 
+                        stringResource(R.string.join_invitation_join_profile)
+                )
             }
 
             // Error message
@@ -212,7 +217,7 @@ fun JoinInvitationScreen(
                         if (uiState.baby != null) {
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = "You can now track ${uiState.baby!!.name}'s activities together!",
+                                text = stringResource(R.string.join_success_message, uiState.baby!!.name),
                                 color = MaterialTheme.colorScheme.extended.onSuccessContainer,
                                 textAlign = TextAlign.Center,
                                 fontSize = 14.sp
@@ -233,7 +238,7 @@ fun JoinInvitationScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "How it works:",
+                        text = stringResource(R.string.how_it_works),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -249,7 +254,7 @@ fun JoinInvitationScreen(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(
-                                text = "• ",
+                                text = stringResource(R.string.bullet_point),
                                 fontSize = 14.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )

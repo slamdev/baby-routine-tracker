@@ -8,6 +8,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.github.slamdev.babyroutinetracker.R
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -81,7 +83,7 @@ fun BreastFeedingCard(
             
             breastFeedingActivityContent(
                 lastFeeding = lastFeeding,
-                lastFeedingText = "Last fed $durationText",
+                lastFeedingText = stringResource(R.string.last_fed_format, durationText),
                 timeAgo = timeAgo,
                 endTime = lastFeeding.endTime.toDate()
             )
