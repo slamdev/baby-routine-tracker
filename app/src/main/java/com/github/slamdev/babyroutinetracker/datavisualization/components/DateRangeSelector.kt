@@ -40,13 +40,18 @@ fun DateRangeSelector(
         ) {
             DateRange.values().forEach { range ->
                 val isSelected = selectedRange == range
+                val label = when(range) {
+                    DateRange.LAST_WEEK -> stringResource(R.string.range_last_week)
+                    DateRange.LAST_TWO_WEEKS -> stringResource(R.string.range_last_2_weeks)
+                    DateRange.LAST_MONTH -> stringResource(R.string.range_last_month)
+                }
                 
                 FilterChip(
                     selected = isSelected,
                     onClick = { onRangeSelected(range) },
                     label = {
                         Text(
-                            text = range.displayName,
+                            text = label,
                             fontSize = 14.sp
                         )
                     },

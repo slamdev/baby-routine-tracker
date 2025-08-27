@@ -151,8 +151,13 @@ private fun DataSummaryCard(
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
+            val rangeLabel = when(dateRange) {
+                DateRange.LAST_WEEK -> stringResource(R.string.range_last_week)
+                DateRange.LAST_TWO_WEEKS -> stringResource(R.string.range_last_2_weeks)
+                DateRange.LAST_MONTH -> stringResource(R.string.range_last_month)
+            }
             Text(
-                text = stringResource(R.string.summary_title, dateRange.displayName),
+                text = stringResource(R.string.summary_title, rangeLabel),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -167,11 +172,11 @@ private fun DataSummaryCard(
                 
                 SummaryRow(
                     icon = "😴",
-                    title = "Sleep",
+                    title = stringResource(R.string.summary_section_sleep),
                     stats = listOf(
-                        "Avg: ${String.format("%.1f", avgSleepHours)}h/day",
-                        "Sessions: $totalSleepSessions",
-                        "Best day: ${String.format("%.1f", maxSleepDay?.totalHours ?: 0f)}h"
+                        stringResource(R.string.summary_sleep_avg_hours_per_day, avgSleepHours),
+                        stringResource(R.string.summary_sleep_sessions, totalSleepSessions),
+                        stringResource(R.string.summary_sleep_best_day, maxSleepDay?.totalHours ?: 0f)
                     )
                 )
                 
@@ -186,11 +191,11 @@ private fun DataSummaryCard(
                 
                 SummaryRow(
                     icon = "🍼",
-                    title = "Feeding",
+                    title = stringResource(R.string.summary_section_feeding),
                     stats = listOf(
-                        "Avg: ${String.format("%.1f", avgFeedings)}/day",
-                        "Breast: $totalBreastFeedings",
-                        "Bottle: $totalBottleFeedings"
+                        stringResource(R.string.summary_feeding_avg_per_day, avgFeedings),
+                        stringResource(R.string.summary_feeding_breast_count, totalBreastFeedings),
+                        stringResource(R.string.summary_feeding_bottle_count, totalBottleFeedings)
                     )
                 )
                 
@@ -204,10 +209,10 @@ private fun DataSummaryCard(
                 
                 SummaryRow(
                     icon = "💩",
-                    title = "Poops",
+                    title = stringResource(R.string.summary_section_poops),
                     stats = listOf(
-                        "Total: $totalPoopDiapers poops",
-                        "Avg: ${String.format("%.1f", avgPoops)}/day"
+                        stringResource(R.string.summary_poops_total, totalPoopDiapers),
+                        stringResource(R.string.summary_poops_avg_per_day, avgPoops)
                     )
                 )
             }

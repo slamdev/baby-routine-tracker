@@ -239,6 +239,7 @@
     
     <!-- UI Components -->
     <string name="title_edit_activity">Редактировать активность</string>
+    <string name="title_edit_activity_with_type">Редактировать: %1$s</string>
     
     <!-- Profile Menu -->
     <string name="profile_menu_create_baby">Создать профиль ребенка</string>
@@ -263,6 +264,19 @@
     <string name="bullet_point">•</string>
     <string name="warning_emoji">⚠️</string>
     <string name="summary_bullet_format">• %1$s</string>
+    
+    <!-- Data Summary (translations for previously hardcoded strings) -->
+    <string name="summary_section_sleep">Сон</string>
+    <string name="summary_section_feeding">Кормление</string>
+    <string name="summary_section_poops">Какашки</string>
+    <string name="summary_sleep_avg_hours_per_day">Среднее: %1$.1f ч/день</string>
+    <string name="summary_sleep_sessions">Сеансов: %1$d</string>
+    <string name="summary_sleep_best_day">Лучший день: %1$.1f ч</string>
+    <string name="summary_feeding_avg_per_day">Среднее: %1$.1f/день</string>
+    <string name="summary_feeding_breast_count">Грудь: %1$d</string>
+    <string name="summary_feeding_bottle_count">Бутылочка: %1$d</string>
+    <string name="summary_poops_total">Всего: %1$d</string>
+    <string name="summary_poops_avg_per_day">Среднее: %1$.1f/день</string>
     
     
     <!-- Edit Activity Dialog -->

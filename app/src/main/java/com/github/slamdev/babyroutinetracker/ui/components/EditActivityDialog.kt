@@ -75,7 +75,12 @@ fun EditActivityDialog(
         onDismissRequest = onDismiss,
         modifier = modifier,
         title = {
-            Text(stringResource(R.string.title_edit_activity, activity.type.displayName))
+            Text(
+                text = stringResource(
+                    R.string.title_edit_activity_with_type,
+                    activity.type.displayName
+                )
+            )
         },
         text = {
             Column(

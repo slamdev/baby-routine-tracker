@@ -42,10 +42,10 @@ data class DailyDiaperData(
     val poopDiapers: Int
 )
 
-enum class DateRange(val displayName: String, val days: Int) {
-    LAST_WEEK("Last Week", 7),
-    LAST_TWO_WEEKS("Last 2 Weeks", 14),
-    LAST_MONTH("Last Month", 30)
+enum class DateRange(val days: Int) {
+    LAST_WEEK(7),
+    LAST_TWO_WEEKS(14),
+    LAST_MONTH(30)
 }
 
 class DataVisualizationViewModel(

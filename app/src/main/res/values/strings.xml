@@ -370,6 +370,7 @@
     
     <!-- UI Components -->
     <string name="title_edit_activity">Edit Activity</string>
+    <string name="title_edit_activity_with_type">Edit %1$s Activity</string>
     
     <!-- Profile Menu -->
     <string name="profile_menu_create_baby">Create Baby Profile</string>
@@ -394,6 +395,19 @@
     <string name="bullet_point">•</string>
     <string name="warning_emoji">⚠️</string>
     <string name="summary_bullet_format">• %1$s</string>
+    
+    <!-- Data Summary (previously hardcoded in DataVisualizationScreen) -->
+    <string name="summary_section_sleep">Sleep</string>
+    <string name="summary_section_feeding">Feeding</string>
+    <string name="summary_section_poops">Poops</string>
+    <string name="summary_sleep_avg_hours_per_day">Avg: %1$.1fh/day</string>
+    <string name="summary_sleep_sessions">Sessions: %1$d</string>
+    <string name="summary_sleep_best_day">Best day: %1$.1fh</string>
+    <string name="summary_feeding_avg_per_day">Avg: %1$.1f/day</string>
+    <string name="summary_feeding_breast_count">Breast: %1$d</string>
+    <string name="summary_feeding_bottle_count">Bottle: %1$d</string>
+    <string name="summary_poops_total">Total: %1$d poops</string>
+    <string name="summary_poops_avg_per_day">Avg: %1$.1f/day</string>
     
     
     <!-- Edit Activity Dialog -->
