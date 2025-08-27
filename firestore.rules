@@ -1,0 +1,85 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users collection - allow reading for FCM tokens between partners
+    // Cloud Functions can read for FCM token access
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Babies collection - users can only access babies where their userId is in parentIds array
+    // Cloud Functions can read for notification context
+    match /babies/{babyId} {
+      // Allow read if user is a parent OR if it's a Cloud Function
+      allow read: if request.auth != null && 
+                     (request.auth.uid in resource.data.parentIds ||
+                      request.auth.token.firebase.sign_in_provider == 'custom');
+      
+      allow create: if request.auth != null && 
+                       request.auth.uid in request.resource.data.parentIds;
+      
+      // Allow update if user is current parent OR will become a parent (invitation acceptance)
+      allow update: if request.auth != null && 
+                       (request.auth.uid in resource.data.parentIds ||
+                        request.auth.uid in request.resource.data.parentIds);
+      
+      allow delete: if request.auth != null && 
+                       request.auth.uid in resource.data.parentIds;
+    }
+    
+    // Notification preferences - Allow reading for partner notification checking
+    // Document ID format: {userId}_{babyId}
+    match /notificationPreferences/{preferencesId} {
+      // Allow read if:
+      // 1. User owns the document (own preferences), OR
+      // 2. User is checking partner preferences for a shared baby
+      allow read: if request.auth != null && 
+                     (
+                       // Own preferences
+                       preferencesId.matches(request.auth.uid + '_.*') ||
+                       // Partner preferences - check if both users are parents of the same baby
+                       exists(/databases/$(database)/documents/babies/$(preferencesId.split('_')[1])) &&
+                       request.auth.uid in get(/databases/$(database)/documents/babies/$(preferencesId.split('_')[1])).data.parentIds
+                     );
+      
+      // Only allow writing own preferences
+      allow write: if request.auth != null && 
+                      preferencesId.matches(request.auth.uid + '_.*');
+    }
+    
+    // Invitations collection - special rules for invitation system
+    match /invitations/{invitationId} {
+      // Anyone authenticated can read invitations by invitation code (for joining)
+      allow read: if request.auth != null;
+      
+      // Only the inviting user can create invitations
+      allow create: if request.auth != null && 
+                       request.auth.uid == request.resource.data.invitedBy;
+      
+      // Only the inviting user and the system can update invitations
+      // (accepting invitation updates status)
+      allow update: if request.auth != null;
+      
+      // Only the inviting user can delete invitations
+      allow delete: if request.auth != null && 
+                       request.auth.uid == resource.data.invitedBy;
+    }
+    
+    // Activity logs - only parents can access
+    // Cloud Functions can read for notification context
+    match /babies/{babyId}/activities/{activityId} {
+      allow read: if request.auth != null && 
+                     (request.auth.uid in get(/databases/$(database)/documents/babies/$(babyId)).data.parentIds ||
+                      request.auth.token.firebase.sign_in_provider == 'custom');
+      allow write: if request.auth != null && 
+                      request.auth.uid in get(/databases/$(database)/documents/babies/$(babyId)).data.parentIds;
+    }
+    
+    // Sleep plans (for future implementation) - only parents can access
+    match /babies/{babyId}/sleepPlans/{planId} {
+      allow read, write: if request.auth != null && 
+                            request.auth.uid in get(/databases/$(database)/documents/babies/$(babyId)).data.parentIds;
+    }
+  }
+}
