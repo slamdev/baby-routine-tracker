@@ -1847,6 +1847,161 @@ private fun ActivityTypeFilter(
 - **Data Persistence**: All changes saved to Firebase with proper error handling
 - **Real-time Updates**: Changes appear on all devices without manual refresh
 
+## 🗑️ Account Deletion & Data Cleanup Implementation
+
+### Overview
+The app implements comprehensive account deletion functionality that complies with GDPR and other privacy regulations. Users can completely delete their account and all associated data through a secure, multi-step confirmation process.
+
+### Key Features
+
+#### 1. Account Deletion Access
+- **Profile Menu Integration**: Account deletion option available in the ProfileIcon dropdown menu
+- **Visual Design**: Red "Delete Account" option with warning icon to indicate severity
+- **Clear Separation**: Placed between baby profile options and sign-out for logical grouping
+
+#### 2. Multi-Step Confirmation Process
+- **Warning Screen**: Detailed explanation of what will be deleted
+- **Educational Content**: Clear breakdown of data deletion implications
+- **Final Confirmation**: Type "DELETE" confirmation dialog to prevent accidental deletion
+- **GDPR Compliance**: Clear explanation of data protection compliance
+
+#### 3. Comprehensive Data Cleanup
+- **User-Specific Data**: Complete removal of user documents, invitations, and notification preferences
+- **Baby Profile Handling**: 
+  - **Single Parent**: Complete deletion of baby profile and all related data (activities, sleep plans)
+  - **Multiple Parents**: Remove user from parentIds but preserve baby data for remaining parents
+- **Related Data**: Cleanup of activities, sleep plans, invitations, and notification preferences
+
+### Service Layer Implementation
+
+#### DataCleanupService
+```kotlin
+class DataCleanupService {
+    /**
+     * Delete all user data and close account.
+     * Ensures GDPR compliance for data deletion requests.
+     */
+    suspend fun deleteUserAccountAndData(): Result<Unit>
+    
+    private suspend fun getUserBabies(userId: String): List<Baby>
+    private suspend fun deleteOrUpdateBabyData(userId: String, babies: List<Baby>)
+    private suspend fun deleteBabyProfileCompletely(babyId: String)
+    private suspend fun removeUserFromBabyProfile(babyId: String, userId: String)
+    private suspend fun deleteUserSpecificData(userId: String)
+}
+```
+
+#### Key Implementation Patterns
+- **Batch Operations**: Use Firestore batch writes for atomic deletions
+- **Error Resilience**: Continue deletion process even if some operations fail
+- **Safe Removal**: Use `FieldValue.arrayRemove()` for removing users from baby profiles
+- **Audit Logging**: Compliance logging for deletion operations
+
+### UI Implementation
+
+#### AccountDeletionScreen
+- **Warning Design**: Prominent error-colored warning card with clear messaging
+- **Information Sections**: 
+  - What will be deleted (bulleted list)
+  - Important notes with warning emojis
+  - GDPR compliance information
+- **Loading States**: Full-screen loading during deletion process
+- **Error Handling**: User-friendly error messages with retry options
+
+#### AccountDeletionViewModel
+```kotlin
+data class AccountDeletionUiState(
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null,
+    val isAccountDeleted: Boolean = false
+)
+
+class AccountDeletionViewModel : ViewModel() {
+    fun deleteAccount()
+    fun clearError()
+}
+```
+
+### Navigation Implementation
+
+#### Route Integration
+```kotlin
+// In MainActivity NavHost
+composable("account_deletion") {
+    AccountDeletionScreen(
+        onNavigateBack = { navController.popBackStack() },
+        onAccountDeleted = {
+            // Navigate to sign-in and clear all back stack
+            navController.navigate("signin") {
+                popUpTo(0) { inclusive = true }
+                launchSingleTop = true
+            }
+        }
+    )
+}
+```
+
+#### ProfileIcon Integration
+- **Navigation Callback**: `onNavigateToAccountDeletion: () -> Unit`
+- **Menu Item**: Red-colored delete option with warning icon
+- **Propagation**: Navigation callback passed through MainTabScreen and DashboardScreen
+
+### Error Handling
+
+#### User-Friendly Error Messages
+- **Authentication Errors**: "Please sign in again to delete your account"
+- **Network Errors**: "Unable to connect to server. Please check your internet connection"
+- **Permission Errors**: "You don't have permission to perform this action"
+- **Generic Errors**: "Failed to delete account. Please try again or contact support"
+
+#### Deletion States
+- **Loading**: Full-screen loading with disabled interactions
+- **Success**: Automatic navigation to sign-in screen
+- **Error**: Dismissible error messages with retry capability
+
+### Data Protection Compliance
+
+#### GDPR Features
+- **Right to Erasure**: Complete data deletion upon user request
+- **Data Transparency**: Clear explanation of what data will be deleted
+- **Consent Verification**: Multi-step confirmation process
+- **Audit Trail**: Logging for compliance purposes
+
+#### Data Deletion Scope
+```
+✅ User profile and authentication data
+✅ Baby profiles (where user is only parent)
+✅ All activity logs for user's baby profiles
+✅ Sleep plans and AI-generated suggestions
+✅ Invitation codes created by user
+✅ Notification preferences and settings
+✅ Access removal from shared baby profiles
+```
+
+### Security Considerations
+
+#### Authentication Verification
+- **Current User Check**: Verify user is authenticated before deletion
+- **Permission Validation**: Ensure user has access to baby profiles being deleted
+- **Firebase Auth Deletion**: Remove Firebase Authentication account as final step
+
+#### Data Integrity
+- **Transaction Safety**: Use Firestore transactions for critical operations
+- **Rollback Protection**: Individual error handling to prevent partial deletions
+- **Concurrent Safety**: Handle multiple parent scenarios safely
+
+### Implementation Checklist
+
+When implementing account deletion for new features:
+
+- [ ] Add data cleanup logic to DataCleanupService
+- [ ] Update Firestore security rules if needed
+- [ ] Test with multiple user scenarios (single parent, multiple parents)
+- [ ] Verify GDPR compliance requirements
+- [ ] Test error scenarios (network failures, permission issues)
+- [ ] Ensure proper audit logging
+- [ ] Verify complete data removal in all environments
+
 ## �🔄 Future Updates
 
 When adding new entities or features:

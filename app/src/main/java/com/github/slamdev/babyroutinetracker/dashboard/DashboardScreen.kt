@@ -50,6 +50,7 @@ fun DashboardScreen(
     onNavigateToCreateBaby: () -> Unit,
     onNavigateToEditBaby: (Baby) -> Unit,
     onNavigateToNotificationSettings: (Baby) -> Unit,
+    onNavigateToAccountDeletion: () -> Unit,
     onNavigateToHistory: (String) -> Unit,
     modifier: Modifier = Modifier,
     authViewModel: AuthenticationViewModel = viewModel(),
@@ -92,7 +93,8 @@ fun DashboardScreen(
                         onNavigateToJoinInvitation = onNavigateToJoinInvitation,
                         onNavigateToInvitePartner = onNavigateToInvitePartner,
                         onNavigateToEditBaby = onNavigateToEditBaby,
-                        onNavigateToNotificationSettings = onNavigateToNotificationSettings
+                        onNavigateToNotificationSettings = onNavigateToNotificationSettings,
+                        onNavigateToAccountDeletion = onNavigateToAccountDeletion
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(

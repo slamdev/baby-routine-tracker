@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Share
@@ -37,6 +38,7 @@ fun ProfileIcon(
     onNavigateToInvitePartner: () -> Unit,
     onNavigateToEditBaby: (Baby) -> Unit,
     onNavigateToNotificationSettings: (Baby) -> Unit,
+    onNavigateToAccountDeletion: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var showDropdownMenu by remember { mutableStateOf(false) }
@@ -224,6 +226,32 @@ fun ProfileIcon(
                     }
                 )
             }
+            
+            HorizontalDivider()
+            
+            // Account deletion option
+            DropdownMenuItem(
+                text = { 
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Delete Account",
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                        Text(
+                            text = "Delete Account",
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                },
+                onClick = {
+                    showDropdownMenu = false
+                    onNavigateToAccountDeletion()
+                }
+            )
             
             HorizontalDivider()
             

@@ -21,6 +21,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import com.github.slamdev.babyroutinetracker.account.AccountDeletionScreen
 import com.github.slamdev.babyroutinetracker.auth.AuthenticationViewModel
 import com.github.slamdev.babyroutinetracker.auth.SignInScreen
 import com.github.slamdev.babyroutinetracker.dashboard.DashboardScreen
@@ -162,6 +163,9 @@ fun BabyRoutineTrackerApp() {
                 onNavigateToNotificationSettings = { baby ->
                     navController.navigate("notification_settings/${baby.id}/${baby.name}")
                 },
+                onNavigateToAccountDeletion = {
+                    navController.navigate("account_deletion")
+                },
                 authViewModel = authViewModel
             )
         }
@@ -248,6 +252,21 @@ fun BabyRoutineTrackerApp() {
                 babyName = babyName,
                 onNavigateBack = {
                     navController.popBackStack()
+                }
+            )
+        }
+        
+        composable("account_deletion") {
+            AccountDeletionScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onAccountDeleted = {
+                    // Navigate to sign-in screen and clear all back stack
+                    navController.navigate("signin") {
+                        popUpTo(0) { inclusive = true }
+                        launchSingleTop = true
+                    }
                 }
             )
         }
