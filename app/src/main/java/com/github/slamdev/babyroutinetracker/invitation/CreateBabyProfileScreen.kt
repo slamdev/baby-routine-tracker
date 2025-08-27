@@ -145,7 +145,7 @@ fun CreateBabyProfileScreen(
                             IconButton(
                                 onClick = { showBirthDatePicker = true }
                             ) {
-                                Icon(Icons.Default.DateRange, contentDescription = "Select Birth Date")
+                                Icon(Icons.Default.DateRange, contentDescription = stringResource(R.string.content_desc_select_birth_date))
                             }
                         }
                     )
@@ -188,7 +188,7 @@ fun CreateBabyProfileScreen(
                                 IconButton(
                                     onClick = { showDueDatePicker = true }
                                 ) {
-                                    Icon(Icons.Default.DateRange, contentDescription = "Select Due Date")
+                                    Icon(Icons.Default.DateRange, contentDescription = stringResource(R.string.content_desc_select_due_date))
                                 }
                             }
                         )

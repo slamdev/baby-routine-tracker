@@ -13,11 +13,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.github.slamdev.babyroutinetracker.R
 import com.github.slamdev.babyroutinetracker.ui.components.formatters.formatElapsedTime
 import com.github.slamdev.babyroutinetracker.ui.components.formatters.formatTime
 import com.github.slamdev.babyroutinetracker.ui.theme.extended
@@ -137,17 +139,17 @@ fun ActivityCard(
             val (buttonIcon, buttonText, buttonColor) = when {
                 config.isImmediateActivity -> Triple(
                     Icons.Default.Add,
-                    "Log ${config.title}",
+                    stringResource(R.string.activity_card_log_format, config.title),
                     MaterialTheme.colorScheme.extended.actionButton
                 )
                 isOngoing -> Triple(
                     Icons.Default.Check,
-                    "Stop ${config.title}",
+                    stringResource(R.string.activity_card_stop_format, config.title),
                     MaterialTheme.colorScheme.error // Keep error color for stop action
                 )
                 else -> Triple(
                     Icons.Default.PlayArrow,
-                    "Start ${config.title}",
+                    stringResource(R.string.activity_card_start_format, config.title),
                     MaterialTheme.colorScheme.extended.actionButton
                 )
             }
@@ -233,7 +235,7 @@ fun ActivityCard(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            "Loading...",
+                            stringResource(R.string.activity_card_loading),
                             fontSize = 14.sp,
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                         )
@@ -293,7 +295,7 @@ private fun ActivityCardContentDisplay(
         // Ongoing activity state (for non-immediate activities)
         !config.isImmediateActivity && content.ongoingActivity != null -> {
             content.ongoingStartTime?.let { startTime ->
-                val startTimeText = "Started at ${formatTime(startTime)}"
+                val startTimeText = stringResource(R.string.activity_card_started_at, formatTime(startTime))
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -309,7 +311,7 @@ private fun ActivityCardContentDisplay(
                     if (content.onEditStartTime != null) {
                         Icon(
                             imageVector = Icons.Default.Edit,
-                            contentDescription = "Edit Start Time",
+                            contentDescription = stringResource(R.string.content_desc_edit_start_time),
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
@@ -347,7 +349,7 @@ private fun ActivityCardContentDisplay(
                         Spacer(modifier = Modifier.width(6.dp))
                         Icon(
                             imageVector = Icons.Default.Edit,
-                            contentDescription = "Edit Activity",
+                            contentDescription = stringResource(R.string.content_desc_edit_activity),
                             modifier = Modifier.size(16.dp)
                         )
                     }

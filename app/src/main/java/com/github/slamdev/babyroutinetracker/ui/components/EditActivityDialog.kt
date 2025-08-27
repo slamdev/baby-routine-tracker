@@ -191,7 +191,7 @@ fun EditActivityDialog(
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     Text(
-                                        text = "Time",
+                                        text = stringResource(R.string.time_label),
                                         fontSize = 12.sp,
                                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                                     )
@@ -206,7 +206,7 @@ fun EditActivityDialog(
 
                         // End date/time
                         Text(
-                            text = "End",
+                            text = stringResource(R.string.end_label),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Medium,
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
@@ -226,7 +226,7 @@ fun EditActivityDialog(
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     Text(
-                                        text = "Date",
+                                        text = stringResource(R.string.date_label),
                                         fontSize = 12.sp,
                                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                                     )
@@ -249,7 +249,7 @@ fun EditActivityDialog(
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     Text(
-                                        text = "Time",
+                                        text = stringResource(R.string.time_label),
                                         fontSize = 12.sp,
                                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                                     )

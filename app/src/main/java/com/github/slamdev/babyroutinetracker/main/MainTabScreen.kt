@@ -10,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -17,6 +18,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.github.slamdev.babyroutinetracker.R
 import com.github.slamdev.babyroutinetracker.auth.AuthenticationViewModel
 import com.github.slamdev.babyroutinetracker.dashboard.DashboardContent
 import com.github.slamdev.babyroutinetracker.history.ActivityHistoryContent
@@ -54,11 +56,11 @@ fun MainTabScreen(
     val selectedBaby = invitationState.babies.find { it.id == invitationState.selectedBabyId }
     
     // symbol + accessible label
-    val pageSymbols: List<Pair<String, String>> = listOf(
-        "🏠" to "Dashboard",
-        "📜" to "History",
-        "📊" to "Charts",
-        "🤖" to "AI Plans"
+    val tabData = listOf(
+        "🏠" to stringResource(R.string.main_tab_dashboard),
+        "📜" to stringResource(R.string.main_tab_history),
+        "📊" to stringResource(R.string.main_tab_charts),
+        "🤖" to stringResource(R.string.main_tab_ai_plans)
     )
     val scope = rememberCoroutineScope()
 
@@ -85,7 +87,7 @@ fun MainTabScreen(
                                 modifier = Modifier.padding(end = if (isLandscape) 16.dp else 8.dp)
                             ) {
                                 Text(
-                                    text = selectedBaby?.name ?: "Baby Routine Tracker",
+                                    text = selectedBaby?.name ?: stringResource(R.string.main_tab_baby_routine_tracker),
                                     style = MaterialTheme.typography.titleLarge,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
@@ -113,7 +115,7 @@ fun MainTabScreen(
                                 ),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                pageSymbols.forEachIndexed { index, (symbol, desc) ->
+                                tabData.forEachIndexed { index, (symbol, desc) ->
                                     val selected = pagerState.currentPage == index
                                     NavIconChip(
                                         symbol = symbol,
@@ -167,8 +169,8 @@ fun MainTabScreen(
                             )
                         } else {
                             EmptyStateScreen(
-                                title = "Activity History",
-                                description = "Create or join a baby profile to view activity history."
+                                title = stringResource(R.string.main_tab_activity_history),
+                                description = stringResource(R.string.main_tab_create_join_baby_profile)
                             )
                         }
                     }
@@ -180,8 +182,8 @@ fun MainTabScreen(
                             )
                         } else {
                             EmptyStateScreen(
-                                title = "Data Visualization",
-                                description = "Create or join a baby profile to view data visualizations."
+                                title = stringResource(R.string.main_tab_data_visualization),
+                                description = stringResource(R.string.main_tab_create_join_data_viz)
                             )
                         }
                     }
@@ -193,8 +195,8 @@ fun MainTabScreen(
                             )
                         } else {
                             EmptyStateScreen(
-                                title = "AI Sleep Plans",
-                                description = "Create or join a baby profile to access AI sleep plans."
+                                title = stringResource(R.string.main_tab_ai_sleep_plans),
+                                description = stringResource(R.string.main_tab_create_join_ai_plans)
                             )
                         }
                     }

@@ -40,7 +40,7 @@ fun AccountDeletionScreen(
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Go back"
+                            contentDescription = stringResource(R.string.content_desc_go_back)
                         )
                     }
                 },

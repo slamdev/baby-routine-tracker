@@ -410,4 +410,81 @@
     <string name="enter_6_character_code">Enter 6-character code</string>
     <string name="date_format_pattern">MMMM d, yyyy</string>
     <string name="warning_icon">Warning</string>
+    
+    <!-- Content descriptions -->
+    <string name="content_desc_go_back">Go back</string>
+    <string name="content_desc_select_birth_date">Select birth date</string>
+    <string name="content_desc_select_due_date">Select due date</string>
+    <string name="content_desc_back">Back</string>
+    <string name="content_desc_share">Share</string>
+    <string name="content_desc_edit_activity">Edit activity</string>
+    <string name="content_desc_delete_activity">Delete activity</string>
+    <string name="content_desc_edit_last_feeding">Edit last feeding</string>
+    <string name="content_desc_edit_start_time">Edit start time</string>
+    <string name="content_desc_stop_breast_feeding">Stop Breast Feeding</string>
+    <string name="content_desc_start_breast_feeding">Start Breast Feeding</string>
+    <string name="content_desc_log_bottle_feeding">Log Bottle Feeding</string>
+    <string name="content_desc_google">Google</string>
+    <string name="content_desc_english">English</string>
+    <string name="content_desc_russian">Русский</string>
+    <string name="content_desc_error">Error</string>
+    <string name="content_desc_suggestions">Suggestions</string>
+    <string name="content_desc_retry">Retry</string>
+    
+    <!-- Activity card hardcoded strings -->
+    <string name="activity_card_log_format">Log %s</string>
+    <string name="activity_card_stop_format">Stop %s</string>
+    <string name="activity_card_start_format">Start %s</string>
+    <string name="activity_card_loading">Loading…</string>
+    <string name="activity_card_started_at">Started at %s</string>
+    <string name="activity_card_edit_start_time">Edit Start Time</string>
+    <string name="activity_card_edit_activity">Edit Activity</string>
+    
+    <!-- Main tab screen strings -->
+    <string name="main_tab_dashboard">Dashboard</string>
+    <string name="main_tab_history">History</string>
+    <string name="main_tab_charts">Charts</string>
+    <string name="main_tab_ai_plans">AI Plans</string>
+    <string name="main_tab_baby_routine_tracker">Baby Routine Tracker</string>
+    <string name="main_tab_activity_history">Activity History</string>
+    <string name="main_tab_create_join_baby_profile">Create or join a baby profile to view activity history.</string>
+    <string name="main_tab_data_visualization">Data Visualization</string>
+    <string name="main_tab_create_join_data_viz">Create or join a baby profile to view data visualizations.</string>
+    <string name="main_tab_ai_sleep_plans">AI Sleep Plans</string>
+    <string name="main_tab_create_join_ai_plans">Create or join a baby profile to access AI sleep plans.</string>
+    
+    <!-- Error messages from ViewModels -->
+    <string name="error_baby_profile_created">Baby profile created successfully!</string>
+    <string name="error_select_baby_profile_first">Please select a baby profile first</string>
+    <string name="error_invitation_created">Invitation created successfully!</string>
+    <string name="error_enter_invitation_code">Please enter an invitation code</string>
+    <string name="error_joined_baby_profile">Successfully joined %s\'s profile!</string>
+    <string name="error_baby_profile_not_found">Baby profile not found</string>
+    <string name="error_baby_profile_updated">Baby profile updated successfully!</string>
+    <string name="error_baby_fallback_name">Baby</string>
+    
+    <!-- Notification messages -->
+    <string name="notification_saving_preferences">Saving preferences…</string>
+    <string name="notification_save_failed">Failed to save preferences: %s</string>
+    <string name="notification_sending_test">Sending test notification…</string>
+    <string name="notification_test_failed">Test failed: %s</string>
+    
+    <!-- Account deletion error messages -->
+    <string name="account_deletion_user_not_authenticated">Please sign in again to delete your account</string>
+    <string name="account_deletion_network_error">Unable to connect to server. Please check your internet connection and try again</string>
+    <string name="account_deletion_permission_error">You don\'t have permission to perform this action. Please try signing in again</string>
+    <string name="account_deletion_generic_error">Failed to delete account. Please try again or contact support if the problem persists</string>
+    <string name="account_deletion_unexpected_error">An unexpected error occurred. Please try again</string>
+    
+    <!-- Language selector hardcoded strings -->
+    <string name="language_selector_english">English</string>
+    <string name="language_selector_russian">Русский</string>
+    
+    <!-- Push notification hardcoded strings -->
+    <string name="notification_channel_description">Notifications when your partner logs baby activities</string>
+    <string name="notification_new_activity_title">New %s Activity</string>
+    <string name="notification_baby_activity_title">%s - New Activity</string>
+    
+    <!-- Share invitation message -->
+    <string name="share_invitation_message">You\'re invited to track %1$s\'s routine! Use code: %2$s in the Baby Routine Tracker app.</string>
 </resources>

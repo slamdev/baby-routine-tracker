@@ -279,4 +279,52 @@
     <string name="enter_6_character_code">Введите 6-символьный код</string>
     <string name="date_format_pattern">d MMMM yyyy</string>
     <string name="warning_icon">Предупреждение</string>
+    
+    <!-- Content descriptions -->
+    <string name="content_desc_go_back">Назад</string>
+    <string name="content_desc_select_birth_date">Выбрать дату рождения</string>
+    <string name="content_desc_select_due_date">Выбрать ожидаемую дату рождения</string>
+    <string name="content_desc_back">Назад</string>
+    <string name="content_desc_share">Поделиться</string>
+    <string name="content_desc_edit_activity">Редактировать активность</string>
+    <string name="content_desc_delete_activity">Удалить активность</string>
+    <string name="content_desc_edit_last_feeding">Редактировать последнее кормление</string>
+    <string name="content_desc_edit_start_time">Редактировать время начала</string>
+    <string name="content_desc_stop_breast_feeding">Остановить грудное кормление</string>
+    <string name="content_desc_start_breast_feeding">Начать грудное кормление</string>
+    <string name="content_desc_log_bottle_feeding">Записать кормление из бутылочки</string>
+    <string name="content_desc_google">Google</string>
+    <string name="content_desc_english">English</string>
+    <string name="content_desc_russian">Русский</string>
+    <string name="content_desc_error">Ошибка</string>
+    <string name="content_desc_suggestions">Предложения</string>
+    <string name="content_desc_retry">Повторить</string>
+    
+    <!-- Activity card hardcoded strings -->
+    <string name="activity_card_log_format">Записать %s</string>
+    <string name="activity_card_stop_format">Остановить %s</string>
+    <string name="activity_card_start_format">Начать %s</string>
+    <string name="activity_card_loading">Загрузка…</string>
+    <string name="activity_card_started_at">Начато в %s</string>
+    <string name="activity_card_edit_start_time">Редактировать время начала</string>
+    <string name="activity_card_edit_activity">Редактировать активность</string>
+    
+    <!-- Main tab screen strings -->
+    <string name="main_tab_dashboard">Главная</string>
+    <string name="main_tab_history">История</string>
+    <string name="main_tab_charts">Графики</string>
+    <string name="main_tab_ai_plans">ИИ планы</string>
+    <string name="main_tab_baby_routine_tracker">Трекер режима малыша</string>
+    <string name="main_tab_activity_history">История активности</string>
+    <string name="main_tab_create_join_baby_profile">Создайте или присоединитесь к профилю ребенка для просмотра истории активности.</string>
+    <string name="main_tab_data_visualization">Визуализация данных</string>
+    <string name="main_tab_create_join_data_viz">Создайте или присоединитесь к профилю ребенка для просмотра визуализации данных.</string>
+    <string name="main_tab_ai_sleep_plans">ИИ планы сна</string>
+    <string name="main_tab_create_join_ai_plans">Создайте или присоединитесь к профилю ребенка для доступа к ИИ планам сна.</string>
+    
+    <!-- Missing critical translations -->
+    <string name="notification_channel_description">Уведомления, когда ваш партнер записывает активности ребенка</string>
+    <string name="notification_new_activity_title">Новая активность: %s</string>
+    <string name="notification_baby_activity_title">%s - Новая активность</string>
+    <string name="share_invitation_message">Вас приглашают отслеживать режим %1$s! Используйте код: %2$s в приложении Трекер режима малыша.</string>
 </resources>
