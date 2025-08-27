@@ -11,11 +11,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.github.slamdev.babyroutinetracker.R
 import com.github.slamdev.babyroutinetracker.ui.components.CompactErrorDisplay
 import com.github.slamdev.babyroutinetracker.ui.components.ErrorStateComponent
 
@@ -33,7 +35,7 @@ fun AccountDeletionScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Delete Account") },
+                title = { Text(stringResource(R.string.title_delete_account)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
@@ -241,7 +243,7 @@ fun AccountDeletionScreen(
                     enabled = !uiState.isLoading,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.action_cancel))
                 }
             }
         }
@@ -268,7 +270,7 @@ fun AccountDeletionScreen(
                 Column(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Text("Are you absolutely sure you want to delete your account?")
+                    Text(stringResource(R.string.account_deletion_confirmation))
                     Text(
                         text = "This action is PERMANENT and CANNOT be undone.",
                         fontWeight = FontWeight.Bold,
@@ -279,7 +281,7 @@ fun AccountDeletionScreen(
                     OutlinedTextField(
                         value = confirmationText,
                         onValueChange = { confirmationText = it },
-                        placeholder = { Text("Type DELETE here") },
+                        placeholder = { Text(stringResource(R.string.placeholder_type_delete)) },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -312,7 +314,7 @@ fun AccountDeletionScreen(
                     },
                     enabled = !uiState.isLoading
                 ) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.action_cancel))
                 }
             }
         )

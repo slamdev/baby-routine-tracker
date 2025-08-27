@@ -83,6 +83,9 @@
     <string name="action_cancel">Отмена</string>
     <string name="action_delete">Удалить</string>
     <string name="action_edit">Редактировать</string>
+    <string name="action_ok">ОК</string>
+    <string name="action_yes">Да</string>
+    <string name="action_no">Нет</string>
     <string name="action_done">Готово</string>
     <string name="action_retry">Повторить</string>
     <string name="action_dismiss">Закрыть</string>
@@ -97,7 +100,46 @@
     <string name="dialog_poop_notes">Заметки (необязательно)</string>
     <string name="dialog_edit_activity_title">Редактировать активность</string>
     <string name="dialog_delete_activity_title">Удалить активность</string>
+        <!-- Dialog Messages -->
+    <string name="dialog_delete_title">Удалить активность</string>
     <string name="dialog_delete_activity_message">Вы уверены, что хотите удалить эту активность? Это действие нельзя отменить.</string>
+    
+    <!-- Form Fields and Labels -->
+    <string name="label_baby_name">Имя малыша</string>
+    <string name="placeholder_baby_name">Введите имя малыша</string>
+    <string name="label_birth_date">Дата рождения</string>
+    <string name="label_due_date">Дата родов</string>
+    <string name="placeholder_due_date">Выберите дату родов</string>
+    <string name="label_default_bottle_amount">Объём бутылочки по умолчанию (мл)</string>
+    <string name="placeholder_default_bottle_amount">напр., 120</string>
+    <string name="label_amount">Объём</string>
+    <string name="placeholder_amount">напр., 120</string>
+    <string name="suffix_ml">мл</string>
+    <string name="label_notes">Заметки</string>
+    <string name="placeholder_notes">Дополнительные детали...</string>
+    <string name="label_invitation_code">Введите 6-значный код</string>
+    <string name="placeholder_invitation_code">ABC123</string>
+    
+    <!-- Dialog Titles -->
+    <string name="title_select_birth_date">Выберите дату рождения</string>
+    <string name="title_select_due_date">Выберите дату родов</string>
+    <string name="title_join_baby_profile">Присоединиться к профилю малыша</string>
+    <string name="title_invite_partner">Пригласить партнёра</string>
+    <string name="title_edit_activity">Редактировать %s</string>
+    
+    <!-- Button Actions -->
+    <string name="action_log_bottle">Записать бутылочку</string>
+    <string name="action_copy_code">Копировать код</string>
+    <string name="action_share">Поделиться</string>
+    <string name="action_view_history">Посмотреть историю активности</string>
+    
+    <!-- Account Deletion -->
+    <string name="title_delete_account">Удалить аккаунт</string>
+    <string name="account_deletion_confirmation">Вы абсолютно уверены, что хотите удалить свой аккаунт?</string>
+    <string name="placeholder_type_delete">Напишите УДАЛИТЬ здесь</string>
+    
+    <!-- Loading States -->
+    <string name="loading_activities">Загрузка активности...</string>
     
     <!-- Success Messages -->
     <string name="success_activity_logged">Активность успешно записана!</string>
@@ -149,6 +191,17 @@
     <string name="coming_soon_data_visualization">Визуализация данных и графики будут доступны в будущем обновлении.</string>
     <string name="coming_soon_ai_sleep_plans">ИИ-планы сна и рекомендации будут доступны в будущем обновлении.</string>
     
+    <!-- Charts and Data Visualization -->
+    <string name="chart_sleep_title">😴 Часы сна за день</string>
+    <string name="chart_sleep_subtitle">Общее время сна в день</string>
+    <string name="chart_feeding_title">🍼 Кормления за день</string>
+    <string name="chart_feeding_subtitle">Количество кормлений в день</string>
+    <string name="chart_diaper_title">💩 Пачканий за день</string>
+    <string name="chart_diaper_subtitle">Количество грязных подгузников в день</string>
+    <string name="chart_section_sleep">Сон</string>
+    <string name="chart_section_feeding">Кормление</string>
+    <string name="chart_section_poops">Покакания</string>
+    
     <!-- Invitation -->
     <string name="invitation_join_title">Присоединиться к профилю малыша</string>
     <string name="invitation_join_description">Введите код приглашения, которым поделился ваш партнёр, чтобы получить доступ к профилю их малыша.</string>
@@ -185,4 +238,55 @@
     <string name="language_system_default">Системный</string>
     <string name="language_english">English</string>
     <string name="language_russian">Русский</string>
+    
+    <!-- Missing UI Strings -->
+    <string name="ok">ОК</string>
+    <string name="log">Записать</string>
+    <string name="share">Поделиться</string>
+    <string name="copy_code">Копировать код</string>
+    <string name="enter_baby_name">Введите имя малыша</string>
+    <string name="select_due_date">Выбрать дату родов</string>
+    <string name="select_birth_date">Выберите дату рождения</string>
+    <string name="select_due_date_title">Выберите дату родов</string>
+    <string name="amount">Объём</string>
+    <string name="amount_ml">Объём (мл)</string>
+    <string name="ml">мл</string>
+    <string name="eg_120">например, 120</string>
+    <string name="notes">Заметки</string>
+    <string name="any_additional_details">Любые дополнительные детали...</string>
+    <string name="log_bottle">Записать бутылочку</string>
+    <string name="edit_activity_format">Редактировать %s</string>
+    <string name="view_activity_history">Посмотреть историю активности</string>
+    <string name="all">Все</string>
+    
+    <!-- Account Deletion Strings -->
+    <string name="are_you_absolutely_sure">Вы абсолютно уверены, что хотите удалить свой аккаунт?</string>
+    <string name="type_delete_below">Введите \"УДАЛИТЬ\" ниже для подтверждения:</string>
+    <string name="type_delete_here">Введите УДАЛИТЬ здесь</string>
+    
+    <!-- Notification Settings Strings -->
+    <string name="notification_settings_title_full">Настройки уведомлений</string>
+    <string name="no_preferences_found">Настройки не найдены</string>
+    <string name="sleep_activities">Сон</string>
+    <string name="feeding_activities">Кормление</string>
+    <string name="diaper_changes">Смена подгузников</string>
+    <string name="send_test_notification">Отправить тестовое уведомление</string>
+    <string name="saving_preferences">Сохраняем настройки...</string>
+    <string name="partner_notifications">Уведомления партнёра</string>
+    <string name="partner_notifications_for">Уведомления партнёра для %s</string>
+    <string name="configure_notifications_desc">Настройте, когда вы хотите получать уведомления о записях активности вашего партнёра.</string>
+    <string name="receive_notifications_desc">Получать уведомления когда партнёр записывает активности</string>
+    <string name="quiet_hours">Тихие часы</string>
+    <string name="time_picker_coming_soon">Выбор времени скоро появится</string>
+    <string name="test_notifications">Тестовые уведомления</string>
+    <string name="test_notifications_desc">Отправить тестовое уведомление, чтобы проверить, что всё работает</string>
+    <string name="error">Ошибка</string>
+    
+    <!-- ViewModel Error Messages -->
+    <string name="please_select_baby_profile">Пожалуйста, сначала выберите профиль малыша</string>
+    <string name="please_enter_invitation_code">Пожалуйста, введите код приглашения</string>
+    
+    <!-- Other Missing Strings -->
+    <string name="abc123">ABC123</string>
+    <string name="enter_6_character_code">Введите код из 6 символов</string>
 </resources>

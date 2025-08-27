@@ -10,9 +10,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.github.slamdev.babyroutinetracker.R
 import com.github.slamdev.babyroutinetracker.model.NotificationPreferences
 import com.github.slamdev.babyroutinetracker.model.OptionalUiState
 import com.github.slamdev.babyroutinetracker.ui.components.ErrorStateComponent
@@ -43,10 +45,10 @@ fun NotificationSettingsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Notification Settings") },
+                title = { Text(stringResource(R.string.notification_settings_title_full)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 }
             )
@@ -71,14 +73,14 @@ fun NotificationSettingsScreen(
                     tint = MaterialTheme.colorScheme.primary
                 )
                 Text(
-                    text = "Partner Notifications for $babyName",
+                    text = stringResource(R.string.partner_notifications_for, babyName),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold
                 )
             }
 
             Text(
-                text = "Configure when you want to be notified about your partner's activity logs.",
+                text = stringResource(R.string.configure_notifications_desc),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -114,7 +116,7 @@ fun NotificationSettingsScreen(
 
                 is OptionalUiState.Empty -> {
                     // This shouldn't happen as we create default preferences
-                    Text("No preferences found")
+                    Text(stringResource(R.string.no_preferences_found))
                 }
             }
         }
@@ -143,7 +145,7 @@ fun NotificationPreferencesContent(
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    text = "Error",
+                    text = stringResource(R.string.error),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onErrorContainer
                 )
@@ -157,7 +159,7 @@ fun NotificationPreferencesContent(
                     horizontalArrangement = Arrangement.End
                 ) {
                     TextButton(onClick = onClearError) {
-                        Text("Dismiss")
+                        Text(stringResource(R.string.action_dismiss))
                     }
                 }
             }
@@ -191,12 +193,12 @@ fun NotificationPreferencesContent(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Partner Notifications",
+                        text = stringResource(R.string.partner_notifications),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "Receive notifications when your partner logs activities",
+                        text = stringResource(R.string.receive_notifications_desc),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -232,7 +234,7 @@ fun NotificationPreferencesContent(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text("😴", style = MaterialTheme.typography.titleMedium)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Sleep activities", style = MaterialTheme.typography.bodyMedium)
+                        Text(stringResource(R.string.sleep_activities), style = MaterialTheme.typography.bodyMedium)
                     }
                     Switch(
                         checked = currentPreferences.notifySleepActivities,
@@ -254,7 +256,7 @@ fun NotificationPreferencesContent(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text("🍼", style = MaterialTheme.typography.titleMedium)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Feeding activities", style = MaterialTheme.typography.bodyMedium)
+                        Text(stringResource(R.string.feeding_activities), style = MaterialTheme.typography.bodyMedium)
                     }
                     Switch(
                         checked = currentPreferences.notifyFeedingActivities,
@@ -276,7 +278,7 @@ fun NotificationPreferencesContent(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text("💩", style = MaterialTheme.typography.titleMedium)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Diaper changes", style = MaterialTheme.typography.bodyMedium)
+                        Text(stringResource(R.string.diaper_changes), style = MaterialTheme.typography.bodyMedium)
                     }
                     Switch(
                         checked = currentPreferences.notifyDiaperActivities,
@@ -299,7 +301,7 @@ fun NotificationPreferencesContent(
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Quiet Hours",
+                            text = stringResource(R.string.quiet_hours),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
@@ -326,7 +328,7 @@ fun NotificationPreferencesContent(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = "Time picker integration coming soon",
+                        text = stringResource(R.string.time_picker_coming_soon),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -338,13 +340,13 @@ fun NotificationPreferencesContent(
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    text = "Test Notifications",
+                    text = stringResource(R.string.test_notifications),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
                 Text(
-                    text = "Send a test notification to verify everything is working",
+                    text = stringResource(R.string.test_notifications_desc),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(bottom = 12.dp)
@@ -354,7 +356,7 @@ fun NotificationPreferencesContent(
                     onClick = onSendTestNotification,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Send Test Notification")
+                    Text(stringResource(R.string.send_test_notification))
                 }
 
                 // Test status
@@ -379,7 +381,7 @@ fun NotificationPreferencesContent(
                                 modifier = Modifier.weight(1f)
                             )
                             TextButton(onClick = onClearTestStatus) {
-                                Text("Dismiss")
+                                Text(stringResource(R.string.action_dismiss))
                             }
                         }
                     }
@@ -401,7 +403,7 @@ fun NotificationPreferencesContent(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     CircularProgressIndicator(modifier = Modifier.size(24.dp))
-                    Text("Saving preferences...")
+                    Text(stringResource(R.string.saving_preferences))
                 }
             }
         }

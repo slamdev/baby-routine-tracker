@@ -240,7 +240,7 @@ fun DashboardContent(
                     onClick = { onNavigateToHistory(invitationState.selectedBabyId) },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("View Activity History")
+                    Text(stringResource(R.string.action_view_history))
                 }
                 
                 // Feature status cards - show coming soon for other features

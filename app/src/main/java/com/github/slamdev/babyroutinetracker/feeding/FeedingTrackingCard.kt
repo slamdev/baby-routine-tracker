@@ -13,11 +13,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.github.slamdev.babyroutinetracker.R
 import com.github.slamdev.babyroutinetracker.ui.components.CompactErrorDisplay
 import com.github.slamdev.babyroutinetracker.ui.components.TimePickerDialog
 import com.github.slamdev.babyroutinetracker.ui.components.EditActivityDialog
@@ -484,9 +486,9 @@ private fun BottleFeedingDialog(
                         amount = it
                         isValidInput = it.isNotBlank() && it.toDoubleOrNull() != null && it.toDoubleOrNull()!! > 0
                     },
-                    label = { Text("Amount") },
-                    placeholder = { Text("e.g., 120") },
-                    suffix = { Text("ml") },
+                    label = { Text(stringResource(R.string.label_amount)) },
+                    placeholder = { Text(stringResource(R.string.placeholder_amount)) },
+                    suffix = { Text(stringResource(R.string.suffix_ml)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     isError = !isValidInput && amount.isNotBlank()
@@ -501,8 +503,8 @@ private fun BottleFeedingDialog(
                 OutlinedTextField(
                     value = notes,
                     onValueChange = { notes = it },
-                    label = { Text("Notes") },
-                    placeholder = { Text("Any additional details...") },
+                    label = { Text(stringResource(R.string.label_notes)) },
+                    placeholder = { Text(stringResource(R.string.placeholder_notes)) },
                     modifier = Modifier.fillMaxWidth(),
                     maxLines = 3
                 )
@@ -516,12 +518,12 @@ private fun BottleFeedingDialog(
                 },
                 enabled = amount.isNotBlank() && amount.toDoubleOrNull() != null && amount.toDoubleOrNull()!! > 0
             ) {
-                Text("Log Bottle")
+                Text(stringResource(R.string.action_log_bottle))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.action_cancel))
             }
         }
     )

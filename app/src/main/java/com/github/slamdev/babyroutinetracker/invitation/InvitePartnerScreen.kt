@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -22,6 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.github.slamdev.babyroutinetracker.R
 import com.github.slamdev.babyroutinetracker.ui.theme.extended
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -47,7 +49,7 @@ fun InvitePartnerScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Invite Partner") },
+                title = { Text(stringResource(R.string.title_invite_partner)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
@@ -206,7 +208,7 @@ fun InvitePartnerScreen(
                                 },
                                 modifier = Modifier.weight(1f)
                             ) {
-                                Text("Copy Code")
+                                Text(stringResource(R.string.action_copy_code))
                             }
                             
                             // Share button
@@ -227,7 +229,7 @@ fun InvitePartnerScreen(
                                     modifier = Modifier.size(16.dp)
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
-                                Text("Share")
+                                Text(stringResource(R.string.action_share))
                             }
                         }
                     }

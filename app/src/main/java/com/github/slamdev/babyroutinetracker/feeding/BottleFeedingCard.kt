@@ -132,13 +132,13 @@ private fun BottleFeedingDialog(
     var notes by remember { mutableStateOf("") }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Log Bottle Feeding") },
+        title = { Text(stringResource(R.string.dialog_bottle_feeding_title)) },
         text = {
             Column {
                 OutlinedTextField(
                     value = amount,
                     onValueChange = { amount = it },
-                    label = { Text("Amount (ml)") },
+                    label = { Text(stringResource(R.string.dialog_bottle_feeding_amount)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -146,7 +146,7 @@ private fun BottleFeedingDialog(
                 OutlinedTextField(
                     value = notes,
                     onValueChange = { notes = it },
-                    label = { Text("Notes (optional)") },
+                    label = { Text(stringResource(R.string.dialog_bottle_feeding_notes)) },
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -156,12 +156,12 @@ private fun BottleFeedingDialog(
                 onClick = { onConfirm(amount.toDoubleOrNull() ?: 0.0, notes) },
                 enabled = amount.toDoubleOrNull() != null
             ) {
-                Text("Log")
+                Text(stringResource(R.string.log))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.action_cancel))
             }
         }
     )

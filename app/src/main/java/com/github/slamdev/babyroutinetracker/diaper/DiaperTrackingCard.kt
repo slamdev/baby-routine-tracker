@@ -120,23 +120,23 @@ private fun PoopDialog(
     var notes by remember { mutableStateOf("") }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Log Poop") },
+        title = { Text(stringResource(R.string.dialog_poop_title)) },
         text = {
             OutlinedTextField(
                 value = notes,
                 onValueChange = { notes = it },
-                label = { Text("Notes (optional)") },
+                label = { Text(stringResource(R.string.dialog_poop_notes)) },
                 modifier = Modifier.fillMaxWidth()
             )
         },
         confirmButton = {
             Button(onClick = { onConfirm(notes) }) {
-                Text("Log")
+                Text(stringResource(R.string.log))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.action_cancel))
             }
         }
     )

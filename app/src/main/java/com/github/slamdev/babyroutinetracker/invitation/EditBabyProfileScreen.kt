@@ -11,6 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -18,6 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.github.slamdev.babyroutinetracker.R
 import com.github.slamdev.babyroutinetracker.model.Baby
 import com.github.slamdev.babyroutinetracker.ui.theme.extended
 import com.google.firebase.Timestamp
@@ -82,13 +84,10 @@ fun EditBabyProfileScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Edit Baby Profile") },
+                title = { Text(stringResource(R.string.baby_profile_edit)) },
                 navigationIcon = {
-                    IconButton(onClick = {
-                        viewModel.cancelEditingBaby()
-                        onNavigateBack()
-                    }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -191,8 +190,8 @@ fun EditBabyProfileScreen(
                     OutlinedTextField(
                         value = uiState.babyName,
                         onValueChange = { viewModel.updateBabyName(it) },
-                        label = { Text("Baby's Name") },
-                        placeholder = { Text("Enter baby's name") },
+                        label = { Text(stringResource(R.string.label_baby_name)) },
+                        placeholder = { Text(stringResource(R.string.placeholder_baby_name)) },
                         modifier = Modifier.fillMaxWidth(),
                         enabled = !uiState.isLoading,
                         isError = uiState.errorMessage != null && uiState.babyName.isEmpty(),
@@ -208,7 +207,7 @@ fun EditBabyProfileScreen(
                         value = SimpleDateFormat("MMMM d, yyyy", Locale.getDefault())
                             .format(uiState.babyBirthDate.toDate()),
                         onValueChange = { },
-                        label = { Text("Birth Date") },
+                        label = { Text(stringResource(R.string.label_birth_date)) },
                         modifier = Modifier.fillMaxWidth(),
                         enabled = !uiState.isLoading,
                         readOnly = true,
@@ -250,8 +249,8 @@ fun EditBabyProfileScreen(
                                 SimpleDateFormat("MMMM d, yyyy", Locale.getDefault()).format(it.toDate())
                             } ?: "",
                             onValueChange = { },
-                            label = { Text("Due Date") },
-                            placeholder = { Text("Select due date") },
+                            label = { Text(stringResource(R.string.label_due_date)) },
+                            placeholder = { Text(stringResource(R.string.placeholder_due_date)) },
                             modifier = Modifier.fillMaxWidth(),
                             enabled = !uiState.isLoading,
                             readOnly = true,
@@ -277,8 +276,8 @@ fun EditBabyProfileScreen(
                     OutlinedTextField(
                         value = uiState.defaultBottleAmount,
                         onValueChange = { viewModel.updateDefaultBottleAmount(it) },
-                        label = { Text("Default Bottle Amount (ml)") },
-                        placeholder = { Text("e.g., 120") },
+                        label = { Text(stringResource(R.string.label_default_bottle_amount)) },
+                        placeholder = { Text(stringResource(R.string.placeholder_default_bottle_amount)) },
                         modifier = Modifier.fillMaxWidth(),
                         enabled = !uiState.isLoading,
                         keyboardOptions = KeyboardOptions(
@@ -309,7 +308,7 @@ fun EditBabyProfileScreen(
                     enabled = !uiState.isLoading,
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.action_cancel))
                 }
                 
                 Button(
@@ -404,21 +403,21 @@ fun EditBabyProfileScreen(
                             showBirthDatePicker = false
                         }
                     ) {
-                        Text("OK")
+                        Text(stringResource(R.string.action_ok))
                     }
                 },
                 dismissButton = {
                     TextButton(
                         onClick = { showBirthDatePicker = false }
                     ) {
-                        Text("Cancel")
+                        Text(stringResource(R.string.action_cancel))
                     }
                 }
             ) {
                 DatePicker(
                     state = birthDatePickerState,
                     showModeToggle = false,
-                    title = { Text("Select Birth Date") }
+                    title = { Text(stringResource(R.string.title_select_birth_date)) }
                 )
             }
         }
@@ -436,21 +435,21 @@ fun EditBabyProfileScreen(
                             showDueDatePicker = false
                         }
                     ) {
-                        Text("OK")
+                        Text(stringResource(R.string.action_ok))
                     }
                 },
                 dismissButton = {
                     TextButton(
                         onClick = { showDueDatePicker = false }
                     ) {
-                        Text("Cancel")
+                        Text(stringResource(R.string.action_cancel))
                     }
                 }
             ) {
                 DatePicker(
                     state = dueDatePickerState,
                     showModeToggle = false,
-                    title = { Text("Select Due Date") }
+                    title = { Text(stringResource(R.string.title_select_due_date)) }
                 )
             }
         }

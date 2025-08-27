@@ -5,10 +5,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.github.slamdev.babyroutinetracker.R
 import com.github.slamdev.babyroutinetracker.model.Activity
 import com.github.slamdev.babyroutinetracker.model.ActivityType
 import java.text.SimpleDateFormat
@@ -73,7 +75,7 @@ fun EditActivityDialog(
         onDismissRequest = onDismiss,
         modifier = modifier,
         title = {
-            Text("Edit ${activity.type.displayName}")
+            Text(stringResource(R.string.title_edit_activity, activity.type.displayName))
         },
         text = {
             Column(
@@ -289,8 +291,8 @@ fun EditActivityDialog(
                     OutlinedTextField(
                         value = notes,
                         onValueChange = { notes = it },
-                        label = { Text("Notes") },
-                        placeholder = { Text("Any additional details...") },
+                        label = { Text(stringResource(R.string.label_notes)) },
+                        placeholder = { Text(stringResource(R.string.placeholder_notes)) },
                         modifier = Modifier.fillMaxWidth(),
                         maxLines = 3
                     )
@@ -317,12 +319,12 @@ fun EditActivityDialog(
                 },
                 enabled = hasChanges && isValidTimes
             ) {
-                Text("Save")
+                Text(stringResource(R.string.action_save))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.action_cancel))
             }
         }
     )
@@ -351,14 +353,14 @@ fun EditActivityDialog(
                         showStartDatePicker = false
                     }
                 ) {
-                    Text("OK")
+                    Text(stringResource(R.string.action_ok))
                 }
             },
             dismissButton = {
                 TextButton(
                     onClick = { showStartDatePicker = false }
                 ) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.action_cancel))
                 }
             }
         ) {
@@ -392,14 +394,14 @@ fun EditActivityDialog(
                         showEndDatePicker = false
                     }
                 ) {
-                    Text("OK")
+                    Text(stringResource(R.string.action_ok))
                 }
             },
             dismissButton = {
                 TextButton(
                     onClick = { showEndDatePicker = false }
                 ) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.action_cancel))
                 }
             }
         ) {
@@ -433,14 +435,14 @@ fun EditActivityDialog(
                         showInstantDatePicker = false
                     }
                 ) {
-                    Text("OK")
+                    Text(stringResource(R.string.action_ok))
                 }
             },
             dismissButton = {
                 TextButton(
                     onClick = { showInstantDatePicker = false }
                 ) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.action_cancel))
                 }
             }
         ) {

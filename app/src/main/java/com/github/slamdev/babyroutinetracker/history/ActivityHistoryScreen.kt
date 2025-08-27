@@ -12,12 +12,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.github.slamdev.babyroutinetracker.R
 import com.github.slamdev.babyroutinetracker.model.Activity
 import com.github.slamdev.babyroutinetracker.model.ActivityType
 import com.github.slamdev.babyroutinetracker.ui.components.CompactErrorDisplay
@@ -42,10 +44,10 @@ fun ActivityHistoryScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Activity History") },
+                title = { Text(stringResource(R.string.history_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 }
             )
@@ -90,7 +92,7 @@ fun ActivityHistoryContent(
                     ) {
                         CircularProgressIndicator()
                         Spacer(modifier = Modifier.height(16.dp))
-                        Text("Loading activities...")
+                        Text(stringResource(R.string.loading_activities))
                     }
                 }
             }
@@ -302,8 +304,8 @@ private fun ActivityHistoryItem(
                         if (showDeleteConfirmation) {
                             AlertDialog(
                                 onDismissRequest = { showDeleteConfirmation = false },
-                                title = { Text("Delete Activity") },
-                                text = { Text("Are you sure you want to delete this activity? This action cannot be undone.") },
+                                title = { Text(stringResource(R.string.dialog_delete_title)) },
+                                text = { Text(stringResource(R.string.dialog_delete_activity_message)) },
                                 confirmButton = {
                                     Button(
                                         onClick = {
@@ -314,14 +316,14 @@ private fun ActivityHistoryItem(
                                             containerColor = MaterialTheme.colorScheme.error
                                         )
                                     ) {
-                                        Text("Delete")
+                                        Text(stringResource(R.string.action_delete))
                                     }
                                 },
                                 dismissButton = {
                                     TextButton(
                                         onClick = { showDeleteConfirmation = false }
                                     ) {
-                                        Text("Cancel")
+                                        Text(stringResource(R.string.action_cancel))
                                     }
                                 }
                             )
@@ -386,8 +388,8 @@ private fun ActivityHistoryItem(
                         if (showDeleteConfirmation) {
                             AlertDialog(
                                 onDismissRequest = { showDeleteConfirmation = false },
-                                title = { Text("Delete Activity") },
-                                text = { Text("Are you sure you want to delete this activity? This action cannot be undone.") },
+                                title = { Text(stringResource(R.string.dialog_delete_title)) },
+                                text = { Text(stringResource(R.string.dialog_delete_activity_message)) },
                                 confirmButton = {
                                     Button(
                                         onClick = {
@@ -398,14 +400,14 @@ private fun ActivityHistoryItem(
                                             containerColor = MaterialTheme.colorScheme.error
                                         )
                                     ) {
-                                        Text("Delete")
+                                        Text(stringResource(R.string.action_delete))
                                     }
                                 },
                                 dismissButton = {
                                     TextButton(
                                         onClick = { showDeleteConfirmation = false }
                                     ) {
-                                        Text("Cancel")
+                                        Text(stringResource(R.string.action_cancel))
                                     }
                                 }
                             )
@@ -516,7 +518,7 @@ private fun ActivityTypeFilter(
                 FilterChip(
                     selected = selectedType == null,
                     onClick = { onTypeSelected(null) },
-                    label = { Text("All") }
+                    label = { Text(stringResource(R.string.history_filter_all)) }
                 )
             }
             
@@ -525,7 +527,7 @@ private fun ActivityTypeFilter(
                 FilterChip(
                     selected = selectedType == ActivityType.SLEEP,
                     onClick = { onTypeSelected(ActivityType.SLEEP) },
-                    label = { Text("😴 Sleep") }
+                    label = { Text(stringResource(R.string.history_filter_sleep)) }
                 )
             }
             
@@ -533,7 +535,7 @@ private fun ActivityTypeFilter(
                 FilterChip(
                     selected = selectedType == ActivityType.FEEDING,
                     onClick = { onTypeSelected(ActivityType.FEEDING) },
-                    label = { Text("🍼 Feeding") }
+                    label = { Text(stringResource(R.string.history_filter_feeding)) }
                 )
             }
             
@@ -541,7 +543,7 @@ private fun ActivityTypeFilter(
                 FilterChip(
                     selected = selectedType == ActivityType.DIAPER,
                     onClick = { onTypeSelected(ActivityType.DIAPER) },
-                    label = { Text("💩 Diaper") }
+                    label = { Text(stringResource(R.string.history_filter_diaper)) }
                 )
             }
         }

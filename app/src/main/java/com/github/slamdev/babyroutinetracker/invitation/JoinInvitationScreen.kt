@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -18,6 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.github.slamdev.babyroutinetracker.R
 import com.github.slamdev.babyroutinetracker.ui.theme.extended
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,7 +51,7 @@ fun JoinInvitationScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Join Baby Profile") },
+                title = { Text(stringResource(R.string.title_join_baby_profile)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
@@ -120,8 +122,8 @@ fun JoinInvitationScreen(
                                 viewModel.updateInvitationCode(code.uppercase())
                             }
                         },
-                        label = { Text("Enter 6-character code") },
-                        placeholder = { Text("ABC123") },
+                        label = { Text(stringResource(R.string.label_invitation_code)) },
+                        placeholder = { Text(stringResource(R.string.placeholder_invitation_code)) },
                         modifier = Modifier.fillMaxWidth(),
                         enabled = !uiState.isLoading,
                         isError = uiState.errorMessage != null,
