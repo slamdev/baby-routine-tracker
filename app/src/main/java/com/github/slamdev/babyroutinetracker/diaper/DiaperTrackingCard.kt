@@ -57,7 +57,7 @@ fun DiaperTrackingCard(
             
             diaperActivityContent(
                 lastDiaper = lastDiaper,
-                lastDiaperText = "Last poop logged",
+                lastDiaperText = "Last poop",
                 timeAgo = timeAgo,
                 diaperTime = lastDiaper.startTime.toDate(),
                 notes = lastDiaper.notes

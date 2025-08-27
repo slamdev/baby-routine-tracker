@@ -1631,7 +1631,165 @@ All activity updates trigger real-time synchronization:
 - **Data Consistency**: Transaction-based updates ensure data integrity
 - **Activity Type Detection**: Automatic detection of instant vs. duration activities for appropriate UI
 
-## 🔄 Future Updates
+## �️ Enhanced Activity History Screen
+
+### Overview
+The activity history screen has been significantly enhanced with deletion, advanced date/time editing, and filtering capabilities.
+
+### Key Features
+
+#### 1. Activity Deletion with Confirmation
+- **Delete Button**: Each activity item displays a trash icon (red) alongside the edit button
+- **Confirmation Dialog**: Prevents accidental deletion with clear warning message
+- **Real-time Sync**: Deleted activities disappear from all connected devices immediately
+- **Permanent Deletion**: Activities are permanently removed from Firebase Firestore
+
+```kotlin
+// Service Layer - Delete functionality
+suspend fun deleteActivity(activityId: String, babyId: String): Result<Unit> {
+    // Verifies user authentication and baby access
+    // Permanently deletes from Firebase
+    // Real-time listeners update all connected devices
+}
+```
+
+#### 2. Enhanced Date & Time Editing
+- **Date Pickers**: Material 3 DatePickerDialog for selecting different dates
+- **Combined Date/Time**: Preserves time when changing dates and vice versa  
+- **Responsive Layout**: Date and time pickers arranged in responsive rows
+- **Activity Type Specific**:
+  - **Instant Activities** (bottle, diaper): Single date/time picker pair
+  - **Duration Activities** (sleep, breast feeding): Separate start/end date/time pickers
+
+```kotlin
+// Enhanced EditActivityDialog supports both date and time editing
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EditActivityDialog(
+    activity: Activity,
+    onDismiss: () -> Unit,
+    onSave: (Activity, Date, Date?, String?) -> Unit
+) {
+    // Date picker state management
+    val startDatePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = startTime.time
+    )
+    
+    // Combined date/time logic preserves existing time components
+    // Responsive UI adapts to activity type (instant vs duration)
+}
+```
+
+#### 3. Activity Type Filtering
+- **Filter Chips**: Horizontal scrollable filter controls at top of screen
+- **Filter Options**: "All", "😴 Sleep", "🍼 Feeding", "💩 Diaper"
+- **Real-time Filtering**: Updates list immediately without refresh
+- **Empty State**: Shows helpful message when no activities match filter
+- **State Management**: Filter resets when navigating away from history screen
+
+```kotlin
+// ViewModel State includes filtering
+data class ActivityHistoryUiState(
+    val activities: List<Activity> = emptyList(),
+    val filteredActivities: List<Activity> = emptyList(),
+    val selectedActivityType: ActivityType? = null, // null = show all
+    val errorMessage: String? = null
+)
+
+// Filtering Logic
+private fun filterActivities(activities: List<Activity>, activityType: ActivityType?): List<Activity> {
+    return if (activityType == null) {
+        activities
+    } else {
+        activities.filter { it.type == activityType }
+    }
+}
+```
+
+### UI Implementation Details
+
+#### Responsive Action Buttons Layout
+- **Wide Screen** (landscape): Edit and delete buttons arranged horizontally
+- **Narrow Screen** (portrait): Edit and delete buttons stacked vertically
+- **Color Coding**: Edit button uses primary color, delete button uses error color
+- **Touch Targets**: Adequate spacing and sizing for easy interaction
+
+#### Confirmation Dialog Design
+```kotlin
+AlertDialog(
+    title = { Text("Delete Activity") },
+    text = { Text("Are you sure you want to delete this activity? This action cannot be undone.") },
+    confirmButton = {
+        Button(
+            onClick = { onDeleteActivity() },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.error
+            )
+        ) {
+            Text("Delete")
+        }
+    },
+    dismissButton = {
+        TextButton(onClick = { showDeleteConfirmation = false }) {
+            Text("Cancel")
+        }
+    }
+)
+```
+
+#### Filter Chips Implementation
+```kotlin
+@Composable
+private fun ActivityTypeFilter(
+    selectedType: ActivityType?,
+    onTypeSelected: (ActivityType?) -> Unit
+) {
+    LazyRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        item {
+            FilterChip(
+                selected = selectedType == null,
+                onClick = { onTypeSelected(null) },
+                label = { Text("All") }
+            )
+        }
+        // Individual activity type chips...
+    }
+}
+```
+
+### Technical Implementation
+
+#### Service Layer Updates
+- **Delete Method**: Added `deleteActivity()` with proper authentication and access control
+- **Enhanced Query**: `getRecentActivities()` loads up to 50 recent activities for history view
+- **Real-time Sync**: All changes (edits, deletions) sync automatically across devices
+
+#### ViewModel Enhancements  
+- **Filter State**: Manages selected activity type and filtered list
+- **Delete Operations**: Handles deletion with proper error handling and loading states
+- **State Consistency**: Ensures UI always reflects current data after any changes
+
+#### UI Component Updates
+- **Enhanced ActivityHistoryItem**: Supports both edit and delete actions
+- **Advanced EditActivityDialog**: Includes both date and time pickers
+- **Filter Controls**: Activity type filter chips with visual feedback
+
+### Error Handling
+
+#### Delete Operations
+- **Authentication Check**: Verifies user has permission to delete
+- **Network Errors**: Graceful handling with retry capability  
+- **Confirmation Required**: Prevents accidental deletion
+- **Success Feedback**: Clear indication when deletion succeeds
+
+#### Enhanced Editing
+- **Date/Time Validation**: Ensures start time ≤ end time across date boundaries
+- **Data Persistence**: All changes saved to Firebase with proper error handling
+- **Real-time Updates**: Changes appear on all devices without manual refresh
+
+## �🔄 Future Updates
 
 When adding new entities or features:
 1. Follow the established patterns in this guide

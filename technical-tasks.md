@@ -428,6 +428,56 @@ This document outlines the specific acceptance criter### **Real-time Dashboard**
   * Add activity history screen with full editing capabilities. ✅ COMPLETED
   * Implement service methods for updating activity times and notes separately. ✅ COMPLETED
 
+### **Activity History Screen Enhancements** ✅ **COMPLETED**
+
+**User Story:** As a parent, I want to delete activity entries from the history screen so I can remove mistaken or duplicate entries.
+
+* **Acceptance Criteria:**
+  * Each activity item in the history screen has a delete button (trash icon). ✅ IMPLEMENTED
+  * Tapping the delete button shows a confirmation dialog to prevent accidental deletion. ✅ IMPLEMENTED
+  * Confirmation dialog warns that deletion is permanent and cannot be undone. ✅ IMPLEMENTED
+  * After confirmation, the activity is permanently deleted from Firebase and disappears from all devices. ✅ IMPLEMENTED
+  * Delete functionality works for all activity types (Sleep, Feeding, Diaper). ✅ IMPLEMENTED
+* **Technical Tasks:**
+  * Add deleteActivity method to ActivityService with proper authentication and access control. ✅ COMPLETED
+  * Add deleteActivity method to ActivityHistoryViewModel with error handling. ✅ COMPLETED
+  * Update ActivityHistoryItem component to include delete button alongside edit button. ✅ COMPLETED
+  * Implement confirmation dialog with proper styling (red delete button). ✅ COMPLETED
+  * Ensure real-time synchronization removes deleted activities from all connected devices. ✅ COMPLETED
+
+**User Story:** As a parent, I want to edit both the date and time of activities in the history screen so I can correct activities that were logged on the wrong date.
+
+* **Acceptance Criteria:**
+  * The edit dialog for completed activities includes both date and time pickers. ✅ IMPLEMENTED
+  * For instant activities (bottle feeding, diaper), shows single date picker and single time picker. ✅ IMPLEMENTED
+  * For duration activities (sleep, breast feeding), shows separate date/time pickers for start and end. ✅ IMPLEMENTED
+  * Date pickers use Material 3 DatePickerDialog with proper date selection. ✅ IMPLEMENTED
+  * Time pickers preserve the existing time picker functionality but work with selected dates. ✅ IMPLEMENTED
+  * Changes are validated (start time cannot be after end time) and saved to Firebase. ✅ IMPLEMENTED
+* **Technical Tasks:**
+  * Enhance EditActivityDialog to include DatePickerDialog components alongside TimePickerDialog. ✅ COMPLETED
+  * Add date picker state management with rememberDatePickerState. ✅ COMPLETED
+  * Implement date/time combination logic to preserve time when changing dates. ✅ COMPLETED
+  * Update UI layout to show both date and time pickers in responsive row layout. ✅ COMPLETED
+  * Ensure validation works across both date and time changes. ✅ COMPLETED
+
+**User Story:** As a parent, I want to filter the activity history by activity type so I can focus on specific activities like just sleep or just feedings.
+
+* **Acceptance Criteria:**
+  * History screen includes filter chips at the top: "All", "😴 Sleep", "🍼 Feeding", "💩 Diaper". ✅ IMPLEMENTED
+  * Selected filter chip is visually highlighted and affects the displayed list. ✅ IMPLEMENTED
+  * Filtering works in real-time without requiring a refresh or reload. ✅ IMPLEMENTED
+  * "All" filter shows all activities; individual filters show only that activity type. ✅ IMPLEMENTED
+  * Filter state persists while on the history screen but resets when navigating away. ✅ IMPLEMENTED
+  * When no activities match the filter, shows helpful message "No activities found for the selected filter". ✅ IMPLEMENTED
+* **Technical Tasks:**
+  * Add selectedActivityType and filteredActivities to ActivityHistoryUiState. ✅ COMPLETED
+  * Implement filterByActivityType method in ActivityHistoryViewModel. ✅ COMPLETED
+  * Create ActivityTypeFilter composable with FilterChip components in LazyRow. ✅ COMPLETED
+  * Update activity loading to populate both activities and filteredActivities. ✅ COMPLETED
+  * Implement filtering logic that works with ActivityType enum values. ✅ COMPLETED
+  * Update UI to display filteredActivities instead of all activities. ✅ COMPLETED
+
 ### **Baby Profile Management**
 
 **User Story:** As a new parent, I want to create my baby's profile with their name and birthdate so I can personalize the app experience.

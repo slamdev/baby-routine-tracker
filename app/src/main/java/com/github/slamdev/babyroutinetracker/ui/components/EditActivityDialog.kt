@@ -14,6 +14,7 @@ import com.github.slamdev.babyroutinetracker.model.ActivityType
 import java.text.SimpleDateFormat
 import java.util.*
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditActivityDialog(
     activity: Activity,
@@ -21,13 +22,28 @@ fun EditActivityDialog(
     onSave: (Activity, Date, Date?, String?) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var showStartDatePicker by remember { mutableStateOf(false) }
+    var showEndDatePicker by remember { mutableStateOf(false) }
+    var showInstantDatePicker by remember { mutableStateOf(false) }
     var showStartTimePicker by remember { mutableStateOf(false) }
     var showEndTimePicker by remember { mutableStateOf(false) }
     var showInstantTimePicker by remember { mutableStateOf(false) }
+    
     var startTime by remember { mutableStateOf(activity.startTime.toDate()) }
     var endTime by remember { mutableStateOf(activity.endTime?.toDate()) }
     var instantTime by remember { mutableStateOf(activity.startTime.toDate()) }
     var notes by remember { mutableStateOf(activity.notes) }
+
+    // Date pickers state
+    val startDatePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = startTime.time
+    )
+    val endDatePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = endTime?.time ?: startTime.time
+    )
+    val instantDatePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = instantTime.time
+    )
 
     // Check if this activity type supports notes
     val supportsNotes = activity.type == ActivityType.FEEDING && activity.feedingType == "bottle" ||
@@ -66,87 +82,181 @@ fun EditActivityDialog(
                 // Only show time editing for completed activities
                 if (activity.endTime != null) {
                     Text(
-                        text = "Time",
+                        text = "Date & Time",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.primary
                     )
 
                     if (isInstantActivity) {
-                        // For instant activities (bottle feeding, diaper), show single time picker
-                        OutlinedCard(
+                        // For instant activities (bottle feeding, diaper), show single date/time pickers
+                        Row(
                             modifier = Modifier.fillMaxWidth(),
-                            onClick = { showInstantTimePicker = true }
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(12.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally
+                            // Date picker
+                            OutlinedCard(
+                                modifier = Modifier.weight(1f),
+                                onClick = { showInstantDatePicker = true }
                             ) {
-                                Text(
-                                    text = when (activity.type) {
-                                        ActivityType.DIAPER -> "Diaper Change Time"
-                                        ActivityType.FEEDING -> "Feeding Time"
-                                        else -> "Activity Time"
-                                    },
-                                    fontSize = 12.sp,
-                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                                )
-                                Text(
-                                    text = formatDateTime(instantTime),
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Medium
-                                )
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(12.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = "Date",
+                                        fontSize = 12.sp,
+                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                    )
+                                    Text(
+                                        text = formatDate(instantTime),
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                }
+                            }
+                            
+                            // Time picker
+                            OutlinedCard(
+                                modifier = Modifier.weight(1f),
+                                onClick = { showInstantTimePicker = true }
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(12.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = "Time",
+                                        fontSize = 12.sp,
+                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                    )
+                                    Text(
+                                        text = formatTime(instantTime),
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                }
                             }
                         }
                     } else {
-                        // For duration activities (sleep, breast feeding), show start and end time pickers
-                        // Start time picker
-                        OutlinedCard(
+                        // For duration activities (sleep, breast feeding), show start and end date/time pickers
+                        // Start date/time
+                        Text(
+                            text = "Start",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+                        )
+                        Row(
                             modifier = Modifier.fillMaxWidth(),
-                            onClick = { showStartTimePicker = true }
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(12.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally
+                            OutlinedCard(
+                                modifier = Modifier.weight(1f),
+                                onClick = { showStartDatePicker = true }
                             ) {
-                                Text(
-                                    text = "Start Time",
-                                    fontSize = 12.sp,
-                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                                )
-                                Text(
-                                    text = formatDateTime(startTime),
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Medium
-                                )
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(12.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = "Date",
+                                        fontSize = 12.sp,
+                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                    )
+                                    Text(
+                                        text = formatDate(startTime),
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                }
+                            }
+                            
+                            OutlinedCard(
+                                modifier = Modifier.weight(1f),
+                                onClick = { showStartTimePicker = true }
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(12.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = "Time",
+                                        fontSize = 12.sp,
+                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                    )
+                                    Text(
+                                        text = formatTime(startTime),
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                }
                             }
                         }
 
-                        // End time picker
-                        OutlinedCard(
+                        // End date/time
+                        Text(
+                            text = "End",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+                        )
+                        Row(
                             modifier = Modifier.fillMaxWidth(),
-                            onClick = { showEndTimePicker = true }
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(12.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally
+                            OutlinedCard(
+                                modifier = Modifier.weight(1f),
+                                onClick = { showEndDatePicker = true }
                             ) {
-                                Text(
-                                    text = "End Time",
-                                    fontSize = 12.sp,
-                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                                )
-                                Text(
-                                    text = formatDateTime(endTime ?: Date()),
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Medium
-                                )
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(12.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = "Date",
+                                        fontSize = 12.sp,
+                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                    )
+                                    Text(
+                                        text = formatDate(endTime ?: Date()),
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                }
+                            }
+                            
+                            OutlinedCard(
+                                modifier = Modifier.weight(1f),
+                                onClick = { showEndTimePicker = true }
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(12.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = "Time",
+                                        fontSize = 12.sp,
+                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                    )
+                                    Text(
+                                        text = formatTime(endTime ?: Date()),
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                }
                             }
                         }
 
@@ -217,6 +327,131 @@ fun EditActivityDialog(
         }
     )
 
+    // Date Picker Dialogs
+    if (showStartDatePicker) {
+        DatePickerDialog(
+            onDismissRequest = { showStartDatePicker = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        startDatePickerState.selectedDateMillis?.let { millis ->
+                            val selectedDate = Date(millis)
+                            // Combine selected date with current time
+                            val calendar = Calendar.getInstance().apply {
+                                time = startTime
+                            }
+                            val newCalendar = Calendar.getInstance().apply {
+                                time = selectedDate
+                                set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY))
+                                set(Calendar.MINUTE, calendar.get(Calendar.MINUTE))
+                                set(Calendar.SECOND, calendar.get(Calendar.SECOND))
+                            }
+                            startTime = newCalendar.time
+                        }
+                        showStartDatePicker = false
+                    }
+                ) {
+                    Text("OK")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showStartDatePicker = false }
+                ) {
+                    Text("Cancel")
+                }
+            }
+        ) {
+            DatePicker(
+                state = startDatePickerState,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+    }
+
+    if (showEndDatePicker) {
+        DatePickerDialog(
+            onDismissRequest = { showEndDatePicker = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        endDatePickerState.selectedDateMillis?.let { millis ->
+                            val selectedDate = Date(millis)
+                            // Combine selected date with current time
+                            val calendar = Calendar.getInstance().apply {
+                                time = endTime ?: Date()
+                            }
+                            val newCalendar = Calendar.getInstance().apply {
+                                time = selectedDate
+                                set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY))
+                                set(Calendar.MINUTE, calendar.get(Calendar.MINUTE))
+                                set(Calendar.SECOND, calendar.get(Calendar.SECOND))
+                            }
+                            endTime = newCalendar.time
+                        }
+                        showEndDatePicker = false
+                    }
+                ) {
+                    Text("OK")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showEndDatePicker = false }
+                ) {
+                    Text("Cancel")
+                }
+            }
+        ) {
+            DatePicker(
+                state = endDatePickerState,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+    }
+
+    if (showInstantDatePicker) {
+        DatePickerDialog(
+            onDismissRequest = { showInstantDatePicker = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        instantDatePickerState.selectedDateMillis?.let { millis ->
+                            val selectedDate = Date(millis)
+                            // Combine selected date with current time
+                            val calendar = Calendar.getInstance().apply {
+                                time = instantTime
+                            }
+                            val newCalendar = Calendar.getInstance().apply {
+                                time = selectedDate
+                                set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY))
+                                set(Calendar.MINUTE, calendar.get(Calendar.MINUTE))
+                                set(Calendar.SECOND, calendar.get(Calendar.SECOND))
+                            }
+                            instantTime = newCalendar.time
+                        }
+                        showInstantDatePicker = false
+                    }
+                ) {
+                    Text("OK")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showInstantDatePicker = false }
+                ) {
+                    Text("Cancel")
+                }
+            }
+        ) {
+            DatePicker(
+                state = instantDatePickerState,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+    }
+
+    // Time Picker Dialogs
     if (showStartTimePicker) {
         TimePickerDialog(
             initialTime = startTime,
@@ -262,6 +497,7 @@ private fun TimePickerDialog(
         androidx.compose.ui.platform.LocalContext.current,
         { _, hourOfDay, minute ->
             val newTime = Calendar.getInstance().apply {
+                time = initialTime
                 set(Calendar.HOUR_OF_DAY, hourOfDay)
                 set(Calendar.MINUTE, minute)
             }.time
@@ -280,7 +516,7 @@ private fun TimePickerDialog(
     }
 }
 
-private fun formatDateTime(date: Date): String {
+private fun formatTime(date: Date): String {
     val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
     return sdf.format(date)
 }

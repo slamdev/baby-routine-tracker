@@ -2,9 +2,11 @@ package com.github.slamdev.babyroutinetracker.history
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -119,19 +121,55 @@ fun ActivityHistoryContent(
                 }
             }
             else -> {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                Column(
+                    modifier = Modifier.fillMaxSize()
                 ) {
-                    items(uiState.activities) { activity ->
-                        ActivityHistoryItem(
-                            activity = activity,
-                            onEditActivity = {
-                                selectedActivity = activity
-                                showEditDialog = true
+                    // Activity type filter
+                    ActivityTypeFilter(
+                        selectedType = uiState.selectedActivityType,
+                        onTypeSelected = { activityType ->
+                            viewModel.filterByActivityType(activityType)
+                        },
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                    )
+
+                    // Activities list
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(uiState.filteredActivities) { activity ->
+                            ActivityHistoryItem(
+                                activity = activity,
+                                onEditActivity = {
+                                    selectedActivity = activity
+                                    showEditDialog = true
+                                },
+                                onDeleteActivity = {
+                                    viewModel.deleteActivity(activity)
+                                }
+                            )
+                        }
+                        
+                        // Show message if no activities match filter
+                        if (uiState.filteredActivities.isEmpty() && uiState.activities.isNotEmpty()) {
+                            item {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(32.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "No activities found for the selected filter",
+                                        fontSize = 16.sp,
+                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
                             }
-                        )
+                        }
                     }
                 }
             }
@@ -165,6 +203,7 @@ fun ActivityHistoryContent(
 private fun ActivityHistoryItem(
     activity: Activity,
     onEditActivity: () -> Unit,
+    onDeleteActivity: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     // Get background color based on activity type
@@ -227,21 +266,66 @@ private fun ActivityHistoryItem(
                     
                     // Additional details
                     Row(
-                        modifier = Modifier.weight(0.25f),
+                        modifier = Modifier.weight(0.2f),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         ActivityDetailsInfo(activity = activity)
                     }
                     
-                    // Edit button
-                    IconButton(
-                        onClick = onEditActivity,
-                        modifier = Modifier.weight(0.1f, fill = false)
+                    // Action buttons
+                    Row(
+                        modifier = Modifier.weight(0.15f, fill = false),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        Icon(
-                            Icons.Default.Edit,
-                            contentDescription = "Edit activity"
-                        )
+                        IconButton(
+                            onClick = onEditActivity
+                        ) {
+                            Icon(
+                                Icons.Default.Edit,
+                                contentDescription = "Edit activity",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                        
+                        var showDeleteConfirmation by remember { mutableStateOf(false) }
+                        
+                        IconButton(
+                            onClick = { showDeleteConfirmation = true }
+                        ) {
+                            Icon(
+                                Icons.Default.Delete,
+                                contentDescription = "Delete activity",
+                                tint = MaterialTheme.colorScheme.error
+                            )
+                        }
+                        
+                        if (showDeleteConfirmation) {
+                            AlertDialog(
+                                onDismissRequest = { showDeleteConfirmation = false },
+                                title = { Text("Delete Activity") },
+                                text = { Text("Are you sure you want to delete this activity? This action cannot be undone.") },
+                                confirmButton = {
+                                    Button(
+                                        onClick = {
+                                            onDeleteActivity()
+                                            showDeleteConfirmation = false
+                                        },
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = MaterialTheme.colorScheme.error
+                                        )
+                                    ) {
+                                        Text("Delete")
+                                    }
+                                },
+                                dismissButton = {
+                                    TextButton(
+                                        onClick = { showDeleteConfirmation = false }
+                                    ) {
+                                        Text("Cancel")
+                                    }
+                                }
+                            )
+                        }
                     }
                 }
             } else {
@@ -277,11 +361,55 @@ private fun ActivityHistoryItem(
                         ActivityDetailsInfo(activity = activity)
                     }
                     
-                    IconButton(onClick = onEditActivity) {
-                        Icon(
-                            Icons.Default.Edit,
-                            contentDescription = "Edit activity"
-                        )
+                    // Action buttons
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        IconButton(onClick = onEditActivity) {
+                            Icon(
+                                Icons.Default.Edit,
+                                contentDescription = "Edit activity",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                        
+                        var showDeleteConfirmation by remember { mutableStateOf(false) }
+                        
+                        IconButton(onClick = { showDeleteConfirmation = true }) {
+                            Icon(
+                                Icons.Default.Delete,
+                                contentDescription = "Delete activity",
+                                tint = MaterialTheme.colorScheme.error
+                            )
+                        }
+                        
+                        if (showDeleteConfirmation) {
+                            AlertDialog(
+                                onDismissRequest = { showDeleteConfirmation = false },
+                                title = { Text("Delete Activity") },
+                                text = { Text("Are you sure you want to delete this activity? This action cannot be undone.") },
+                                confirmButton = {
+                                    Button(
+                                        onClick = {
+                                            onDeleteActivity()
+                                            showDeleteConfirmation = false
+                                        },
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = MaterialTheme.colorScheme.error
+                                        )
+                                    ) {
+                                        Text("Delete")
+                                    }
+                                },
+                                dismissButton = {
+                                    TextButton(
+                                        onClick = { showDeleteConfirmation = false }
+                                    ) {
+                                        Text("Cancel")
+                                    }
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -358,6 +486,64 @@ private fun ActivityDetailsInfo(
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
+        }
+    }
+}
+
+@Composable
+private fun ActivityTypeFilter(
+    selectedType: ActivityType?,
+    onTypeSelected: (ActivityType?) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+    ) {
+        Text(
+            text = "Filter by Activity Type",
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(horizontal = 4.dp)
+        ) {
+            // All activities option
+            item {
+                FilterChip(
+                    selected = selectedType == null,
+                    onClick = { onTypeSelected(null) },
+                    label = { Text("All") }
+                )
+            }
+            
+            // Individual activity types
+            item {
+                FilterChip(
+                    selected = selectedType == ActivityType.SLEEP,
+                    onClick = { onTypeSelected(ActivityType.SLEEP) },
+                    label = { Text("😴 Sleep") }
+                )
+            }
+            
+            item {
+                FilterChip(
+                    selected = selectedType == ActivityType.FEEDING,
+                    onClick = { onTypeSelected(ActivityType.FEEDING) },
+                    label = { Text("🍼 Feeding") }
+                )
+            }
+            
+            item {
+                FilterChip(
+                    selected = selectedType == ActivityType.DIAPER,
+                    onClick = { onTypeSelected(ActivityType.DIAPER) },
+                    label = { Text("💩 Diaper") }
+                )
+            }
         }
     }
 }

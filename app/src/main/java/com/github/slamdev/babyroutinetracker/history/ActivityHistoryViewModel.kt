@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.slamdev.babyroutinetracker.model.Activity
+import com.github.slamdev.babyroutinetracker.model.ActivityType
 import com.github.slamdev.babyroutinetracker.service.ActivityService
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,6 +16,8 @@ import java.util.*
 data class ActivityHistoryUiState(
     val isLoading: Boolean = false,
     val activities: List<Activity> = emptyList(),
+    val filteredActivities: List<Activity> = emptyList(),
+    val selectedActivityType: ActivityType? = null, // null means show all
     val errorMessage: String? = null
 )
 
@@ -68,7 +71,8 @@ class ActivityHistoryViewModel : ViewModel() {
                         Log.i(TAG, "Loaded ${activities.size} activities successfully")
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
-                            activities = activities
+                            activities = activities,
+                            filteredActivities = filterActivities(activities, _uiState.value.selectedActivityType)
                         )
                     },
                     onFailure = { exception ->
@@ -271,5 +275,68 @@ class ActivityHistoryViewModel : ViewModel() {
      */
     fun clearError() {
         _uiState.value = _uiState.value.copy(errorMessage = null)
+    }
+
+    /**
+     * Filter activities by type
+     */
+    fun filterByActivityType(activityType: ActivityType?) {
+        _uiState.value = _uiState.value.copy(
+            selectedActivityType = activityType,
+            filteredActivities = filterActivities(_uiState.value.activities, activityType)
+        )
+    }
+
+    /**
+     * Delete an activity
+     */
+    fun deleteActivity(activity: Activity) {
+        val babyId = currentBabyId
+        if (babyId == null) {
+            Log.e(TAG, "Cannot delete activity - no baby selected")
+            _uiState.value = _uiState.value.copy(errorMessage = "No baby profile selected")
+            return
+        }
+
+        viewModelScope.launch {
+            try {
+                _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+
+                Log.i(TAG, "Deleting activity: ${activity.id}")
+                val result = activityService.deleteActivity(activity.id, babyId)
+
+                result.fold(
+                    onSuccess = {
+                        Log.i(TAG, "Activity deleted successfully: ${activity.id}")
+                        // Reload activities to get fresh data
+                        loadActivities()
+                    },
+                    onFailure = { exception ->
+                        Log.e(TAG, "Failed to delete activity", exception)
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                            errorMessage = exception.message ?: "Failed to delete activity"
+                        )
+                    }
+                )
+            } catch (e: Exception) {
+                Log.e(TAG, "Unexpected error deleting activity", e)
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    errorMessage = "Unexpected error: ${e.message}"
+                )
+            }
+        }
+    }
+
+    /**
+     * Filter activities based on selected type
+     */
+    private fun filterActivities(activities: List<Activity>, activityType: ActivityType?): List<Activity> {
+        return if (activityType == null) {
+            activities
+        } else {
+            activities.filter { it.type == activityType }
+        }
     }
 }

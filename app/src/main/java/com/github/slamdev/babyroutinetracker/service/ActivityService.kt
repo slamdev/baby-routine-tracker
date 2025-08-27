@@ -953,6 +953,42 @@ class ActivityService {
     }
 
     /**
+     * Delete an activity
+     */
+    suspend fun deleteActivity(activityId: String, babyId: String): Result<Unit> {
+        return try {
+            val currentUser = auth.currentUser
+            if (currentUser == null) {
+                val error = Exception("User not authenticated")
+                Log.e(TAG, "Failed to delete activity - user not authenticated", error)
+                return Result.failure(error)
+            }
+
+            // Verify user has access to this baby
+            if (!hasAccessToBaby(babyId)) {
+                val error = Exception("No access to baby profile")
+                Log.e(TAG, "Failed to delete activity - no access to baby: $babyId", error)
+                return Result.failure(error)
+            }
+
+            Log.i(TAG, "Deleting activity: $activityId for baby: $babyId")
+
+            firestore.collection(BABIES_COLLECTION)
+                .document(babyId)
+                .collection(ACTIVITIES_SUBCOLLECTION)
+                .document(activityId)
+                .delete()
+                .await()
+
+            Log.i(TAG, "Activity deleted successfully: $activityId")
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to delete activity: $activityId", e)
+            Result.failure(e)
+        }
+    }
+
+    /**
      * Check if current user has access to a baby profile
      */
     private suspend fun hasAccessToBaby(babyId: String): Boolean {
