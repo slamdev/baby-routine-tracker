@@ -1,0 +1,54 @@
+<resources>
+    <!-- Age plurals - Russian has complex pluralization rules -->
+    <plurals name="age_months">
+        <item quantity="one">%d месяц</item>
+        <item quantity="few">%d месяца</item>
+        <item quantity="many">%d месяцев</item>
+        <item quantity="other">%d месяцев</item>
+    </plurals>
+    
+    <plurals name="age_weeks">
+        <item quantity="one">%d неделя</item>
+        <item quantity="few">%d недели</item>
+        <item quantity="many">%d недель</item>
+        <item quantity="other">%d недель</item>
+    </plurals>
+    
+    <plurals name="age_days">
+        <item quantity="one">%d день</item>
+        <item quantity="few">%d дня</item>
+        <item quantity="many">%d дней</item>
+        <item quantity="other">%d дней</item>
+    </plurals>
+    
+    <!-- Sleep duration plurals -->
+    <plurals name="sleep_hours">
+        <item quantity="one">%d час</item>
+        <item quantity="few">%d часа</item>
+        <item quantity="many">%d часов</item>
+        <item quantity="other">%d часов</item>
+    </plurals>
+    
+    <plurals name="sleep_minutes">
+        <item quantity="one">%d минута</item>
+        <item quantity="few">%d минуты</item>
+        <item quantity="many">%d минут</item>
+        <item quantity="other">%d минут</item>
+    </plurals>
+    
+    <!-- Feeding plurals -->
+    <plurals name="feeding_count">
+        <item quantity="one">%d кормление</item>
+        <item quantity="few">%d кормления</item>
+        <item quantity="many">%d кормлений</item>
+        <item quantity="other">%d кормлений</item>
+    </plurals>
+    
+    <!-- Activity count plurals -->
+    <plurals name="activity_count">
+        <item quantity="one">%d активность</item>
+        <item quantity="few">%d активности</item>
+        <item quantity="many">%d активностей</item>
+        <item quantity="other">%d активностей</item>
+    </plurals>
+</resources>

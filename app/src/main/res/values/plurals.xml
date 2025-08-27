@@ -1,0 +1,40 @@
+<resources>
+    <!-- Age plurals -->
+    <plurals name="age_months">
+        <item quantity="one">%d month old</item>
+        <item quantity="other">%d months old</item>
+    </plurals>
+    
+    <plurals name="age_weeks">
+        <item quantity="one">%d week old</item>
+        <item quantity="other">%d weeks old</item>
+    </plurals>
+    
+    <plurals name="age_days">
+        <item quantity="one">%d day old</item>
+        <item quantity="other">%d days old</item>
+    </plurals>
+    
+    <!-- Sleep duration plurals -->
+    <plurals name="sleep_hours">
+        <item quantity="one">%d hour</item>
+        <item quantity="other">%d hours</item>
+    </plurals>
+    
+    <plurals name="sleep_minutes">
+        <item quantity="one">%d minute</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
+    
+    <!-- Feeding plurals -->
+    <plurals name="feeding_count">
+        <item quantity="one">%d feeding</item>
+        <item quantity="other">%d feedings</item>
+    </plurals>
+    
+    <!-- Activity count plurals -->
+    <plurals name="activity_count">
+        <item quantity="one">%d activity</item>
+        <item quantity="other">%d activities</item>
+    </plurals>
+</resources>
