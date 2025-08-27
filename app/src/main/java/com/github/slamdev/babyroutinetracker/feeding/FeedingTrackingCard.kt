@@ -21,7 +21,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.slamdev.babyroutinetracker.ui.components.CompactErrorDisplay
 import com.github.slamdev.babyroutinetracker.ui.components.TimePickerDialog
 import com.github.slamdev.babyroutinetracker.ui.components.EditActivityDialog
-import com.github.slamdev.babyroutinetracker.viewmodel.FeedingTrackingViewModelFactory
+import com.github.slamdev.babyroutinetracker.ui.components.helpers.breastFeedingActivityConfig
+import com.github.slamdev.babyroutinetracker.ui.components.helpers.breastFeedingActivityContent
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -29,9 +30,7 @@ import java.util.*
 fun FeedingTrackingCard(
     babyId: String,
     modifier: Modifier = Modifier,
-    viewModel: FeedingTrackingViewModel = viewModel(
-        factory = FeedingTrackingViewModelFactory(LocalContext.current)
-    )
+    viewModel: FeedingTrackingViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showBottleFeedingDialog by remember { mutableStateOf(false) }

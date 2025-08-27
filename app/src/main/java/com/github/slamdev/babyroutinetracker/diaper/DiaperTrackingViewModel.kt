@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.github.slamdev.babyroutinetracker.model.Activity
 import com.github.slamdev.babyroutinetracker.model.ActivityType
 import com.github.slamdev.babyroutinetracker.model.OptionalUiState
-import com.github.slamdev.babyroutinetracker.offline.OfflineManager
 import com.github.slamdev.babyroutinetracker.service.ActivityService
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,12 +23,8 @@ data class DiaperTrackingUiState(
     val isLoadingLastDiaper: Boolean = false
 )
 
-class DiaperTrackingViewModel(
-    private val context: android.content.Context
-) : ViewModel() {
-    private val offlineManager = OfflineManager.getInstance(context)
-    private val offlineActivityService = offlineManager.getOfflineActivityService()
-    private val onlineActivityService = ActivityService()
+class DiaperTrackingViewModel : ViewModel() {
+    private val activityService = ActivityService()
     
     private val _uiState = MutableStateFlow(DiaperTrackingUiState())
     val uiState: StateFlow<DiaperTrackingUiState> = _uiState.asStateFlow()
@@ -54,7 +49,7 @@ class DiaperTrackingViewModel(
         
         // Start listening to last diaper activity
         viewModelScope.launch {
-            offlineActivityService.getLastCompletedActivityFlow(babyId, ActivityType.DIAPER)
+            activityService.getLastActivityFlow(babyId, ActivityType.DIAPER)
                 .collect { lastDiaperState ->
                     when (lastDiaperState) {
                         is OptionalUiState.Loading -> {
@@ -108,7 +103,7 @@ class DiaperTrackingViewModel(
                 _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null, successMessage = null)
                 
                 Log.i(TAG, "Logging poop for baby: $babyId")
-                val result = offlineActivityService.logPoop(babyId, notes)
+                val result = activityService.logPoop(babyId, notes)
                 
                 result.fold(
                     onSuccess = { activity ->
@@ -166,7 +161,7 @@ class DiaperTrackingViewModel(
                 _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null, successMessage = null)
 
                 Log.i(TAG, "Updating diaper activity: ${activity.id}")
-                val result = onlineActivityService.updateActivity(babyId, activity)
+                val result = activityService.updateActivity(babyId, activity)
 
                 result.fold(
                     onSuccess = { updatedActivity ->

@@ -16,16 +16,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.slamdev.babyroutinetracker.ui.components.*
 import com.github.slamdev.babyroutinetracker.ui.components.helpers.diaperActivityConfig
 import com.github.slamdev.babyroutinetracker.ui.components.helpers.diaperActivityContent
-import com.github.slamdev.babyroutinetracker.viewmodel.DiaperTrackingViewModelFactory
 import java.util.*
 
 @Composable
 fun DiaperTrackingCard(
     babyId: String,
     modifier: Modifier = Modifier,
-    viewModel: DiaperTrackingViewModel = viewModel(
-        factory = DiaperTrackingViewModelFactory(LocalContext.current)
-    )
+    viewModel: DiaperTrackingViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showPoopDialog by remember { mutableStateOf(false) }

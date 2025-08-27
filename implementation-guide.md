@@ -3,6 +3,25 @@
 ## Project Overview
 This is an Android Kotlin app using Jetpack Compose and Firebase for baby activity tracking with multi-user collaboration.
 
+## ⚠️ Important: Offline Support Removed
+
+**As of December 2024**: Offline support has been completely removed from this project per user requirements. The app now requires an active internet connection for all functionality.
+
+### What was removed:
+- Room database dependencies
+- WorkManager for background sync
+- OfflineManager and related offline services
+- NetworkConnectivityService
+- Local data caching and sync queue
+- Offline status indicators in UI
+
+### Current behavior:
+- App requires internet connection for all operations
+- All data operations use Firebase Firestore directly
+- Real-time synchronization across devices (online only)
+- Graceful error handling for network issues
+- User-friendly error messages when connection is unavailable
+
 ## 🔧 Development Commands
 
 ### Compile Project
@@ -1228,7 +1247,7 @@ BabyAgeDisplay(
 
 ### Always Test These Scenarios
 1. **Multi-user sync** - Changes appear on both devices
-2. **Offline behavior** - App works without internet
+2. **~~Offline behavior~~ - ~~App works without internet~~** ❌ **REMOVED** - App now requires internet connection
 3. **Permission edge cases** - New users joining profiles
 4. **UI responsiveness** - Portrait/landscape/split-screen modes
 5. **Error scenarios** - Database connection issues, permission errors
@@ -1236,10 +1255,11 @@ BabyAgeDisplay(
 
 ### Error Scenario Testing
 
-// Test network errors
+// Test network errors (UPDATED - no offline support)
 1. Turn off wifi/data while using the app
-2. Verify error messages appear with "check your internet connection"
-3. Verify retry functionality works when connection restored
+2. Verify error messages appear with "check your internet connection" 
+3. Verify app gracefully handles connection loss (no data loss, clear error messages)
+4. Verify functionality returns when connection is restored (no manual refresh needed)
 
 // Test permission errors  
 1. Temporarily modify Firestore security rules to deny access

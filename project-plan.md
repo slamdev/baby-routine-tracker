@@ -160,22 +160,21 @@ invitations/{invitationId}
 - Invitations are publicly readable by invitation code but only writable by authenticated users
 - Activity logs are only readable/writable by baby's parents
 
-## **5.2\. Error Handling & Offline Support**
+## **5.2\. Error Handling** (**Offline Support Removed**)
 
 ### **Error Scenarios:**
 * Network connectivity loss during activity logging
 * Firestore write/read failures
 * Authentication token expiration
 * AI API rate limiting or failures
-* Device storage limitations
 * Invalid data validation errors
 
-### **Offline Strategy:**
-* Cache recent activities locally using Room database
-* Queue failed writes for retry when connection restored
-* Provide offline indicators in UI
-* Allow viewing recent data without network connection
-* Graceful degradation for AI features when offline
+### **~~Offline Strategy~~ (REMOVED):**
+* ~~Cache recent activities locally using Room database~~ ❌ **REMOVED**
+* ~~Queue failed writes for retry when connection restored~~ ❌ **REMOVED**
+* ~~Provide offline indicators in UI~~ ❌ **REMOVED**
+* ~~Allow viewing recent data without network connection~~ ❌ **REMOVED**
+* ~~Graceful degradation for AI features when offline~~ ❌ **REMOVED**
 
 ### **Error Recovery:**
 * Automatic retry mechanism for failed operations
@@ -245,7 +244,7 @@ This project will be broken down into six manageable phases.
 * \[ \] Build the main dashboard to show the latest activities.  
 * \[ \] Ensure real-time data synchronization between devices.  
 * \[ \] Implement activity editing and time adjustment features.  
-* \[ \] Add offline support with local caching and sync queue.  
+* ~~\[ \] Add offline support with local caching and sync queue.~~ ❌ **REMOVED**
 * \[ \] Create activity history view with basic filtering.  
 * \[ \] Implement comprehensive input validation and error handling.
 
@@ -307,4 +306,4 @@ This project will be broken down into six manageable phases.
 * **Risk:** Battery drain from real-time synchronization and background processing.  
   * **Mitigation:** Optimize background tasks and implement efficient listener management. Use WorkManager for background operations.  
 * **Risk:** Network connectivity issues affecting app usability.  
-  * **Mitigation:** Implement comprehensive offline support with local caching and sync queue. Provide clear offline indicators and graceful degradation.  
+  * **Mitigation:** ~~Implement comprehensive offline support with local caching and sync queue. Provide clear offline indicators and graceful degradation.~~ ❌ **REMOVED** - App now requires internet connection for full functionality.  

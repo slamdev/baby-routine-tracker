@@ -553,35 +553,37 @@ This document outlines the specific acceptance criter### **Real-time Dashboard**
   * Add quiet hours scheduling and notification filtering. ✅ COMPLETED
   * Implement notification batching to avoid spam. ✅ COMPLETED
 
-### **Offline Support & Sync**
+### **Offline Support & Sync** - ❌ **REMOVED**
 
 **User Story:** As a parent with unreliable internet, I want to continue logging activities even when offline so I don't miss recording important events.
 
+* **Status**: ❌ **REMOVED** - Offline support was implemented but subsequently removed due to requirement change
 * **Acceptance Criteria:**  
-  * All core logging functions work without internet connection. ✅ IMPLEMENTED
-  * Offline activities are stored locally and queued for sync. ✅ IMPLEMENTED
-  * UI clearly indicates offline status with appropriate messaging. ✅ IMPLEMENTED
-  * Recent data remains accessible for viewing when offline. ✅ IMPLEMENTED
+  * ~~All core logging functions work without internet connection~~ ❌ REMOVED
+  * ~~Offline activities are stored locally and queued for sync~~ ❌ REMOVED
+  * ~~UI clearly indicates offline status with appropriate messaging~~ ❌ REMOVED
+  * ~~Recent data remains accessible for viewing when offline~~ ❌ REMOVED
 * **Technical Tasks:**  
-  * Implement Room database for offline data storage. ✅ COMPLETED
-  * Create sync queue management system for pending operations. ✅ COMPLETED
-  * Build offline detection and UI state management. ✅ COMPLETED
-  * Implement local caching strategy for recent activities. ✅ COMPLETED
-  * Add offline data validation and storage optimization. ✅ COMPLETED
+  * ~~Implement Room database for offline data storage~~ ❌ REMOVED
+  * ~~Create sync queue management system for pending operations~~ ❌ REMOVED
+  * ~~Build offline detection and UI state management~~ ❌ REMOVED
+  * ~~Implement local caching strategy for recent activities~~ ❌ REMOVED
+  * ~~Add offline data validation and storage optimization~~ ❌ REMOVED
 
 **User Story:** As a user, I want to see a clear indicator when the app is offline so I know my data isn't syncing yet.
 
+* **Status**: ❌ **REMOVED** - Offline support was implemented but subsequently removed due to requirement change
 * **Acceptance Criteria:**  
-  * Prominent offline indicator appears when network is unavailable. ✅ IMPLEMENTED
-  * Indicator shows number of pending items waiting to sync. ✅ IMPLEMENTED
-  * Online status restoration is clearly communicated to users. ✅ IMPLEMENTED
-  * Sync progress is visible during online restoration. ✅ IMPLEMENTED
+  * ~~Prominent offline indicator appears when network is unavailable~~ ❌ REMOVED
+  * ~~Indicator shows number of pending items waiting to sync~~ ❌ REMOVED
+  * ~~Online status restoration is clearly communicated to users~~ ❌ REMOVED
+  * ~~Sync progress is visible during online restoration~~ ❌ REMOVED
 * **Technical Tasks:**  
-  * Implement network connectivity monitoring with ConnectivityManager. ✅ COMPLETED
-  * Create offline status UI components and indicators. ✅ COMPLETED
-  * Build sync progress tracking and display. ✅ COMPLETED
-  * Add retry mechanisms for failed sync operations. ✅ COMPLETED
-  * Implement connection restoration handling and notifications. ✅ COMPLETED
+  * ~~Implement network connectivity monitoring with ConnectivityManager~~ ❌ REMOVED
+  * ~~Create offline status UI components and indicators~~ ❌ REMOVED
+  * ~~Build sync progress tracking and display~~ ❌ REMOVED
+  * ~~Add retry mechanisms for failed sync operations~~ ❌ REMOVED
+  * ~~Implement connection restoration handling and notifications~~ ❌ REMOVED
 
 ### **App Settings & Preferences**
 

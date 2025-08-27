@@ -31,7 +31,6 @@ import com.github.slamdev.babyroutinetracker.invitation.CreateBabyProfileScreen
 import com.github.slamdev.babyroutinetracker.invitation.EditBabyProfileScreen
 import com.github.slamdev.babyroutinetracker.invitation.InvitationViewModel
 import com.github.slamdev.babyroutinetracker.history.ActivityHistoryScreen
-import com.github.slamdev.babyroutinetracker.offline.OfflineManager
 import com.github.slamdev.babyroutinetracker.notifications.NotificationSettingsScreen
 import com.github.slamdev.babyroutinetracker.service.UserService
 import com.github.slamdev.babyroutinetracker.ui.theme.BabyroutinetrackerTheme
@@ -55,9 +54,6 @@ class MainActivity : ComponentActivity() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
-        // Initialize offline manager
-        OfflineManager.getInstance(this).initialize()
         
         // Request notification permission for Android 13+
         requestNotificationPermission()

@@ -19,16 +19,13 @@ import com.github.slamdev.babyroutinetracker.ui.components.*
 import com.github.slamdev.babyroutinetracker.ui.components.formatters.TimeUtils
 import com.github.slamdev.babyroutinetracker.ui.components.helpers.breastFeedingActivityConfig
 import com.github.slamdev.babyroutinetracker.ui.components.helpers.breastFeedingActivityContent
-import com.github.slamdev.babyroutinetracker.viewmodel.FeedingTrackingViewModelFactory
 import java.util.*
 
 @Composable
 fun BreastFeedingCard(
     babyId: String,
     modifier: Modifier = Modifier,
-    viewModel: FeedingTrackingViewModel = viewModel(
-        factory = FeedingTrackingViewModelFactory(LocalContext.current)
-    )
+    viewModel: FeedingTrackingViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showEditStartTimeDialog by remember { mutableStateOf(false) }
