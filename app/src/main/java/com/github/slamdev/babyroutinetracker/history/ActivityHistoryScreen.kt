@@ -242,15 +242,15 @@ private fun ActivityHistoryItem(
                     ) {
                         Text(
                             text = when (activity.type) {
-                                ActivityType.SLEEP -> "😴 Sleep"
+                                ActivityType.SLEEP -> stringResource(R.string.history_activity_sleep)
                                 ActivityType.FEEDING -> {
                                     if (activity.feedingType == "breast_milk") {
-                                        "🤱 Breast"
+                                        stringResource(R.string.history_activity_breast_short)
                                     } else {
-                                        "🍼 Bottle"
+                                        stringResource(R.string.history_activity_bottle_short)
                                     }
                                 }
-                                ActivityType.DIAPER -> "💩 Diaper"
+                                ActivityType.DIAPER -> stringResource(R.string.history_activity_diaper_short)
                             },
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp
@@ -284,7 +284,7 @@ private fun ActivityHistoryItem(
                         ) {
                             Icon(
                                 Icons.Default.Edit,
-                                contentDescription = "Edit activity",
+                                contentDescription = stringResource(R.string.content_desc_edit_activity),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
@@ -296,7 +296,7 @@ private fun ActivityHistoryItem(
                         ) {
                             Icon(
                                 Icons.Default.Delete,
-                                contentDescription = "Delete activity",
+                                contentDescription = stringResource(R.string.content_desc_delete_activity),
                                 tint = MaterialTheme.colorScheme.error
                             )
                         }
@@ -345,15 +345,15 @@ private fun ActivityHistoryItem(
                         // Activity type and basic info
                         Text(
                             text = when (activity.type) {
-                                ActivityType.SLEEP -> "😴 Sleep"
+                                ActivityType.SLEEP -> stringResource(R.string.history_activity_sleep)
                                 ActivityType.FEEDING -> {
                                     if (activity.feedingType == "breast_milk") {
-                                        "🤱 Breast Feeding"
+                                        stringResource(R.string.history_activity_breast_feeding)
                                     } else {
-                                        "🍼 Bottle Feeding"
+                                        stringResource(R.string.history_activity_bottle_feeding)
                                     }
                                 }
-                                ActivityType.DIAPER -> "💩 Diaper Change"
+                                ActivityType.DIAPER -> stringResource(R.string.history_activity_diaper_change)
                             },
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp
@@ -370,7 +370,7 @@ private fun ActivityHistoryItem(
                         IconButton(onClick = onEditActivity) {
                             Icon(
                                 Icons.Default.Edit,
-                                contentDescription = "Edit activity",
+                                contentDescription = stringResource(R.string.content_desc_edit_activity),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
@@ -380,7 +380,7 @@ private fun ActivityHistoryItem(
                         IconButton(onClick = { showDeleteConfirmation = true }) {
                             Icon(
                                 Icons.Default.Delete,
-                                contentDescription = "Delete activity",
+                                contentDescription = stringResource(R.string.content_desc_delete_activity),
                                 tint = MaterialTheme.colorScheme.error
                             )
                         }

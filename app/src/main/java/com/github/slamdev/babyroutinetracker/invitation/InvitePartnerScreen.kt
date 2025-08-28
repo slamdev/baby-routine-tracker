@@ -52,7 +52,7 @@ fun InvitePartnerScreen(
                 title = { Text(stringResource(R.string.title_invite_partner)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.content_desc_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -224,13 +224,13 @@ fun InvitePartnerScreen(
                                         putExtra(Intent.EXTRA_TEXT, viewModel.getShareText(uiState.invitation!!))
                                         type = "text/plain"
                                     }
-                                    context.startActivity(Intent.createChooser(shareIntent, "Share Invitation"))
+                                    context.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.share_invitation_title)))
                                 },
                                 modifier = Modifier.weight(1f)
                             ) {
                                 Icon(
                                     Icons.Default.Share,
-                                    contentDescription = "Share",
+                                    contentDescription = stringResource(R.string.content_desc_share),
                                     modifier = Modifier.size(16.dp)
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))

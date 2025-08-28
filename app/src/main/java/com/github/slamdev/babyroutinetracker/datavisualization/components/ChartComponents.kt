@@ -42,7 +42,7 @@ fun SleepChart(
     
     ChartContainer(
         title = "😴 Daily Sleep Hours",
-        subtitle = "Total sleep time per day",
+        subtitle = stringResource(R.string.chart_subtitle_sleep_time),
         modifier = modifier
     ) {
         if (data.isEmpty()) {
@@ -112,8 +112,8 @@ fun SleepChart(
             
             ChartLegend(
                 items = listOf(
-                    "📊 Average: ${String.format("%.1f", data.map { it.totalHours }.average())} hours",
-                    "🔢 Total sessions: ${data.sumOf { it.sleepSessions }}"
+                    stringResource(R.string.chart_average_hours, data.map { it.totalHours }.average()),
+                    stringResource(R.string.chart_total_sessions, data.sumOf { it.sleepSessions })
                 )
             )
         }
@@ -222,9 +222,9 @@ fun FeedingChart(
             
             ChartLegend(
                 items = listOf(
-                    "🤱 Breast: ${data.sumOf { it.breastFeedings }} total",
-                    "🍼 Bottle: ${data.sumOf { it.bottleFeedings }} total",
-                    "📊 Average: ${String.format("%.1f", data.map { it.totalFeedings }.average())} per day"
+                    stringResource(R.string.chart_label_breast_total, data.sumOf { it.breastFeedings }),
+                    stringResource(R.string.chart_label_bottle_total, data.sumOf { it.bottleFeedings }),
+                    stringResource(R.string.chart_average_per_day, data.map { it.totalFeedings }.average())
                 )
             )
         }
@@ -318,8 +318,8 @@ fun DiaperChart(
             
             ChartLegend(
                 items = listOf(
-                    "💩 Total: ${data.sumOf { it.poopDiapers }} poops",
-                    "📊 Average: ${String.format("%.1f", data.map { it.poopDiapers }.average())} per day"
+                    stringResource(R.string.chart_total_poops, data.sumOf { it.poopDiapers }),
+                    stringResource(R.string.chart_average_per_day, data.map { it.poopDiapers }.average())
                 )
             )
         }

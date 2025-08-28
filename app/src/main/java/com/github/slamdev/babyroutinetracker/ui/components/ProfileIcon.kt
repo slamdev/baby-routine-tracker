@@ -63,7 +63,7 @@ fun ProfileIcon(
                         .data(user.photoUrl)
                         .crossfade(true)
                         .build(),
-                    contentDescription = "Profile Picture",
+                    contentDescription = stringResource(R.string.content_desc_profile_picture),
                     modifier = Modifier
                         .fillMaxSize()
                         .clip(CircleShape),
@@ -92,7 +92,7 @@ fun ProfileIcon(
                     } else {
                         Icon(
                             imageVector = Icons.Default.Person,
-                            contentDescription = "Profile",
+                            contentDescription = stringResource(R.string.content_desc_profile),
                             tint = Color.White,
                             modifier = Modifier.size(20.dp)
                         )
@@ -113,7 +113,7 @@ fun ProfileIcon(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = it.displayName ?: "User",
+                        text = it.displayName ?: stringResource(R.string.default_user_name),
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp
                     )
@@ -137,7 +137,7 @@ fun ProfileIcon(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Add,
-                            contentDescription = "Create Baby Profile"
+                            contentDescription = stringResource(R.string.content_desc_create_baby_profile)
                         )
                         Text(stringResource(R.string.profile_menu_create_baby))
                     }
@@ -156,7 +156,7 @@ fun ProfileIcon(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Person,
-                            contentDescription = "Join Profile"
+                            contentDescription = stringResource(R.string.content_desc_join_profile)
                         )
                         Text(stringResource(R.string.profile_menu_join_profile))
                     }
@@ -177,7 +177,7 @@ fun ProfileIcon(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Person, // Using Person for edit as Edit icon may not be available
-                                contentDescription = "Edit Baby Profile"
+                                contentDescription = stringResource(R.string.content_desc_edit_baby_profile)
                             )
                             Text(stringResource(R.string.profile_menu_edit_baby, baby.name))
                         }
@@ -197,7 +197,7 @@ fun ProfileIcon(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Notifications,
-                                contentDescription = "Notification Settings"
+                                contentDescription = stringResource(R.string.content_desc_notification_settings)
                             )
                             Text(stringResource(R.string.profile_menu_notification_settings))
                         }
@@ -219,7 +219,7 @@ fun ProfileIcon(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Share,
-                                contentDescription = "Invite Partner"
+                                contentDescription = stringResource(R.string.content_desc_invite_partner)
                             )
                             Text(stringResource(R.string.profile_menu_invite_partner))
                         }
@@ -242,7 +242,7 @@ fun ProfileIcon(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Settings,
-                            contentDescription = "Language Settings"
+                            contentDescription = stringResource(R.string.content_desc_language_settings)
                         )
                         Text(stringResource(R.string.profile_menu_language_settings))
                     }
@@ -262,7 +262,7 @@ fun ProfileIcon(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Delete,
-                            contentDescription = "Delete Account",
+                            contentDescription = stringResource(R.string.content_desc_delete_account),
                             tint = MaterialTheme.colorScheme.error
                         )
                         Text(
@@ -288,7 +288,7 @@ fun ProfileIcon(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ExitToApp,
-                            contentDescription = "Sign Out"
+                            contentDescription = stringResource(R.string.content_desc_sign_out)
                         )
                         Text(stringResource(R.string.profile_menu_sign_out))
                     }
