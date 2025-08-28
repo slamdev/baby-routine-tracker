@@ -400,17 +400,6 @@ private fun ActivityCardContentDisplay(
                 }
             }
         }
-        // No activity state
-        else -> {
-            Text(
-                text = stringResource(R.string.no_recent_activity),
-                fontSize = 14.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                textAlign = TextAlign.Center,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
     }
 }
 
