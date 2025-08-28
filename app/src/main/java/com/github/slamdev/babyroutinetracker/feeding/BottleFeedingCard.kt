@@ -18,7 +18,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.slamdev.babyroutinetracker.R
 import com.github.slamdev.babyroutinetracker.model.Baby
 import com.github.slamdev.babyroutinetracker.ui.components.*
-import com.github.slamdev.babyroutinetracker.ui.components.formatters.TimeUtils
+import com.github.slamdev.babyroutinetracker.ui.components.TimeUtils
 import com.github.slamdev.babyroutinetracker.ui.components.helpers.bottleFeedingActivityConfig
 import com.github.slamdev.babyroutinetracker.ui.components.helpers.bottleFeedingActivityContent
 import androidx.compose.ui.text.input.KeyboardType
@@ -33,6 +33,7 @@ fun BottleFeedingCard(
     viewModel: FeedingTrackingViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
     var showBottleDialog by remember { mutableStateOf(false) }
     var showEditLastActivityDialog by remember { mutableStateOf(false) }
 
@@ -61,7 +62,8 @@ fun BottleFeedingCard(
                 TimeUtils.getRelevantTimestamp(
                     lastFeeding.startTime.toDate(),
                     lastFeeding.endTime?.toDate()
-                )
+                ),
+                context
             )
 
             bottleFeedingActivityContent(

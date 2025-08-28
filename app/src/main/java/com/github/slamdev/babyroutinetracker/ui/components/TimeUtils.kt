@@ -1,5 +1,7 @@
 package com.github.slamdev.babyroutinetracker.ui.components
 
+import android.content.Context
+import com.github.slamdev.babyroutinetracker.R
 import java.util.*
 import kotlin.math.abs
 
@@ -13,9 +15,10 @@ object TimeUtils {
      * Examples: "Happened 23m ago", "Happened 1h 23m ago", "Happened 1d ago"
      * 
      * @param pastDate The date/time when the activity happened
+     * @param context Android context to access string resources for localization
      * @return Formatted string showing how long ago the activity happened
      */
-    fun formatTimeAgo(pastDate: Date): String {
+    fun formatTimeAgo(pastDate: Date, context: Context): String {
         val now = Date()
         val diffMillis = abs(now.time - pastDate.time)
         val diffSeconds = diffMillis / 1000
@@ -24,21 +27,21 @@ object TimeUtils {
         val diffDays = diffHours / 24
         
         return when {
-            diffMinutes < 1 -> "Happened now"
-            diffMinutes < 60 -> "Happened ${diffMinutes}m ago"
+            diffMinutes < 1 -> context.getString(R.string.happened_now)
+            diffMinutes < 60 -> context.getString(R.string.happened_minutes_ago, diffMinutes)
             diffHours < 24 -> {
                 val hours = diffHours
                 val remainingMinutes = diffMinutes % 60
                 if (remainingMinutes == 0L) {
-                    "Happened ${hours}h ago"
+                    context.getString(R.string.happened_hours_ago, hours)
                 } else {
-                    "Happened ${hours}h ${remainingMinutes}m ago"
+                    context.getString(R.string.happened_hours_minutes_ago, hours, remainingMinutes)
                 }
             }
-            diffDays < 7 -> "Happened ${diffDays}d ago"
+            diffDays < 7 -> context.getString(R.string.happened_days_ago, diffDays)
             else -> {
                 val weeks = diffDays / 7
-                "Happened ${weeks}w ago"
+                context.getString(R.string.happened_weeks_ago, weeks)
             }
         }
     }

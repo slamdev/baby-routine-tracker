@@ -1,13 +1,15 @@
 package com.github.slamdev.babyroutinetracker.feeding
 
+import android.app.Application
 import android.util.Log
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.slamdev.babyroutinetracker.model.Activity
 import com.github.slamdev.babyroutinetracker.model.ActivityType
 import com.github.slamdev.babyroutinetracker.model.OptionalUiState
 import com.github.slamdev.babyroutinetracker.service.ActivityService
 import com.github.slamdev.babyroutinetracker.util.ErrorUtils
+import com.github.slamdev.babyroutinetracker.util.LocalizedMessageProvider
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -30,8 +32,9 @@ data class FeedingTrackingUiState(
     val isLoadingLastFeeding: Boolean = false
 )
 
-class FeedingTrackingViewModel : ViewModel() {
+class FeedingTrackingViewModel(application: Application) : AndroidViewModel(application) {
     private val activityService = ActivityService()
+    private val messageProvider = LocalizedMessageProvider(application)
     
     private val _uiState = MutableStateFlow(FeedingTrackingUiState())
     val uiState: StateFlow<FeedingTrackingUiState> = _uiState.asStateFlow()
@@ -152,7 +155,7 @@ class FeedingTrackingViewModel : ViewModel() {
         val babyId = currentBabyId
         if (babyId == null) {
             Log.e(TAG, "Cannot start breast milk feeding - no baby selected")
-            _uiState.value = _uiState.value.copy(errorMessage = "No baby profile selected")
+            _uiState.value = _uiState.value.copy(errorMessage = messageProvider.getSelectBabyProfileFirstErrorMessage())
             return
         }
 
@@ -197,13 +200,13 @@ class FeedingTrackingViewModel : ViewModel() {
         
         if (babyId == null) {
             Log.e(TAG, "Cannot end breast milk feeding - no baby selected")
-            _uiState.value = _uiState.value.copy(errorMessage = "No baby profile selected")
+            _uiState.value = _uiState.value.copy(errorMessage = messageProvider.getSelectBabyProfileFirstErrorMessage())
             return
         }
         
         if (ongoingBreastFeeding == null) {
             Log.w(TAG, "Cannot end breast milk feeding - no ongoing session")
-            _uiState.value = _uiState.value.copy(errorMessage = "No ongoing breast milk feeding session to end")
+            _uiState.value = _uiState.value.copy(errorMessage = messageProvider.getNoOngoingBreastFeedingSessionErrorMessage())
             return
         }
 
@@ -246,7 +249,7 @@ class FeedingTrackingViewModel : ViewModel() {
         val babyId = currentBabyId
         if (babyId == null) {
             Log.e(TAG, "Cannot log bottle feeding - no baby selected")
-            _uiState.value = _uiState.value.copy(errorMessage = "No baby profile selected")
+            _uiState.value = _uiState.value.copy(errorMessage = messageProvider.getSelectBabyProfileFirstErrorMessage())
             return
         }
 

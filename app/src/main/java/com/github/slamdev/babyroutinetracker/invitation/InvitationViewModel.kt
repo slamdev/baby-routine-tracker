@@ -1,11 +1,13 @@
 package com.github.slamdev.babyroutinetracker.invitation
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.slamdev.babyroutinetracker.model.Baby
 import com.github.slamdev.babyroutinetracker.model.Invitation
 import com.github.slamdev.babyroutinetracker.service.InvitationService
 import com.github.slamdev.babyroutinetracker.util.ErrorUtils
+import com.github.slamdev.babyroutinetracker.util.LocalizedMessageProvider
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,8 +31,9 @@ data class InvitationUiState(
     val editingBaby: Baby? = null
 )
 
-class InvitationViewModel : ViewModel() {
+class InvitationViewModel(application: Application) : AndroidViewModel(application) {
     private val invitationService = InvitationService()
+    private val messageProvider = LocalizedMessageProvider(application)
     
     private val _uiState = MutableStateFlow(InvitationUiState())
     val uiState: StateFlow<InvitationUiState> = _uiState.asStateFlow()
@@ -90,8 +93,7 @@ class InvitationViewModel : ViewModel() {
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         baby = baby,
-                        // TODO: Replace with localized string via resources (R.string.profile_created_successfully)
-                        successMessage = "Baby profile created successfully!"
+                        successMessage = messageProvider.getProfileCreatedSuccessMessage()
                     )
                     // Real-time listener will automatically update the babies list
                 }
@@ -129,8 +131,7 @@ class InvitationViewModel : ViewModel() {
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         invitation = invitation,
-                        // TODO: Localize (R.string.invitation_created_successfully)
-                        successMessage = "Invitation created successfully!"
+                        successMessage = messageProvider.getInvitationCreatedSuccessMessage()
                     )
                 }
                 .onFailure { error ->
@@ -148,8 +149,7 @@ class InvitationViewModel : ViewModel() {
     fun acceptInvitation(invitationCode: String) {
         if (invitationCode.isEmpty()) {
             _uiState.value = _uiState.value.copy(
-                // TODO: Localize (R.string.please_enter_invitation_code)
-                errorMessage = "Please enter an invitation code"
+                errorMessage = messageProvider.getEnterInvitationCodeErrorMessage()
             )
             return
         }
@@ -166,8 +166,7 @@ class InvitationViewModel : ViewModel() {
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         baby = baby,
-                        // TODO: Localize formatted success message (R.string.join_invitation_success)
-                        successMessage = "Successfully joined ${baby.name}'s profile!"
+                        successMessage = messageProvider.getJoinInvitationSuccessMessage(baby.name)
                     )
                     // Real-time listener will automatically update the babies list
                 }
@@ -258,8 +257,7 @@ class InvitationViewModel : ViewModel() {
             } else {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    // TODO: Localize (R.string.error_baby_profile_not_found)
-                    errorMessage = "Baby profile not found"
+                    errorMessage = messageProvider.getBabyProfileNotFoundErrorMessage()
                 )
             }
         }
@@ -288,8 +286,7 @@ class InvitationViewModel : ViewModel() {
                         isLoading = false,
                         baby = baby,
                         editingBaby = null,
-                        // TODO: Localize (R.string.profile_updated_successfully)
-                        successMessage = "Baby profile updated successfully!"
+                        successMessage = messageProvider.getProfileUpdatedSuccessMessage()
                     )
                     // Real-time listener will automatically update the babies list
                 }

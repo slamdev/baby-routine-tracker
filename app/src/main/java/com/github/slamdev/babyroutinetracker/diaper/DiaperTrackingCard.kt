@@ -27,6 +27,7 @@ fun DiaperTrackingCard(
     viewModel: DiaperTrackingViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
     var showPoopDialog by remember { mutableStateOf(false) }
     var showEditLastActivityDialog by remember { mutableStateOf(false) }
     
@@ -54,7 +55,8 @@ fun DiaperTrackingCard(
                 TimeUtils.getRelevantTimestamp(
                     lastDiaper.startTime.toDate(),
                     lastDiaper.endTime?.toDate()
-                )
+                ),
+                context
             )
             
             diaperActivityContent(

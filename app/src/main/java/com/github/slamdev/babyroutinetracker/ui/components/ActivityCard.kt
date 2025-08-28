@@ -54,7 +54,7 @@ data class ActivityCardContent(
     val lastActivityNotes: String? = null, // Optional notes to display
     
     // Fallback text when no activity exists
-    val noActivityText: String = stringResource(R.string.no_recent_activity)
+    val noActivityText: String = "No recent activity"
 )
 
 /**

@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.slamdev.babyroutinetracker.model.Activity
 import com.github.slamdev.babyroutinetracker.ui.components.*
-import com.github.slamdev.babyroutinetracker.ui.components.formatters.TimeUtils
+import com.github.slamdev.babyroutinetracker.ui.components.TimeUtils
 import com.github.slamdev.babyroutinetracker.ui.components.helpers.breastFeedingActivityConfig
 import com.github.slamdev.babyroutinetracker.ui.components.helpers.breastFeedingActivityContent
 import java.util.*
@@ -30,6 +30,7 @@ fun BreastFeedingCard(
     viewModel: FeedingTrackingViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
     var showEditStartTimeDialog by remember { mutableStateOf(false) }
     var showEditLastActivityDialog by remember { mutableStateOf(false) }
     
@@ -78,7 +79,8 @@ fun BreastFeedingCard(
                 TimeUtils.getRelevantTimestamp(
                     lastFeeding.startTime.toDate(),
                     lastFeeding.endTime?.toDate()
-                )
+                ),
+                context
             )
             
             breastFeedingActivityContent(

@@ -522,4 +522,55 @@
     <!-- Test notification strings -->
     <string name="notification_test_title">Test Notification</string>
     <string name="notification_test_body">This is a test notification from Baby Routine Tracker</string>
+
+    <!-- Time "happened" strings that were hardcoded in TimeUtils -->
+    <string name="happened_now">Happened now</string>
+    <string name="happened_minutes_ago">Happened %dm ago</string>
+    <string name="happened_hours_ago">Happened %dh ago</string>
+    <string name="happened_hours_minutes_ago">Happened %1$dh %2$dm ago</string>
+    <string name="happened_days_ago">Happened %dd ago</string>
+    <string name="happened_weeks_ago">Happened %dw ago</string>
+
+    <!-- ViewModel Success Messages -->
+    <string name="success_poop_logged">Poop logged successfully!</string>
+    <string name="success_diaper_updated">Diaper activity updated successfully!</string>
+    <string name="success_baby_profile_created">Baby profile created successfully!</string>
+    <string name="success_invitation_created">Invitation created successfully!</string>
+    <string name="success_joined_profile">Successfully joined %s\'s profile!</string>
+    <string name="success_baby_profile_updated">Baby profile updated successfully!</string>
+    <string name="success_bottle_feeding_logged">Bottle feeding logged successfully!</string>
+    <string name="success_feeding_updated">Feeding updated successfully!</string>
+    <string name="success_start_time_updated">Start time updated successfully!</string>
+    <string name="success_sleep_activity_updated">Sleep activity updated successfully!</string>
+
+    <!-- ViewModel Error Messages -->
+    <string name="error_no_baby_profile_selected">No baby profile selected</string>
+    <string name="error_please_select_baby_profile_first">Please select a baby profile first</string>
+    <string name="error_please_enter_invitation_code">Please enter an invitation code</string>
+    <string name="error_no_ongoing_breast_feeding">No ongoing breast milk feeding session to end</string>
+    <string name="error_no_ongoing_sleep_session">No ongoing sleep session to end</string>
+    <string name="error_no_ongoing_breast_feeding_to_update">No ongoing breast feeding to update</string>
+    <string name="error_failed_to_update_start_time">Failed to update start time.</string>
+    <string name="error_no_ongoing_sleep_to_update">No ongoing sleep to update</string>
+    <string name="error_unexpected_error">Unexpected error: %s</string>
+    <string name="error_failed_to_process_activity_data">Failed to process activity data</string>
+
+    <!-- Account deletion error messages -->
+    <string name="error_account_deletion_user_not_authenticated">Please sign in again to delete your account</string>
+    <string name="error_account_deletion_network">Unable to connect to server. Please check your internet connection and try again</string>
+    <string name="error_account_deletion_permission">You don\'t have permission to perform this action. Please try signing in again</string>
+    <string name="error_account_deletion_generic">Failed to delete account. Please try again or contact support if the problem persists</string>
+    <string name="error_account_deletion_unexpected">An unexpected error occurred. Please try again</string>
+
+    <!-- Notification ViewModel error messages -->
+    <string name="error_save_preferences_failed">Failed to save preferences: %s</string>
+    <string name="error_test_notification_failed">Test failed: %s</string>
+    <string name="status_sending_test_notification">Sending test notification…</string>
+
+    <!-- Feeding ViewModel messages -->
+    <string name="error_no_ongoing_breast_feeding_session">No ongoing breast milk feeding session to end</string>
+    <string name="error_no_ongoing_breast_feeding_to_update_time">No ongoing breast feeding to update</string>
+    <string name="error_please_enter_amount">Please enter an amount</string>
+    <string name="error_invalid_amount_number">Please enter a valid number</string>
+
 </resources>

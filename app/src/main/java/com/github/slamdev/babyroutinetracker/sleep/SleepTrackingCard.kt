@@ -9,7 +9,7 @@ import com.github.slamdev.babyroutinetracker.R
 import com.github.slamdev.babyroutinetracker.ui.components.ActivityCard
 import com.github.slamdev.babyroutinetracker.ui.components.ActivityCardState
 import com.github.slamdev.babyroutinetracker.ui.components.EditActivityDialog
-import com.github.slamdev.babyroutinetracker.ui.components.formatters.TimeUtils
+import com.github.slamdev.babyroutinetracker.ui.components.TimeUtils
 import com.github.slamdev.babyroutinetracker.ui.components.helpers.sleepActivityConfig
 import com.github.slamdev.babyroutinetracker.ui.components.helpers.sleepActivityContent
 import java.util.*
@@ -21,6 +21,7 @@ fun SleepTrackingCard(
     viewModel: SleepTrackingViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
     var showEditStartTimeDialog by remember { mutableStateOf(false) }
     var showEditLastActivityDialog by remember { mutableStateOf(false) }
 
@@ -69,7 +70,8 @@ fun SleepTrackingCard(
                 TimeUtils.getRelevantTimestamp(
                     lastSleep.startTime.toDate(),
                     lastSleep.endTime?.toDate()
-                )
+                ),
+                context
             )
 
             sleepActivityContent(
