@@ -50,10 +50,9 @@ enum class DateRange(val days: Int) {
     LAST_MONTH(30)
 }
 
-class DataVisualizationViewModel(
-    application: Application,
+class DataVisualizationViewModel(application: Application) : AndroidViewModel(application) {
+
     private val activityService: ActivityService = ActivityService(application)
-) : AndroidViewModel(application) {
     
     private val messageProvider = LocalizedMessageProvider(application)
     
