@@ -272,7 +272,7 @@ class FeedingTrackingViewModel(application: Application) : AndroidViewModel(appl
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
                             // TODO: Localize success message (add resource)
-                            successMessage = "Bottle feeding logged successfully!"
+                            successMessage = messageProvider.getBottleFeedingLoggedSuccessMessage()
                         )
                     },
                     onFailure = { exception ->
@@ -336,7 +336,7 @@ class FeedingTrackingViewModel(application: Application) : AndroidViewModel(appl
         val ongoingFeeding = _uiState.value.ongoingBreastFeeding
         if (babyId == null || ongoingFeeding == null) {
             Log.e(TAG, "Cannot update start time - no ongoing breast feeding")
-            _uiState.value = _uiState.value.copy(errorMessage = "No ongoing breast feeding to update")
+            _uiState.value = _uiState.value.copy(errorMessage = messageProvider.getNoOngoingBreastFeedingToUpdateMessage())
             return
         }
 
@@ -349,10 +349,10 @@ class FeedingTrackingViewModel(application: Application) : AndroidViewModel(appl
             )
             result.fold(
                 onSuccess = {
-                    _uiState.value = _uiState.value.copy(isLoading = false, successMessage = "Start time updated.")
+                    _uiState.value = _uiState.value.copy(isLoading = false, successMessage = messageProvider.getStartTimeUpdatedSuccessMessage())
                 },
                 onFailure = {
-                    _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = "Failed to update start time.")
+                    _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = messageProvider.getFailedToUpdateStartTimeMessage())
                 }
             )
         }
@@ -365,7 +365,7 @@ class FeedingTrackingViewModel(application: Application) : AndroidViewModel(appl
         val babyId = currentBabyId
         if (babyId == null) {
             Log.e(TAG, "Cannot update feeding - no baby selected")
-            _uiState.value = _uiState.value.copy(errorMessage = "No baby profile selected")
+            _uiState.value = _uiState.value.copy(errorMessage = messageProvider.getNoBabyProfileSelectedMessage())
             return
         }
 
@@ -388,14 +388,14 @@ class FeedingTrackingViewModel(application: Application) : AndroidViewModel(appl
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         // TODO: Localize success message (add resource)
-                        successMessage = "Feeding updated successfully!"
+                        successMessage = messageProvider.getFeedingUpdatedSuccessMessage()
                     )
                 },
                 onFailure = { exception ->
                     Log.e(TAG, "Failed to update feeding activity", exception)
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        errorMessage = exception.message ?: "Failed to update feeding"
+                        errorMessage = exception.message ?: messageProvider.getFailedToUpdateFeedingMessage()
                     )
                 }
             )

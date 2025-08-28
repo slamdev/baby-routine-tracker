@@ -595,14 +595,126 @@
     <string name="edit_feeding_start_time_title">Изменить время начала кормления</string>
     
     <!-- Partner Notification Activity Descriptions -->
-    <string name="notification_activity_started_sleep">начал спать</string>
-    <string name="notification_activity_ended_sleep">закончил спать</string>
-    <string name="notification_activity_started_breast_feeding">начал грудное кормление</string>
+    <string name="notification_started_sleep">начал спать</string>
+    <string name="notification_ended_sleep">закончил спать</string>
+    <string name="notification_started_breast_feeding">начал грудное кормление</string>
+    <string name="notification_finished_breast_feeding">закончил грудное кормление</string>
+    <string name="notification_gave_bottle">дал бутылочку (%d мл)</string>
+    <string name="notification_logged_feeding">записал кормление</string>
+    <string name="notification_changed_diaper">поменял подгузник</string>
+    <string name="notification_new_activity_title">%s - Новая активность</string>
+    <string name="notification_partner_activity_body">%1$s %2$s</string>
+    
+    <!-- Service layer messages -->
+    <string name="error_no_ongoing_breast_feeding_to_update">Нет активного грудного вскармливания для обновления</string>
+    <string name="error_failed_to_update_feeding">Не удалось обновить кормление</string>
+    <string name="error_please_sign_in_to_view_preferences">Пожалуйста, войдите для просмотра настроек</string>
+    <string name="error_no_permission_to_view_preferences">У вас нет разрешения для просмотра этих настроек</string>
+    <string name="error_unable_to_load_notification_preferences">Не удаётся загрузить настройки уведомлений</string>
+    <string name="error_failed_to_process_notification_preferences">Не удалось обработать настройки уведомлений</string>
+    <string name="error_user_not_authenticated">Пользователь не аутентифицирован</string>
+    <string name="error_no_partners_found_to_notify">Не найдено партнёров для уведомления</string>
+    
+    <!-- Missing strings -->
+    <string name="error_unable_to_load_activity_data">Не удаётся загрузить данные активности</string>
+    <string name="error_failed_to_update_activity_time">Не удалось обновить время активности</string>
+    <string name="error_failed_to_update_activity_notes">Не удалось обновить заметки активности</string>
+
+</resources>
     <string name="notification_activity_finished_breast_feeding">закончил грудное кормление</string>
     <string name="notification_activity_gave_bottle">дал бутылочку (%d мл)</string>
     <string name="notification_activity_logged_feeding">записал кормление</string>
     <string name="notification_activity_changed_diaper">поменял подгузник</string>
     <string name="notification_title_new_activity">%s - Новая активность</string>
     <string name="notification_body_activity">%1$s %2$s</string>
+
+    <!-- Missing translations from English file -->
+    <!-- Error messages -->
+    <string name="error_no_ongoing_breast_feeding">Нет активной сессии грудного кормления для завершения</string>
+    <string name="error_no_ongoing_sleep_session">Нет активной сессии сна для завершения</string>
+    <string name="error_no_ongoing_breast_feeding_to_update">Нет активного грудного кормления для обновления</string>
+    <string name="error_failed_to_update_start_time">Не удалось обновить время начала.</string>
+    <string name="error_no_ongoing_sleep_to_update">Нет активного сна для обновления</string>
+    <string name="error_unexpected_error">Неожиданная ошибка: %s</string>
+    <string name="error_failed_to_process_activity_data">Не удалось обработать данные активности</string>
+    <string name="error_unable_to_load_activity_data">Не удается загрузить данные активности</string>
+
+    <!-- Account deletion error messages -->
+    <string name="error_account_deletion_user_not_authenticated">Пожалуйста, войдите снова, чтобы удалить свой аккаунт</string>
+    <string name="error_account_deletion_network">Не удается подключиться к серверу. Проверьте подключение к интернету и попробуйте снова</string>
+    <string name="error_account_deletion_permission">У вас нет разрешения для выполнения этого действия. Попробуйте войти заново</string>
+    <string name="error_account_deletion_generic">Не удалось удалить аккаунт. Попробуйте снова или обратитесь в службу поддержки, если проблема сохраняется</string>
+    <string name="error_account_deletion_unexpected">Произошла неожиданная ошибка. Попробуйте снова</string>
+
+    <!-- Notification ViewModel error messages -->
+    <string name="error_save_preferences_failed">Не удалось сохранить настройки: %s</string>
+    <string name="error_test_notification_failed">Тест не удался: %s</string>
+    <string name="status_sending_test_notification">Отправка тестового уведомления…</string>
+
+    <!-- Feeding ViewModel messages -->
+    <string name="error_no_ongoing_breast_feeding_session">Нет активной сессии грудного кормления для завершения</string>
+    <string name="error_no_ongoing_breast_feeding_to_update_time">Нет активного грудного кормления для обновления</string>
+    <string name="error_please_enter_amount">Пожалуйста, введите количество</string>
+    <string name="error_invalid_amount_number">Пожалуйста, введите корректное число</string>
+
+    <!-- Activity History ViewModel messages -->
+    <string name="error_failed_to_update_activity_time">Не удалось обновить время активности</string>
+    <string name="error_failed_to_update_activity_notes">Не удалось обновить заметки активности</string>
+
+    <!-- History Screen Activity Labels -->
+    <string name="history_activity_sleep">😴 Сон</string>
+    <string name="history_activity_breast_short">🤱 Грудь</string>
+    <string name="history_activity_breast_feeding">🤱 Грудное кормление</string>
+    <string name="history_activity_bottle_feeding">🍼 Кормление из бутылочки</string>
+    <string name="history_activity_bottle_short">🍼 Бутылочка</string>
+    <string name="history_activity_diaper_change">💩 Смена подгузника</string>
+    <string name="history_activity_diaper_short">💩 Подгузник</string>
+
+    <!-- Data Visualization Chart Labels -->
+    <string name="chart_label_breast_total">🤱 Грудь: %d всего</string>
+    <string name="chart_label_bottle_total">🍼 Бутылочка: %d всего</string>
+    <string name="chart_label_poop_total">💩 Покака: %d всего</string>
+    <string name="chart_no_data">Нет данных за выбранный период</string>
+    <string name="chart_subtitle_sleep_time">Общее время сна в день</string>
+    <string name="chart_average_hours">📊 Среднее: %.1f часов</string>
+    <string name="chart_total_sessions">🔢 Всего сессий: %d</string>
+    <string name="chart_average_per_day">📊 Среднее: %.1f в день</string>
+    <string name="chart_total_poops">💩 Всего: %d покак</string>
+
+    <!-- Content Descriptions -->
+    <string name="content_desc_profile_picture">Фото профиля</string>
+    <string name="content_desc_profile">Профиль</string>
+    <string name="content_desc_create_baby_profile">Создать профиль ребёнка</string>
+    <string name="content_desc_join_profile">Присоединиться к профилю</string>
+    <string name="content_desc_edit_baby_profile">Редактировать профиль ребёнка</string>
+    <string name="content_desc_notification_settings">Настройки уведомлений</string>
+    <string name="content_desc_invite_partner">Пригласить партнёра</string>
+    <string name="content_desc_language_settings">Настройки языка</string>
+    <string name="content_desc_delete_account">Удалить аккаунт</string>
+    <string name="content_desc_sign_out">Выйти</string>
+
+    <!-- Default Values -->
+    <string name="default_user_name">Пользователь</string>
+    <string name="default_baby_name">Малыш</string>
+    <string name="default_partner_name">Ваш партнёр</string>
+
+    <!-- Share Intent -->
+    <string name="share_invitation_title">Поделиться приглашением</string>
+    
+    <!-- Chart Component Titles -->
+    <string name="chart_sleep_title_emoji">😴 Часы сна в день</string>
+    <string name="chart_feeding_title_emoji">🍼 Кормления в день</string>
+    <string name="chart_feeding_subtitle">Количество кормлений в день</string>
+    <string name="chart_diaper_title_emoji">💩 Покаки в день</string>
+    <string name="chart_diaper_subtitle">Количество грязных подгузников в день</string>
+    <string name="chart_no_sleep_data">Нет данных о сне</string>
+    <string name="chart_no_feeding_data">Нет данных о кормлении</string>
+    <string name="chart_no_diaper_data">Нет данных о покаках</string>
+    
+    <!-- Feeding Time Picker -->
+    <string name="edit_feeding_start_time_title">Изменить время начала кормления</string>
+    <string name="error_failed_to_delete_activity">Не удалось удалить активность</string>
+    <string name="error_failed_to_update_sleep_activity">Не удалось обновить активность сна</string>
+    <string name="error_unable_to_connect_to_server">Не удается подключиться к серверу. Проверьте подключение к интернету</string>
 
 </resources>

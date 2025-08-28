@@ -1,13 +1,15 @@
 package com.github.slamdev.babyroutinetracker.history
 
+import android.app.Application
 import android.util.Log
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.slamdev.babyroutinetracker.model.Activity
 import com.github.slamdev.babyroutinetracker.model.ActivityType
 import com.github.slamdev.babyroutinetracker.model.OptionalUiState
 import com.github.slamdev.babyroutinetracker.service.ActivityService
 import com.github.slamdev.babyroutinetracker.util.ErrorUtils
+import com.github.slamdev.babyroutinetracker.util.LocalizedMessageProvider
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,8 +25,9 @@ data class ActivityHistoryUiState(
     val errorMessage: String? = null
 )
 
-class ActivityHistoryViewModel : ViewModel() {
+class ActivityHistoryViewModel(application: Application) : AndroidViewModel(application) {
     private val activityService = ActivityService()
+    private val messageProvider = LocalizedMessageProvider(application)
     
     private val _uiState = MutableStateFlow(ActivityHistoryUiState())
     val uiState: StateFlow<ActivityHistoryUiState> = _uiState.asStateFlow()
@@ -57,7 +60,7 @@ class ActivityHistoryViewModel : ViewModel() {
         val babyId = currentBabyId
         if (babyId == null) {
             Log.e(TAG, "Cannot setup activities listener - no baby selected")
-            _uiState.value = _uiState.value.copy(errorMessage = "No baby profile selected")
+            _uiState.value = _uiState.value.copy(errorMessage = messageProvider.getNoBabyProfileSelectedErrorMessage())
             return
         }
 
@@ -118,7 +121,7 @@ class ActivityHistoryViewModel : ViewModel() {
         val babyId = currentBabyId
         if (babyId == null) {
             Log.e(TAG, "Cannot update activity - no baby selected")
-            _uiState.value = _uiState.value.copy(errorMessage = "No baby profile selected")
+            _uiState.value = _uiState.value.copy(errorMessage = messageProvider.getNoBabyProfileSelectedErrorMessage())
             return
         }
 
@@ -165,7 +168,7 @@ class ActivityHistoryViewModel : ViewModel() {
         val babyId = currentBabyId
         if (babyId == null) {
             Log.e(TAG, "Cannot update instant activity time - no baby selected")
-            _uiState.value = _uiState.value.copy(errorMessage = "No baby profile selected")
+            _uiState.value = _uiState.value.copy(errorMessage = messageProvider.getNoBabyProfileSelectedErrorMessage())
             return
         }
 
@@ -183,14 +186,14 @@ class ActivityHistoryViewModel : ViewModel() {
                     onFailure = { exception ->
                         Log.e(TAG, "Failed to update instant activity time", exception)
                         _uiState.value = _uiState.value.copy(
-                            errorMessage = exception.message ?: "Failed to update activity time"
+                            errorMessage = exception.message ?: messageProvider.getFailedToUpdateActivityTimeErrorMessage()
                         )
                     }
                 )
             } catch (e: Exception) {
                 Log.e(TAG, "Unexpected error updating instant activity time", e)
                 _uiState.value = _uiState.value.copy(
-                    errorMessage = "Unexpected error: ${e.message}"
+                    errorMessage = messageProvider.getUnexpectedErrorMessage(e.message ?: "")
                 )
             }
         }
@@ -203,7 +206,7 @@ class ActivityHistoryViewModel : ViewModel() {
         val babyId = currentBabyId
         if (babyId == null) {
             Log.e(TAG, "Cannot update activity notes - no baby selected")
-            _uiState.value = _uiState.value.copy(errorMessage = "No baby profile selected")
+            _uiState.value = _uiState.value.copy(errorMessage = messageProvider.getNoBabyProfileSelectedErrorMessage())
             return
         }
 
@@ -220,14 +223,14 @@ class ActivityHistoryViewModel : ViewModel() {
                     onFailure = { exception ->
                         Log.e(TAG, "Failed to update activity notes", exception)
                         _uiState.value = _uiState.value.copy(
-                            errorMessage = exception.message ?: "Failed to update activity notes"
+                            errorMessage = exception.message ?: messageProvider.getFailedToUpdateActivityNotesErrorMessage()
                         )
                     }
                 )
             } catch (e: Exception) {
                 Log.e(TAG, "Unexpected error updating activity notes", e)
                 _uiState.value = _uiState.value.copy(
-                    errorMessage = "Unexpected error: ${e.message}"
+                    errorMessage = messageProvider.getUnexpectedErrorMessage(e.message ?: "")
                 )
             }
         }
@@ -240,7 +243,7 @@ class ActivityHistoryViewModel : ViewModel() {
         val babyId = currentBabyId
         if (babyId == null) {
             Log.e(TAG, "Cannot update activity - no baby selected")
-            _uiState.value = _uiState.value.copy(errorMessage = "No baby profile selected")
+            _uiState.value = _uiState.value.copy(errorMessage = messageProvider.getNoBabyProfileSelectedErrorMessage())
             return
         }
 
@@ -257,7 +260,7 @@ class ActivityHistoryViewModel : ViewModel() {
                     onFailure = { exception ->
                         Log.e(TAG, "Failed to update activity", exception)
                         _uiState.value = _uiState.value.copy(
-                            errorMessage = exception.message ?: "Failed to update activity"
+                            errorMessage = exception.message ?: messageProvider.getFailedToUpdateActivityTimeErrorMessage()
                         )
                     }
                 )
@@ -294,7 +297,7 @@ class ActivityHistoryViewModel : ViewModel() {
         val babyId = currentBabyId
         if (babyId == null) {
             Log.e(TAG, "Cannot delete activity - no baby selected")
-            _uiState.value = _uiState.value.copy(errorMessage = "No baby profile selected")
+            _uiState.value = _uiState.value.copy(errorMessage = messageProvider.getNoBabyProfileSelectedErrorMessage())
             return
         }
 
@@ -311,7 +314,7 @@ class ActivityHistoryViewModel : ViewModel() {
                     onFailure = { exception ->
                         Log.e(TAG, "Failed to delete activity", exception)
                         _uiState.value = _uiState.value.copy(
-                            errorMessage = exception.message ?: "Failed to delete activity"
+                            errorMessage = exception.message ?: messageProvider.getFailedToDeleteActivityErrorMessage()
                         )
                     }
                 )

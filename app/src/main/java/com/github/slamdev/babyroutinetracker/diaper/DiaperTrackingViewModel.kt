@@ -1,13 +1,15 @@
 package com.github.slamdev.babyroutinetracker.diaper
 
+import android.app.Application
 import android.util.Log
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.slamdev.babyroutinetracker.model.Activity
 import com.github.slamdev.babyroutinetracker.model.ActivityType
 import com.github.slamdev.babyroutinetracker.model.OptionalUiState
 import com.github.slamdev.babyroutinetracker.service.ActivityService
 import com.github.slamdev.babyroutinetracker.util.ErrorUtils
+import com.github.slamdev.babyroutinetracker.util.LocalizedMessageProvider
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,8 +26,9 @@ data class DiaperTrackingUiState(
     val isLoadingLastDiaper: Boolean = false
 )
 
-class DiaperTrackingViewModel : ViewModel() {
+class DiaperTrackingViewModel(application: Application) : AndroidViewModel(application) {
     private val activityService = ActivityService()
+    private val messageProvider = LocalizedMessageProvider(application)
     
     private val _uiState = MutableStateFlow(DiaperTrackingUiState())
     val uiState: StateFlow<DiaperTrackingUiState> = _uiState.asStateFlow()
@@ -95,7 +98,7 @@ class DiaperTrackingViewModel : ViewModel() {
         val babyId = currentBabyId
         if (babyId == null) {
             Log.e(TAG, "Cannot log poop - no baby selected")
-            _uiState.value = _uiState.value.copy(errorMessage = "No baby profile selected")
+            _uiState.value = _uiState.value.copy(errorMessage = messageProvider.getNoBabyProfileSelectedErrorMessage())
             return
         }
 
@@ -111,8 +114,7 @@ class DiaperTrackingViewModel : ViewModel() {
                         Log.i(TAG, "Poop logged successfully: ${activity.id}")
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
-                            // TODO: Localize success message (R.string.activity_logged_successfully or specific)
-                            successMessage = "Poop logged successfully!"
+                            successMessage = messageProvider.getPoopLoggedSuccessMessage()
                         )
                     },
                     onFailure = { exception ->
@@ -156,7 +158,7 @@ class DiaperTrackingViewModel : ViewModel() {
         val babyId = currentBabyId
         if (babyId == null) {
             Log.e(TAG, "Cannot update diaper - no baby selected")
-            _uiState.value = _uiState.value.copy(errorMessage = "No baby profile selected")
+            _uiState.value = _uiState.value.copy(errorMessage = messageProvider.getNoBabyProfileSelectedErrorMessage())
             return
         }
 
@@ -172,8 +174,7 @@ class DiaperTrackingViewModel : ViewModel() {
                         Log.i(TAG, "Diaper activity updated successfully: ${updatedActivity.id}")
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
-                            // TODO: Localize success message (add specific string resource)
-                            successMessage = "Diaper activity updated successfully!"
+                            successMessage = messageProvider.getDiaperUpdatedSuccessMessage()
                         )
                     },
                     onFailure = { exception ->

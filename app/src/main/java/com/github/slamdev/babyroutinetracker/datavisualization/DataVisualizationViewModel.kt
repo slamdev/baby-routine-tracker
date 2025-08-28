@@ -1,12 +1,14 @@
 package com.github.slamdev.babyroutinetracker.datavisualization
 
+import android.app.Application
 import android.util.Log
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.slamdev.babyroutinetracker.model.Activity
 import com.github.slamdev.babyroutinetracker.model.ActivityType
 import com.github.slamdev.babyroutinetracker.service.ActivityService
 import com.github.slamdev.babyroutinetracker.util.ErrorUtils
+import com.github.slamdev.babyroutinetracker.util.LocalizedMessageProvider
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -49,8 +51,11 @@ enum class DateRange(val days: Int) {
 }
 
 class DataVisualizationViewModel(
+    application: Application,
     private val activityService: ActivityService = ActivityService()
-) : ViewModel() {
+) : AndroidViewModel(application) {
+    
+    private val messageProvider = LocalizedMessageProvider(application)
     
     companion object {
         private const val TAG = "DataVisualizationViewModel"
@@ -143,7 +148,7 @@ class DataVisualizationViewModel(
                     
                     val userMessage = error?.let { 
                         ErrorUtils.getFirebaseErrorMessage(it, "view baby activities", "activity data") 
-                    } ?: "Unable to load activity data"
+                    } ?: messageProvider.getUnableToLoadActivityDataErrorMessage()
                     
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
@@ -154,7 +159,7 @@ class DataVisualizationViewModel(
                 Log.e(TAG, "Unexpected error loading data", e)
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    errorMessage = "Failed to process activity data"
+                    errorMessage = messageProvider.getFailedToProcessActivityDataErrorMessage()
                 )
             }
         }

@@ -1,13 +1,15 @@
 package com.github.slamdev.babyroutinetracker.sleep
 
+import android.app.Application
 import android.util.Log
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.slamdev.babyroutinetracker.model.Activity
 import com.github.slamdev.babyroutinetracker.model.ActivityType
 import com.github.slamdev.babyroutinetracker.model.OptionalUiState
 import com.github.slamdev.babyroutinetracker.service.ActivityService
 import com.github.slamdev.babyroutinetracker.util.ErrorUtils
+import com.github.slamdev.babyroutinetracker.util.LocalizedMessageProvider
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -30,8 +32,9 @@ data class SleepTrackingUiState(
     val successMessage: String? = null
 )
 
-class SleepTrackingViewModel : ViewModel() {
+class SleepTrackingViewModel(application: Application) : AndroidViewModel(application) {
     private val activityService = ActivityService()
+    private val messageProvider = LocalizedMessageProvider(application)
     
     private val _uiState = MutableStateFlow(SleepTrackingUiState())
     val uiState: StateFlow<SleepTrackingUiState> = _uiState.asStateFlow()
@@ -144,7 +147,7 @@ class SleepTrackingViewModel : ViewModel() {
         val babyId = currentBabyId
         if (babyId == null) {
             Log.e(TAG, "Cannot start sleep - no baby selected")
-            _uiState.value = _uiState.value.copy(errorMessage = "No baby profile selected")
+            _uiState.value = _uiState.value.copy(errorMessage = messageProvider.getNoBabyProfileSelectedErrorMessage())
             return
         }
 
@@ -189,13 +192,13 @@ class SleepTrackingViewModel : ViewModel() {
         
         if (babyId == null) {
             Log.e(TAG, "Cannot end sleep - no baby selected")
-            _uiState.value = _uiState.value.copy(errorMessage = "No baby profile selected")
+            _uiState.value = _uiState.value.copy(errorMessage = messageProvider.getNoBabyProfileSelectedErrorMessage())
             return
         }
         
         if (ongoingSleep == null) {
             Log.w(TAG, "Cannot end sleep - no ongoing sleep session")
-            _uiState.value = _uiState.value.copy(errorMessage = "No ongoing sleep session to end")
+            _uiState.value = _uiState.value.copy(errorMessage = messageProvider.getNoOngoingSleepSessionErrorMessage())
             return
         }
 
@@ -281,7 +284,7 @@ class SleepTrackingViewModel : ViewModel() {
         val ongoingSleep = _uiState.value.ongoingSleep
         if (babyId == null || ongoingSleep == null) {
             Log.e(TAG, "Cannot update start time - no ongoing sleep")
-            _uiState.value = _uiState.value.copy(errorMessage = "No ongoing sleep to update")
+            _uiState.value = _uiState.value.copy(errorMessage = messageProvider.getNoOngoingSleepToUpdateErrorMessage())
             return
         }
 
@@ -302,7 +305,7 @@ class SleepTrackingViewModel : ViewModel() {
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
                             // TODO: Localize success message (add resource)
-                            successMessage = "Start time updated successfully!"
+                            successMessage = messageProvider.getStartTimeUpdatedSuccessMessage()
                         )
                     },
                     onFailure = { exception ->
@@ -332,7 +335,7 @@ class SleepTrackingViewModel : ViewModel() {
         val babyId = currentBabyId
         if (babyId == null) {
             Log.e(TAG, "Cannot update sleep - no baby selected")
-            _uiState.value = _uiState.value.copy(errorMessage = "No baby profile selected")
+            _uiState.value = _uiState.value.copy(errorMessage = messageProvider.getNoBabyProfileSelectedErrorMessage())
             return
         }
 
@@ -349,14 +352,14 @@ class SleepTrackingViewModel : ViewModel() {
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
                             // TODO: Localize success message (add resource)
-                            successMessage = "Sleep activity updated successfully!"
+                            successMessage = messageProvider.getSleepActivityUpdatedSuccessMessage()
                         )
                     },
                     onFailure = { exception ->
                         Log.e(TAG, "Failed to update sleep activity", exception)
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
-                            errorMessage = exception.message ?: "Failed to update sleep activity"
+                            errorMessage = exception.message ?: messageProvider.getFailedToUpdateSleepActivityErrorMessage()
                         )
                     }
                 )
@@ -364,7 +367,7 @@ class SleepTrackingViewModel : ViewModel() {
                 Log.e(TAG, "Unexpected error updating sleep activity", e)
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    errorMessage = "Unexpected error: ${e.message}"
+                    errorMessage = messageProvider.getUnexpectedErrorMessage(e.message ?: "Unknown error")
                 )
             }
         }

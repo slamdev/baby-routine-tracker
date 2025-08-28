@@ -1,12 +1,14 @@
 package com.github.slamdev.babyroutinetracker.notifications
 
+import android.app.Application
 import android.util.Log
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.slamdev.babyroutinetracker.model.NotificationPreferences
 import com.github.slamdev.babyroutinetracker.model.OptionalUiState
 import com.github.slamdev.babyroutinetracker.service.NotificationPreferencesService
 import com.github.slamdev.babyroutinetracker.service.PartnerNotificationService
+import com.github.slamdev.babyroutinetracker.util.LocalizedMessageProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,9 +22,10 @@ data class NotificationSettingsUiState(
     val testNotificationStatus: String? = null
 )
 
-class NotificationSettingsViewModel : ViewModel() {
-    private val notificationPreferencesService = NotificationPreferencesService()
-    private val partnerNotificationService = PartnerNotificationService()
+class NotificationSettingsViewModel(application: Application) : AndroidViewModel(application) {
+    private val notificationPreferencesService = NotificationPreferencesService(application)
+    private val partnerNotificationService = PartnerNotificationService(application)
+    private val messageProvider = LocalizedMessageProvider(application)
 
     private val _uiState = MutableStateFlow(NotificationSettingsUiState())
     val uiState: StateFlow<NotificationSettingsUiState> = _uiState.asStateFlow()
@@ -68,14 +71,14 @@ class NotificationSettingsViewModel : ViewModel() {
                     val error = result.exceptionOrNull()
                     _uiState.value = _uiState.value.copy(
                         isSaving = false,
-                        saveError = "Failed to save preferences: ${error?.message}"
+                        saveError = messageProvider.getSavePreferencesFailedErrorMessage(error?.message ?: "")
                     )
                     Log.e(TAG, "Failed to update notification preferences", error)
                 }
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     isSaving = false,
-                    saveError = "Failed to save preferences: ${e.message}"
+                    saveError = messageProvider.getSavePreferencesFailedErrorMessage(e.message ?: "")
                 )
                 Log.e(TAG, "Failed to update notification preferences", e)
             }
@@ -88,7 +91,7 @@ class NotificationSettingsViewModel : ViewModel() {
     fun sendTestNotification(babyId: String) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(
-                testNotificationStatus = "Sending test notification..."
+                testNotificationStatus = messageProvider.getSendingTestNotificationStatusMessage()
             )
 
             try {
@@ -100,13 +103,13 @@ class NotificationSettingsViewModel : ViewModel() {
                 } else {
                     val error = result.exceptionOrNull()
                     _uiState.value = _uiState.value.copy(
-                        testNotificationStatus = "Test failed: ${error?.message}"
+                        testNotificationStatus = messageProvider.getTestNotificationFailedErrorMessage(error?.message ?: "")
                     )
                     Log.e(TAG, "Failed to send test notification", error)
                 }
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
-                    testNotificationStatus = "Test failed: ${e.message}"
+                    testNotificationStatus = messageProvider.getTestNotificationFailedErrorMessage(e.message ?: "")
                 )
                 Log.e(TAG, "Failed to send test notification", e)
             }

@@ -1,9 +1,11 @@
 package com.github.slamdev.babyroutinetracker.account
 
+import android.app.Application
 import android.util.Log
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.slamdev.babyroutinetracker.service.DataCleanupService
+import com.github.slamdev.babyroutinetracker.util.LocalizedMessageProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,8 +17,9 @@ data class AccountDeletionUiState(
     val isAccountDeleted: Boolean = false
 )
 
-class AccountDeletionViewModel : ViewModel() {
+class AccountDeletionViewModel(application: Application) : AndroidViewModel(application) {
     private val dataCleanupService = DataCleanupService()
+    private val messageProvider = LocalizedMessageProvider(application)
 
     private val _uiState = MutableStateFlow(AccountDeletionUiState())
     val uiState: StateFlow<AccountDeletionUiState> = _uiState.asStateFlow()
@@ -53,13 +56,13 @@ class AccountDeletionViewModel : ViewModel() {
                         Log.e(TAG, "Account deletion failed", exception)
                         val userFriendlyMessage = when {
                             exception.message?.contains("User not authenticated") == true ->
-                                "Please sign in again to delete your account"
+                                messageProvider.getAccountDeletionUserNotAuthenticatedErrorMessage()
                             exception.message?.contains("network", ignoreCase = true) == true ->
-                                "Unable to connect to server. Please check your internet connection and try again"
+                                messageProvider.getAccountDeletionNetworkErrorMessage()
                             exception.message?.contains("permission", ignoreCase = true) == true ->
-                                "You don't have permission to perform this action. Please try signing in again"
+                                messageProvider.getAccountDeletionPermissionErrorMessage()
                             else ->
-                                "Failed to delete account. Please try again or contact support if the problem persists"
+                                messageProvider.getAccountDeletionGenericErrorMessage()
                         }
                         
                         _uiState.value = _uiState.value.copy(
@@ -72,7 +75,7 @@ class AccountDeletionViewModel : ViewModel() {
                 Log.e(TAG, "Unexpected error during account deletion", e)
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    errorMessage = "An unexpected error occurred. Please try again"
+                    errorMessage = messageProvider.getAccountDeletionUnexpectedErrorMessage()
                 )
             }
         }

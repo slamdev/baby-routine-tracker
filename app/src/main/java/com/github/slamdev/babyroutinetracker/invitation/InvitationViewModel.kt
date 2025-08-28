@@ -113,8 +113,7 @@ class InvitationViewModel(application: Application) : AndroidViewModel(applicati
         val targetBabyId = babyId ?: _uiState.value.selectedBabyId
         if (targetBabyId.isEmpty()) {
             _uiState.value = _uiState.value.copy(
-                // TODO: Localize using R.string.please_select_baby_profile once context injection added
-                errorMessage = "Please select a baby profile first"
+                errorMessage = messageProvider.getSelectBabyProfileFirstErrorMessage()
             )
             return
         }
@@ -345,7 +344,7 @@ class InvitationViewModel(application: Application) : AndroidViewModel(applicati
      * Get share text for invitation
      */
     fun getShareText(invitation: Invitation): String {
-        val babyName = _uiState.value.babies.find { it.id == invitation.babyId }?.name ?: "Baby"
+        val babyName = _uiState.value.babies.find { it.id == invitation.babyId }?.name ?: messageProvider.getDefaultBabyName()
         return "You're invited to track $babyName's routine! Use code: ${invitation.invitationCode} in the Baby Routine Tracker app."
     }
 }

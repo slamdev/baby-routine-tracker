@@ -554,6 +554,7 @@
     <string name="error_no_ongoing_sleep_to_update">No ongoing sleep to update</string>
     <string name="error_unexpected_error">Unexpected error: %s</string>
     <string name="error_failed_to_process_activity_data">Failed to process activity data</string>
+    <string name="error_unable_to_load_activity_data">Unable to load activity data</string>
 
     <!-- Account deletion error messages -->
     <string name="error_account_deletion_user_not_authenticated">Please sign in again to delete your account</string>
@@ -572,6 +573,10 @@
     <string name="error_no_ongoing_breast_feeding_to_update_time">No ongoing breast feeding to update</string>
     <string name="error_please_enter_amount">Please enter an amount</string>
     <string name="error_invalid_amount_number">Please enter a valid number</string>
+
+    <!-- Activity History ViewModel messages -->
+    <string name="error_failed_to_update_activity_time">Failed to update activity time</string>
+    <string name="error_failed_to_update_activity_notes">Failed to update activity notes</string>
 
     <!-- History Screen Activity Labels -->
     <string name="history_activity_sleep">😴 Sleep</string>
@@ -627,14 +632,27 @@
     <string name="edit_feeding_start_time_title">Edit Feeding Start Time</string>
     
     <!-- Partner Notification Activity Descriptions -->
-    <string name="notification_activity_started_sleep">started sleep</string>
-    <string name="notification_activity_ended_sleep">ended sleep</string>
-    <string name="notification_activity_started_breast_feeding">started breast feeding</string>
-    <string name="notification_activity_finished_breast_feeding">finished breast feeding</string>
-    <string name="notification_activity_gave_bottle">gave a bottle (%dml)</string>
-    <string name="notification_activity_logged_feeding">logged a feeding</string>
-    <string name="notification_activity_changed_diaper">changed a diaper</string>
-    <string name="notification_title_new_activity">%s - New Activity</string>
-    <string name="notification_body_activity">%1$s %2$s</string>
+    <string name="notification_started_sleep">started sleep</string>
+    <string name="notification_ended_sleep">ended sleep</string>
+    <string name="notification_started_breast_feeding">started breast feeding</string>
+    <string name="notification_finished_breast_feeding">finished breast feeding</string>
+    <string name="notification_gave_bottle">gave a bottle (%dml)</string>
+    <string name="notification_logged_feeding">logged a feeding</string>
+    <string name="notification_changed_diaper">changed a diaper</string>
+    <string name="notification_new_activity_title">%s - New Activity</string>
+    <string name="notification_partner_activity_body">%1$s %2$s</string>
+    
+    <!-- Service layer messages -->
+    <string name="error_no_ongoing_breast_feeding_to_update">No ongoing breast feeding to update</string>
+    <string name="error_failed_to_update_feeding">Failed to update feeding</string>
+    <string name="error_please_sign_in_to_view_preferences">Please sign in to view preferences</string>
+    <string name="error_no_permission_to_view_preferences">You don\'t have permission to view these preferences</string>
+    <string name="error_unable_to_load_notification_preferences">Unable to load notification preferences</string>
+    <string name="error_failed_to_process_notification_preferences">Failed to process notification preferences</string>
+    <string name="error_user_not_authenticated">User not authenticated</string>
+    <string name="error_no_partners_found_to_notify">No partners found to notify</string>
+    <string name="error_failed_to_delete_activity">Failed to delete activity</string>
+    <string name="error_failed_to_update_sleep_activity">Failed to update sleep activity</string>
+    <string name="error_unable_to_connect_to_server">Unable to connect to server. Check your internet connection</string>
 
 </resources>

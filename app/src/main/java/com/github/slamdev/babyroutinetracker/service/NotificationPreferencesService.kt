@@ -1,8 +1,10 @@
 package com.github.slamdev.babyroutinetracker.service
 
+import android.content.Context
 import android.util.Log
 import com.github.slamdev.babyroutinetracker.model.NotificationPreferences
 import com.github.slamdev.babyroutinetracker.model.OptionalUiState
+import com.github.slamdev.babyroutinetracker.util.LocalizedMessageProvider
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -17,9 +19,10 @@ import java.util.*
 /**
  * Service for managing notification preferences
  */
-class NotificationPreferencesService {
+class NotificationPreferencesService(private val context: Context) {
     private val firestore = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
+    private val messageProvider = LocalizedMessageProvider(context)
 
     companion object {
         private const val TAG = "NotificationPreferencesService"
@@ -34,7 +37,7 @@ class NotificationPreferencesService {
         
         val currentUser = auth.currentUser
         if (currentUser == null) {
-            trySend(OptionalUiState.Error(Exception("User not authenticated"), "Please sign in to view preferences"))
+            trySend(OptionalUiState.Error(Exception("User not authenticated"), messageProvider.getPleaseSignInToViewPreferencesMessage()))
             close()
             return@callbackFlow
         }
@@ -47,10 +50,10 @@ class NotificationPreferencesService {
                     Log.e(TAG, "Error listening to notification preferences", error)
                     val userMessage = when {
                         error.message?.contains("PERMISSION_DENIED") == true -> 
-                            "You don't have permission to view these preferences"
+                            "                            messageProvider.getNoPermissionToViewPreferencesMessage()"
                         error.message?.contains("UNAVAILABLE") == true -> 
-                            "Unable to connect to server. Check your internet connection"
-                        else -> "Unable to load notification preferences"
+                            "                            messageProvider.getUnableToConnectToServerMessage()"
+                        else -> messageProvider.getUnableToLoadNotificationPreferencesMessage()
                     }
                     trySend(OptionalUiState.Error(error, userMessage))
                     return@addSnapshotListener
@@ -66,7 +69,7 @@ class NotificationPreferencesService {
                         }
                     } catch (e: Exception) {
                         Log.e(TAG, "Error processing notification preferences snapshot", e)
-                        trySend(OptionalUiState.Error(e, "Failed to process notification preferences"))
+                        trySend(OptionalUiState.Error(e, messageProvider.getFailedToProcessNotificationPreferencesMessage()))
                     }
                 } else {
                     // Create default preferences if none exist

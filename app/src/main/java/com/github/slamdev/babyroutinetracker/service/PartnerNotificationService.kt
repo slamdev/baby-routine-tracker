@@ -7,6 +7,7 @@ import com.github.slamdev.babyroutinetracker.model.Activity
 import com.github.slamdev.babyroutinetracker.model.ActivityType
 import com.github.slamdev.babyroutinetracker.model.Baby
 import com.github.slamdev.babyroutinetracker.model.User
+import com.github.slamdev.babyroutinetracker.util.LocalizedMessageProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.functions.FirebaseFunctions
@@ -15,15 +16,18 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
 
 /**
- * Service for sending partner activity notifications
+ * Service for sending partner activity notifications with full internationalization support
  */
-class PartnerNotificationService {
+class PartnerNotificationService(
+    private val context: Context
+) {
     private val firestore = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
     // Configure Firebase Functions to use europe-west1 region
     private val functions = Firebase.functions("europe-west1")
     private val userService = UserService()
-    private val notificationPreferencesService = NotificationPreferencesService()
+    private val notificationPreferencesService = NotificationPreferencesService(context)
+    private val messageProvider = LocalizedMessageProvider(context)
 
     companion object {
         private const val TAG = "PartnerNotificationService"
@@ -43,7 +47,7 @@ class PartnerNotificationService {
             // Get current user's name for the notification
             val currentUserDoc = firestore.collection("users").document(currentUser.uid).get().await()
             val currentUserData = currentUserDoc.toObject(User::class.java)
-            val senderName = currentUserData?.displayName ?: "Your partner"
+            val senderName = currentUserData?.displayName ?: context.getString(R.string.default_partner_name)
 
             // Get FCM tokens for all partners (excluding current user)
             val partnerTokens = userService.getPartnerFcmTokens(baby.id, excludeCurrentUser = true)
@@ -82,11 +86,8 @@ class PartnerNotificationService {
             }
 
             // Create notification payload
-            val notificationData = if (context != null) {
-                createNotificationPayload(activity, baby, senderName, context)
-            } else {
-                createFallbackNotificationPayload(activity, baby, senderName)
-            }
+            val notificationData = 
+                createNotificationPayload(activity, baby, senderName)
             
             // Send notifications via Firebase Functions
             sendNotificationsViaCloudFunction(tokensToNotify, notificationData)
@@ -153,26 +154,33 @@ class PartnerNotificationService {
     }
 
     /**
-     * Create notification payload with fallback strings (when Context is not available)
-     * This method uses hardcoded English strings as fallback
+     * Create notification payload with localized strings
      */
-    private fun createFallbackNotificationPayload(
+    private fun createNotificationPayload(
         activity: Activity, 
         baby: Baby, 
         senderName: String
     ): Map<String, Any> {
         val activityTypeDisplay = when (activity.type) {
-            ActivityType.SLEEP -> if (activity.isOngoing()) "started sleep" else "ended sleep"
-            ActivityType.FEEDING -> when (activity.feedingType) {
-                "breast_milk" -> if (activity.isOngoing()) "started breast feeding" else "finished breast feeding"
-                "bottle" -> "gave a bottle (${activity.amount.toInt()}ml)"
-                else -> "logged a feeding"
+            ActivityType.SLEEP -> if (activity.isOngoing()) {
+                messageProvider.getActivityStartedSleepMessage()
+            } else {
+                messageProvider.getActivityEndedSleepMessage()
             }
-            ActivityType.DIAPER -> "changed a diaper"
+            ActivityType.FEEDING -> when (activity.feedingType) {
+                "breast_milk" -> if (activity.isOngoing()) {
+                    messageProvider.getActivityStartedBreastFeedingMessage()
+                } else {
+                    messageProvider.getActivityFinishedBreastFeedingMessage()
+                }
+                "bottle" -> messageProvider.getGaveBottleNotification(activity.amount.toInt())
+                else -> messageProvider.getActivityLoggedFeedingMessage()
+            }
+            ActivityType.DIAPER -> messageProvider.getActivityChangedDiaperMessage()
         }
 
-        val title = "${baby.name} - New Activity"
-        val body = "$senderName $activityTypeDisplay"
+        val title = messageProvider.getNewActivityNotificationTitle(baby.name)
+        val body = messageProvider.getPartnerActivityNotificationBody(senderName, activityTypeDisplay)
         
         // Add duration for completed activities
         val bodyWithDetails = if (!activity.isOngoing() && activity.getDurationMinutes() != null) {
@@ -248,13 +256,13 @@ class PartnerNotificationService {
         return try {
             val currentUser = auth.currentUser
             if (currentUser == null) {
-                return Result.failure(Exception("User not authenticated"))
+                return Result.failure(Exception(messageProvider.getUserNotAuthenticatedMessage()))
             }
 
             val partnerTokens = userService.getPartnerFcmTokens(babyId, excludeCurrentUser = true)
             
             if (partnerTokens.isEmpty()) {
-                return Result.failure(Exception("No partners found to notify"))
+                return Result.failure(Exception(messageProvider.getNoPartnersFoundToNotifyMessage()))
             }
 
             val testData = if (context != null) {
@@ -266,8 +274,8 @@ class PartnerNotificationService {
                 )
             } else {
                 mapOf(
-                    "title" to "Test Notification",
-                    "body" to "This is a test notification from Baby Routine Tracker",
+                    "title" to messageProvider.getTestNotificationTitle(),
+                    "body" to messageProvider.getTestNotificationBody(),
                     "babyId" to babyId,
                     "timestamp" to System.currentTimeMillis().toString()
                 )
