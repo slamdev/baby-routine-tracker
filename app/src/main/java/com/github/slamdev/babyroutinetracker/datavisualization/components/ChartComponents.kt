@@ -37,6 +37,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
+// Using compose axis rememberStart extension on VerticalAxis.Companion
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
+import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisLabelComponent
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisLineComponent
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisTickComponent
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
@@ -71,9 +78,21 @@ fun SleepChart(
                 }
             }
             
+            // Add vertical axis with hour unit labels (e.g., 6 → 6h)
+            val hourSuffix = stringResource(R.string.chart_unit_hours_suffix)
+            val hourAxisFormatter = remember(hourSuffix) {
+                // Formatter with required 3 parameters (context, value, axisPosition)
+                CartesianValueFormatter { _, value, _ -> "${value.toInt()}$hourSuffix" }
+            }
             CartesianChartHost(
                 chart = rememberCartesianChart(
-                    rememberColumnCartesianLayer()
+                    rememberColumnCartesianLayer(),
+                    startAxis = VerticalAxis.rememberStart(
+                        line = rememberAxisLineComponent(),
+                        label = rememberAxisLabelComponent(),
+                        tick = rememberAxisTickComponent(),
+                        valueFormatter = hourAxisFormatter
+                    )
                 ),
                 modelProducer = modelProducer,
                 modifier = Modifier.height(200.dp)
@@ -118,9 +137,20 @@ fun FeedingChart(
                 }
             }
             
+            // Add vertical axis with count unit labels (e.g., 5 → 5x)
+            val countSuffix = stringResource(R.string.chart_unit_count_suffix)
+            val countAxisFormatter = remember(countSuffix) {
+                CartesianValueFormatter { _, value, _ -> "${value.toInt()}$countSuffix" }
+            }
             CartesianChartHost(
                 chart = rememberCartesianChart(
-                    rememberColumnCartesianLayer()
+                    rememberColumnCartesianLayer(),
+                    startAxis = VerticalAxis.rememberStart(
+                        line = rememberAxisLineComponent(),
+                        label = rememberAxisLabelComponent(),
+                        tick = rememberAxisTickComponent(),
+                        valueFormatter = countAxisFormatter
+                    )
                 ),
                 modelProducer = modelProducer,
                 modifier = Modifier.height(200.dp)
@@ -164,9 +194,20 @@ fun DiaperChart(
                 }
             }
             
+            // Add vertical axis with count unit labels (e.g., 4 → 4x)
+            val countSuffix = stringResource(R.string.chart_unit_count_suffix)
+            val countAxisFormatter = remember(countSuffix) {
+                CartesianValueFormatter { _, value, _ -> "${value.toInt()}$countSuffix" }
+            }
             CartesianChartHost(
                 chart = rememberCartesianChart(
-                    rememberColumnCartesianLayer()
+                    rememberColumnCartesianLayer(),
+                    startAxis = VerticalAxis.rememberStart(
+                        line = rememberAxisLineComponent(),
+                        label = rememberAxisLabelComponent(),
+                        tick = rememberAxisTickComponent(),
+                        valueFormatter = countAxisFormatter
+                    )
                 ),
                 modelProducer = modelProducer,
                 modifier = Modifier.height(200.dp)

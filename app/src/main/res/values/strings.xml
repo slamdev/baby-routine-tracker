@@ -638,6 +638,10 @@
     <string name="chart_total_diapers">💩 Total diapers: %d</string>
     <string name="chart_avg_daily_diapers">📊 Average daily: %.1f</string>
     
+    <!-- Chart Axis Units -->
+    <string name="chart_unit_hours_suffix">h</string>
+    <string name="chart_unit_count_suffix">x</string>
+    
     <!-- Feeding Time Picker -->
     <string name="edit_feeding_start_time_title">Edit Feeding Start Time</string>
     
