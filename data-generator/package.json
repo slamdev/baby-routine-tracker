@@ -1,0 +1,12 @@
+{
+  "name": "emma-data-generator",
+  "version": "1.0.0",
+  "description": "Generate realistic baby activity data for Emma",
+  "main": "generate_emma_data.js",
+  "scripts": {
+    "generate": "node generate_emma_data.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.0.0"
+  }
+}
