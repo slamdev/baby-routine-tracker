@@ -21,8 +21,6 @@ class PushNotificationService : FirebaseMessagingService() {
     companion object {
         private const val TAG = "PushNotificationService"
         private const val CHANNEL_ID = "partner_activity_notifications"
-        private const val CHANNEL_NAME = "Partner Activity Updates"
-        private const val CHANNEL_DESCRIPTION = "Notifications when your partner logs baby activities"
     }
 
     override fun onCreate() {
@@ -154,10 +152,10 @@ class PushNotificationService : FirebaseMessagingService() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 CHANNEL_ID,
-                CHANNEL_NAME,
+                getString(R.string.notification_channel_name),
                 NotificationManager.IMPORTANCE_HIGH // Changed to HIGH for better visibility
             ).apply {
-                description = CHANNEL_DESCRIPTION
+                description = getString(R.string.notification_channel_description)
                 enableLights(true)
                 enableVibration(true)
                 setShowBadge(true)

@@ -315,6 +315,11 @@
     <!-- Sharing/Invitation -->
     <string name="share_invitation_message">Вы приглашены отслеживать режим %1$s! Используйте код: %2$s в приложении Baby Routine Tracker.</string>
 
+    <!-- Push notification hardcoded strings -->
+    <string name="notification_channel_name">Обновления активности партнёра</string>
+    <string name="notification_channel_description">Уведомления, когда ваш партнёр записывает активности малыша</string>
+    <string name="notification_new_activity_title">Новая активность %s</string>
+
     <!-- Preview/Demo strings (only used in preview functions) -->
     <string name="preview_error_network">Не удается подключиться к серверу. Проверьте подключение к интернету.</string>
     <string name="preview_error_permission">У вас нет разрешения на просмотр активностей этого малыша.</string>
