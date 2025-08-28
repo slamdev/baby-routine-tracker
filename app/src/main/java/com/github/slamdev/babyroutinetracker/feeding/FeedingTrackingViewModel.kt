@@ -33,7 +33,7 @@ data class FeedingTrackingUiState(
 )
 
 class FeedingTrackingViewModel(application: Application) : AndroidViewModel(application) {
-    private val activityService = ActivityService()
+    private val activityService = ActivityService(application)
     private val messageProvider = LocalizedMessageProvider(application)
     
     private val _uiState = MutableStateFlow(FeedingTrackingUiState())

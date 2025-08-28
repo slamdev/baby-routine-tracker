@@ -36,7 +36,7 @@ class PartnerNotificationService(
     /**
      * Send notification to partners when an activity is logged
      */
-    suspend fun notifyPartnersOfActivity(activity: Activity, baby: Baby, context: Context? = null) {
+    suspend fun notifyPartnersOfActivity(activity: Activity, baby: Baby) {
         try {
             val currentUser = auth.currentUser
             if (currentUser == null) {
@@ -252,7 +252,7 @@ class PartnerNotificationService(
     /**
      * Test notification functionality
      */
-    suspend fun sendTestNotification(babyId: String, context: Context? = null): Result<String> {
+    suspend fun sendTestNotification(babyId: String): Result<String> {
         return try {
             val currentUser = auth.currentUser
             if (currentUser == null) {

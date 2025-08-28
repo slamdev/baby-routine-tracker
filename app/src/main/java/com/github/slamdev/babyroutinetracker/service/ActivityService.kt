@@ -1,5 +1,6 @@
 package com.github.slamdev.babyroutinetracker.service
 
+import android.content.Context
 import android.util.Log
 import com.github.slamdev.babyroutinetracker.model.Activity
 import com.github.slamdev.babyroutinetracker.model.ActivityType
@@ -17,10 +18,12 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import java.util.UUID
 
-class ActivityService {
+class ActivityService(
+    private val context: Context
+) {
     private val firestore = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
-    private val partnerNotificationService = PartnerNotificationService()
+    private val partnerNotificationService = PartnerNotificationService(context)
 
     companion object {
         private const val TAG = "ActivityService"

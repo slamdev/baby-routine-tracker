@@ -52,7 +52,7 @@ enum class DateRange(val days: Int) {
 
 class DataVisualizationViewModel(
     application: Application,
-    private val activityService: ActivityService = ActivityService()
+    private val activityService: ActivityService = ActivityService(application)
 ) : AndroidViewModel(application) {
     
     private val messageProvider = LocalizedMessageProvider(application)
