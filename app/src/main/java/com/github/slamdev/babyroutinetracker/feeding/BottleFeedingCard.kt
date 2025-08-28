@@ -18,7 +18,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.slamdev.babyroutinetracker.R
 import com.github.slamdev.babyroutinetracker.model.Baby
 import com.github.slamdev.babyroutinetracker.ui.components.*
-import com.github.slamdev.babyroutinetracker.ui.components.TimeUtils
+import com.github.slamdev.babyroutinetracker.ui.components.formatters.formatTimeAgoLocalized
+import com.github.slamdev.babyroutinetracker.ui.components.formatters.getRelevantTimestamp
 import com.github.slamdev.babyroutinetracker.ui.components.helpers.bottleFeedingActivityConfig
 import com.github.slamdev.babyroutinetracker.ui.components.helpers.bottleFeedingActivityContent
 import androidx.compose.ui.text.input.KeyboardType
@@ -58,12 +59,11 @@ fun BottleFeedingCard(
     val cardContent = when {
         lastFeeding != null && lastFeeding.endTime != null -> {
             val amount = lastFeeding.amount.toInt()
-            val timeAgo = TimeUtils.formatTimeAgo(
-                TimeUtils.getRelevantTimestamp(
+            val timeAgo = formatTimeAgoLocalized(
+                getRelevantTimestamp(
                     lastFeeding.startTime.toDate(),
                     lastFeeding.endTime?.toDate()
-                ),
-                context
+                )
             )
 
             bottleFeedingActivityContent(

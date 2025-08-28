@@ -16,6 +16,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.slamdev.babyroutinetracker.R
 import com.github.slamdev.babyroutinetracker.ui.components.*
+import com.github.slamdev.babyroutinetracker.ui.components.formatters.formatTimeAgoLocalized
+import com.github.slamdev.babyroutinetracker.ui.components.formatters.getRelevantTimestamp
 import com.github.slamdev.babyroutinetracker.ui.components.helpers.diaperActivityConfig
 import com.github.slamdev.babyroutinetracker.ui.components.helpers.diaperActivityContent
 import java.util.*
@@ -51,12 +53,11 @@ fun DiaperTrackingCard(
     
     val cardContent = when {
         lastDiaper != null -> {
-            val timeAgo = TimeUtils.formatTimeAgo(
-                TimeUtils.getRelevantTimestamp(
+            val timeAgo = formatTimeAgoLocalized(
+                getRelevantTimestamp(
                     lastDiaper.startTime.toDate(),
                     lastDiaper.endTime?.toDate()
-                ),
-                context
+                )
             )
             
             diaperActivityContent(

@@ -18,7 +18,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.slamdev.babyroutinetracker.model.Activity
 import com.github.slamdev.babyroutinetracker.ui.components.*
-import com.github.slamdev.babyroutinetracker.ui.components.TimeUtils
+import com.github.slamdev.babyroutinetracker.ui.components.formatters.formatTimeAgoLocalized
+import com.github.slamdev.babyroutinetracker.ui.components.formatters.getRelevantTimestamp
 import com.github.slamdev.babyroutinetracker.ui.components.helpers.breastFeedingActivityConfig
 import com.github.slamdev.babyroutinetracker.ui.components.helpers.breastFeedingActivityContent
 import java.util.*
@@ -75,12 +76,11 @@ fun BreastFeedingCard(
                 stringResource(R.string.duration_unknown)
             }
             
-            val timeAgo = TimeUtils.formatTimeAgo(
-                TimeUtils.getRelevantTimestamp(
+            val timeAgo = formatTimeAgoLocalized(
+                getRelevantTimestamp(
                     lastFeeding.startTime.toDate(),
                     lastFeeding.endTime?.toDate()
-                ),
-                context
+                )
             )
             
             breastFeedingActivityContent(

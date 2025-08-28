@@ -345,6 +345,6 @@ class InvitationViewModel(application: Application) : AndroidViewModel(applicati
      */
     fun getShareText(invitation: Invitation): String {
         val babyName = _uiState.value.babies.find { it.id == invitation.babyId }?.name ?: messageProvider.getDefaultBabyName()
-        return "You're invited to track $babyName's routine! Use code: ${invitation.invitationCode} in the Baby Routine Tracker app."
+        return messageProvider.getShareInvitationMessage(babyName, invitation.invitationCode)
     }
 }

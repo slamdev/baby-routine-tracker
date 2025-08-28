@@ -19,6 +19,9 @@ class LocalizedMessageProvider(private val context: Context) {
     fun getJoinInvitationSuccessMessage(babyName: String): String = 
         context.getString(R.string.success_joined_profile, babyName)
     
+    fun getShareInvitationMessage(babyName: String, invitationCode: String): String = 
+        context.getString(R.string.share_invitation_message, babyName, invitationCode)
+    
     fun getProfileUpdatedSuccessMessage(): String = 
         context.getString(R.string.success_baby_profile_updated)
     
@@ -241,5 +244,30 @@ class LocalizedMessageProvider(private val context: Context) {
     
     fun getNoPartnersFoundToNotifyMessage(): String {
         return context.getString(R.string.error_no_partners_found_to_notify)
+    }
+    
+    // Time Formatting Messages
+    fun getHappenedNowMessage(): String {
+        return context.getString(R.string.happened_now)
+    }
+    
+    fun getHappenedMinutesAgoMessage(minutes: Long): String {
+        return context.getString(R.string.happened_minutes_ago, minutes)
+    }
+    
+    fun getHappenedHoursAgoMessage(hours: Long): String {
+        return context.getString(R.string.happened_hours_ago, hours)
+    }
+    
+    fun getHappenedHoursMinutesAgoMessage(hours: Long, minutes: Long): String {
+        return context.getString(R.string.happened_hours_minutes_ago, hours, minutes)
+    }
+    
+    fun getHappenedDaysAgoMessage(days: Long): String {
+        return context.getString(R.string.happened_days_ago, days)
+    }
+    
+    fun getHappenedWeeksAgoMessage(weeks: Long): String {
+        return context.getString(R.string.happened_weeks_ago, weeks)
     }
 }

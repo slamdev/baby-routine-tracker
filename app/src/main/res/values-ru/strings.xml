@@ -42,6 +42,7 @@
     <string name="activity_last_instant">Последний: %s</string>
     <string name="activity_happened_ago">Произошло %s назад</string>
     <string name="activity_no_data">Нет записанных активностей</string>
+    <string name="no_recent_activity">Нет недавней активности</string>
     <string name="activity_no_recent_sleep">Нет недавнего сна</string>
     <string name="activity_no_recent_feeding">Нет недавнего кормления</string>
     <string name="activity_no_poops_logged">Ещё не записано какашек</string>
@@ -295,6 +296,25 @@
     <string name="notification_baby_activity_title">%s - Новая активность</string>
     <string name="notification_partner_activity_body">%1$s %2$s</string>
     
+    <!-- Time "happened" strings that were hardcoded in TimeUtils -->
+    <string name="happened_now">Произошло сейчас</string>
+    <string name="happened_minutes_ago">Произошло %d мин назад</string>
+    <string name="happened_hours_ago">Произошло %d ч назад</string>
+    <string name="happened_hours_minutes_ago">Произошло %1$d ч %2$d мин назад</string>
+    <string name="happened_days_ago">Произошло %d д назад</string>
+    <string name="happened_weeks_ago">Произошло %d нед назад</string>
+    
+    <!-- Language Selection -->
+    <string name="language_english">Английский</string>
+    <string name="language_russian">Русский</string>
+    <string name="language_selector_english">English</string>
+    <string name="language_selector_russian">Русский</string>
+    <string name="content_desc_english">English</string>
+    <string name="content_desc_russian">Русский</string>
+    
+    <!-- Sharing/Invitation -->
+    <string name="share_invitation_message">Вы приглашены отслеживать режим %1$s! Используйте код: %2$s в приложении Baby Routine Tracker.</string>
+
     <!-- Preview/Demo strings (only used in preview functions) -->
     <string name="preview_error_network">Не удается подключиться к серверу. Проверьте подключение к интернету.</string>
     <string name="preview_error_permission">У вас нет разрешения на просмотр активностей этого малыша.</string>

@@ -9,7 +9,8 @@ import com.github.slamdev.babyroutinetracker.R
 import com.github.slamdev.babyroutinetracker.ui.components.ActivityCard
 import com.github.slamdev.babyroutinetracker.ui.components.ActivityCardState
 import com.github.slamdev.babyroutinetracker.ui.components.EditActivityDialog
-import com.github.slamdev.babyroutinetracker.ui.components.TimeUtils
+import com.github.slamdev.babyroutinetracker.ui.components.formatters.formatTimeAgoLocalized
+import com.github.slamdev.babyroutinetracker.ui.components.formatters.getRelevantTimestamp
 import com.github.slamdev.babyroutinetracker.ui.components.helpers.sleepActivityConfig
 import com.github.slamdev.babyroutinetracker.ui.components.helpers.sleepActivityContent
 import java.util.*
@@ -66,12 +67,11 @@ fun SleepTrackingCard(
                 stringResource(R.string.duration_unknown)
             }
 
-            val timeAgo = TimeUtils.formatTimeAgo(
-                TimeUtils.getRelevantTimestamp(
+            val timeAgo = formatTimeAgoLocalized(
+                getRelevantTimestamp(
                     lastSleep.startTime.toDate(),
                     lastSleep.endTime?.toDate()
-                ),
-                context
+                )
             )
 
             sleepActivityContent(

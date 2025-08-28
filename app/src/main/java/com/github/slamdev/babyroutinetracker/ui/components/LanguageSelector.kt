@@ -56,7 +56,7 @@ fun LanguageSelector(
             // English
             LanguageOption(
                 label = stringResource(R.string.language_english),
-                description = "English",
+                description = stringResource(R.string.language_selector_english),
                 isSelected = selectedLanguage == LanguagePreferences.LANGUAGE_ENGLISH,
                 onClick = { onLanguageSelected(LanguagePreferences.LANGUAGE_ENGLISH) }
             )
@@ -64,7 +64,7 @@ fun LanguageSelector(
             // Russian
             LanguageOption(
                 label = stringResource(R.string.language_russian),
-                description = "Русский",
+                description = stringResource(R.string.language_selector_russian),
                 isSelected = selectedLanguage == LanguagePreferences.LANGUAGE_RUSSIAN,
                 onClick = { onLanguageSelected(LanguagePreferences.LANGUAGE_RUSSIAN) }
             )
@@ -149,8 +149,8 @@ private fun LanguageOption(
 private fun getSystemLanguageDescription(): String {
     val systemLanguage = java.util.Locale.getDefault().language
     return when (systemLanguage) {
-        "en" -> "English"
-        "ru" -> "Русский"
+        "en" -> stringResource(R.string.language_english)
+        "ru" -> stringResource(R.string.language_russian)
         else -> systemLanguage.uppercase()
     }
 }
@@ -166,8 +166,8 @@ fun CompactLanguageSelector(
 ) {
     val languages = listOf(
         LanguagePreferences.LANGUAGE_SYSTEM to stringResource(R.string.language_system_default),
-        LanguagePreferences.LANGUAGE_ENGLISH to "English",
-        LanguagePreferences.LANGUAGE_RUSSIAN to "Русский"
+        LanguagePreferences.LANGUAGE_ENGLISH to stringResource(R.string.language_english),
+        LanguagePreferences.LANGUAGE_RUSSIAN to stringResource(R.string.language_russian)
     )
     
     var expanded by remember { mutableStateOf(false) }
