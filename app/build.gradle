@@ -67,7 +67,8 @@ dependencies {
     implementation libs.coil.compose
     
     // Charts
-    implementation libs.mp.android.chart
+    implementation libs.vico.compose
+    implementation libs.vico.compose.m3
     
     // Testing
     testImplementation libs.junit

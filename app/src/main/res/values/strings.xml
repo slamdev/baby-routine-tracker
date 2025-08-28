@@ -624,11 +624,19 @@
     <string name="chart_sleep_title_emoji">😴 Daily Sleep Hours</string>
     <string name="chart_feeding_title_emoji">🍼 Daily Feedings</string>
     <string name="chart_feeding_subtitle">Number of feedings per day</string>
+    <string name="chart_subtitle_feeding_count">Number of feedings per day</string>
     <string name="chart_diaper_title_emoji">💩 Daily Poops</string>
     <string name="chart_diaper_subtitle">Number of poop diapers per day</string>
+    <string name="chart_subtitle_diaper_count">Number of poop diapers per day</string>
     <string name="chart_no_sleep_data">No sleep data available</string>
     <string name="chart_no_feeding_data">No feeding data available</string>
     <string name="chart_no_diaper_data">No poop data available</string>
+    
+    <!-- Chart Statistics -->
+    <string name="chart_total_feedings">🍼 Total feedings: %d</string>
+    <string name="chart_avg_daily_feedings">📊 Average daily: %.1f</string>
+    <string name="chart_total_diapers">💩 Total diapers: %d</string>
+    <string name="chart_avg_daily_diapers">📊 Average daily: %.1f</string>
     
     <!-- Feeding Time Picker -->
     <string name="edit_feeding_start_time_title">Edit Feeding Start Time</string>

@@ -1,34 +1,49 @@
 /**
- * Chart components for data visualization using Material 3 theme colors.
+ * Chart components for data visualization using Vico with Material 3 theme colors.
  * All colors are derived from MaterialTheme.colorScheme to ensure consistency
  * with the app's theming system and proper support for light/dark themes.
  */
 package com.github.slamdev.babyroutinetracker.datavisualization.components
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.res.stringResource
-import com.github.slamdev.babyroutinetracker.R
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
-import com.github.mikephil.charting.charts.BarChart
-import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.BarData
-import com.github.mikephil.charting.data.BarDataSet
-import com.github.mikephil.charting.data.BarEntry
-import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
-import com.github.slamdev.babyroutinetracker.datavisualization.DailySleepData
-import com.github.slamdev.babyroutinetracker.datavisualization.DailyFeedingData
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Warning
+import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
+import com.github.slamdev.babyroutinetracker.R
 import com.github.slamdev.babyroutinetracker.datavisualization.DailyDiaperData
-import java.text.SimpleDateFormat
-import java.util.*
+import com.github.slamdev.babyroutinetracker.datavisualization.DailyFeedingData
+import com.github.slamdev.babyroutinetracker.datavisualization.DailySleepData
 
 @Composable
 fun SleepChart(
@@ -37,8 +52,6 @@ fun SleepChart(
 ) {
     // Get theme colors
     val primaryColor = MaterialTheme.colorScheme.primary
-    val onSurfaceColor = MaterialTheme.colorScheme.onSurface
-    val outlineColor = MaterialTheme.colorScheme.outline
     
     ChartContainer(
         title = stringResource(R.string.chart_sleep_title_emoji),
@@ -48,64 +61,22 @@ fun SleepChart(
         if (data.isEmpty()) {
             EmptyChartState(stringResource(R.string.chart_no_sleep_data))
         } else {
-            AndroidView(
-                modifier = Modifier.height(200.dp),
-                factory = { context ->
-                    BarChart(context).apply {
-                        description.isEnabled = false
-                        legend.isEnabled = false
-                        setDrawGridBackground(false)
-                        setDrawBorders(false)
-                        axisRight.isEnabled = false
-                        
-                        // X-axis configuration
-                        xAxis.apply {
-                            position = XAxis.XAxisPosition.BOTTOM
-                            setDrawGridLines(false)
-                            granularity = 1f
-                            labelCount = data.size
-                            textColor = onSurfaceColor.copy(alpha = 0.6f).toArgb()
-                            textSize = 10f
-                        }
-                        
-                        // Y-axis configuration
-                        axisLeft.apply {
-                            setDrawGridLines(true)
-                            gridColor = outlineColor.copy(alpha = 0.3f).toArgb()
-                            axisMinimum = 0f
-                            textColor = onSurfaceColor.copy(alpha = 0.6f).toArgb()
-                            textSize = 10f
-                        }
-                        
-                        setTouchEnabled(true)
-                        isDragEnabled = true
-                        setScaleEnabled(false)
-                        setPinchZoom(false)
+            val modelProducer = remember { CartesianChartModelProducer() }
+            
+            LaunchedEffect(data) {
+                modelProducer.runTransaction {
+                    columnSeries {
+                        series(data.map { it.totalHours })
                     }
-                },
-                update = { chart ->
-                    val entries = data.mapIndexed { index, sleepData ->
-                        BarEntry(index.toFloat(), sleepData.totalHours)
-                    }
-                    
-                    val dataSet = BarDataSet(entries, "Sleep Hours").apply {
-                        color = primaryColor.toArgb()
-                        valueTextColor = onSurfaceColor.copy(alpha = 0.7f).toArgb()
-                        valueTextSize = 9f
-                    }
-                    
-                    val barData = BarData(dataSet)
-                    barData.barWidth = 0.7f
-                    
-                    chart.data = barData
-                    
-                    // Set labels for x-axis
-                    val dateFormat = SimpleDateFormat("MM/dd", Locale.getDefault())
-                    val labels = data.map { dateFormat.format(it.date) }
-                    chart.xAxis.valueFormatter = IndexAxisValueFormatter(labels)
-                    
-                    chart.invalidate()
                 }
+            }
+            
+            CartesianChartHost(
+                chart = rememberCartesianChart(
+                    rememberColumnCartesianLayer()
+                ),
+                modelProducer = modelProducer,
+                modifier = Modifier.height(200.dp)
             )
             
             Spacer(modifier = Modifier.height(8.dp))
@@ -126,105 +97,41 @@ fun FeedingChart(
     modifier: Modifier = Modifier
 ) {
     // Get theme colors
-    val primaryColor = MaterialTheme.colorScheme.primary
-    val tertiaryColor = MaterialTheme.colorScheme.tertiary
-    val onSurfaceColor = MaterialTheme.colorScheme.onSurface
-    val outlineColor = MaterialTheme.colorScheme.outline
+    val feedingColor = MaterialTheme.colorScheme.secondary
     
     ChartContainer(
         title = stringResource(R.string.chart_feeding_title_emoji),
-        subtitle = stringResource(R.string.chart_feeding_subtitle),
+        subtitle = stringResource(R.string.chart_subtitle_feeding_count),
         modifier = modifier
     ) {
         if (data.isEmpty()) {
             EmptyChartState(stringResource(R.string.chart_no_feeding_data))
         } else {
-            AndroidView(
-                modifier = Modifier.height(200.dp),
-                factory = { context ->
-                    BarChart(context).apply {
-                        description.isEnabled = false
-                        legend.isEnabled = true
-                        setDrawGridBackground(false)
-                        setDrawBorders(false)
-                        axisRight.isEnabled = false
-                        
-                        // X-axis configuration
-                        xAxis.apply {
-                            position = XAxis.XAxisPosition.BOTTOM
-                            setDrawGridLines(false)
-                            granularity = 1f
-                            labelCount = data.size
-                            textColor = onSurfaceColor.copy(alpha = 0.6f).toArgb()
-                            textSize = 10f
-                        }
-                        
-                        // Y-axis configuration
-                        axisLeft.apply {
-                            setDrawGridLines(true)
-                            gridColor = outlineColor.copy(alpha = 0.3f).toArgb()
-                            axisMinimum = 0f
-                            textColor = onSurfaceColor.copy(alpha = 0.6f).toArgb()
-                            textSize = 10f
-                        }
-                        
-                        setTouchEnabled(true)
-                        isDragEnabled = true
-                        setScaleEnabled(false)
-                        setPinchZoom(false)
-                        
-                        // Configure legend colors to match theme
-                        legend.apply {
-                            textColor = onSurfaceColor.copy(alpha = 0.8f).toArgb()
-                            textSize = 10f
-                        }
+            val modelProducer = remember { CartesianChartModelProducer() }
+            
+            LaunchedEffect(data) {
+                modelProducer.runTransaction {
+                    columnSeries {
+                        series(data.map { it.breastFeedings })
+                        series(data.map { it.bottleFeedings })
                     }
-                },
-                update = { chart ->
-                    val breastEntries = data.mapIndexed { index, feedingData ->
-                        BarEntry(index.toFloat(), feedingData.breastFeedings.toFloat())
-                    }
-                    
-                    val bottleEntries = data.mapIndexed { index, feedingData ->
-                        BarEntry(index.toFloat(), feedingData.bottleFeedings.toFloat())
-                    }
-                    
-                    val breastDataSet = BarDataSet(breastEntries, "Breast").apply {
-                        color = primaryColor.toArgb()
-                        valueTextColor = onSurfaceColor.copy(alpha = 0.7f).toArgb()
-                        valueTextSize = 9f
-                    }
-                    
-                    val bottleDataSet = BarDataSet(bottleEntries, "Bottle").apply {
-                        color = tertiaryColor.toArgb()
-                        valueTextColor = onSurfaceColor.copy(alpha = 0.7f).toArgb()
-                        valueTextSize = 9f
-                    }
-                    
-                    val barData = BarData(breastDataSet, bottleDataSet)
-                    barData.barWidth = 0.35f
-                    
-                    chart.data = barData
-                    
-                    // Group bars together
-                    chart.groupBars(-0.5f, 0.3f, 0.05f)
-                    
-                    // Set labels for x-axis
-                    val dateFormat = SimpleDateFormat("MM/dd", Locale.getDefault())
-                    val labels = data.map { dateFormat.format(it.date) }
-                    chart.xAxis.valueFormatter = IndexAxisValueFormatter(labels)
-                    
-                    chart.invalidate()
                 }
+            }
+            
+            CartesianChartHost(
+                chart = rememberCartesianChart(
+                    rememberColumnCartesianLayer()
+                ),
+                modelProducer = modelProducer,
+                modifier = Modifier.height(200.dp)
             )
             
             Spacer(modifier = Modifier.height(8.dp))
             
             ChartLegend(
                 items = listOf(
-                    stringResource(R.string.chart_label_breast_total, data.sumOf { it.breastFeedings }),
-                    stringResource(R.string.chart_label_bottle_total, data.sumOf { it.bottleFeedings }),
-                    stringResource(R.string.chart_average_per_day, data.map { it.totalFeedings }.average())
+                    stringResource(R.string.chart_total_feedings, data.sumOf { it.totalFeedings }),
+                    stringResource(R.string.chart_avg_daily_feedings, data.map { it.totalFeedings }.average())
                 )
             )
         }
@@ -237,89 +144,40 @@ fun DiaperChart(
     modifier: Modifier = Modifier
 ) {
     // Get theme colors
-    val primaryColor = MaterialTheme.colorScheme.primary
-    val errorColor = MaterialTheme.colorScheme.error
-    val onSurfaceColor = MaterialTheme.colorScheme.onSurface
-    val outlineColor = MaterialTheme.colorScheme.outline
+    val diaperColor = MaterialTheme.colorScheme.tertiary
     
     ChartContainer(
         title = stringResource(R.string.chart_diaper_title_emoji),
-        subtitle = stringResource(R.string.chart_diaper_subtitle),
+        subtitle = stringResource(R.string.chart_subtitle_diaper_count),
         modifier = modifier
     ) {
         if (data.isEmpty()) {
             EmptyChartState(stringResource(R.string.chart_no_diaper_data))
         } else {
-            AndroidView(
-                modifier = Modifier.height(200.dp),
-                factory = { context ->
-                    BarChart(context).apply {
-                        description.isEnabled = false
-                        legend.isEnabled = true
-                        setDrawGridBackground(false)
-                        setDrawBorders(false)
-                        axisRight.isEnabled = false
-                        
-                        // X-axis configuration
-                        xAxis.apply {
-                            position = XAxis.XAxisPosition.BOTTOM
-                            setDrawGridLines(false)
-                            granularity = 1f
-                            labelCount = data.size
-                            textColor = onSurfaceColor.copy(alpha = 0.6f).toArgb()
-                            textSize = 10f
-                        }
-                        
-                        // Y-axis configuration
-                        axisLeft.apply {
-                            setDrawGridLines(true)
-                            gridColor = outlineColor.copy(alpha = 0.3f).toArgb()
-                            axisMinimum = 0f
-                            textColor = onSurfaceColor.copy(alpha = 0.6f).toArgb()
-                            textSize = 10f
-                        }
-                        
-                        setTouchEnabled(true)
-                        isDragEnabled = true
-                        setScaleEnabled(false)
-                        setPinchZoom(false)
-                        
-                        // Configure legend colors to match theme
-                        legend.apply {
-                            textColor = onSurfaceColor.copy(alpha = 0.8f).toArgb()
-                            textSize = 10f
-                        }
+            val modelProducer = remember { CartesianChartModelProducer() }
+            
+            LaunchedEffect(data) {
+                modelProducer.runTransaction {
+                    columnSeries {
+                        series(data.map { it.poopDiapers })
                     }
-                },
-                update = { chart ->
-                    val poopEntries = data.mapIndexed { index, diaperData ->
-                        BarEntry(index.toFloat(), diaperData.poopDiapers.toFloat())
-                    }
-                    
-                    val poopDataSet = BarDataSet(poopEntries, "Poop Diapers").apply {
-                        color = errorColor.toArgb() // Using error color for poop (brownish/red)
-                        valueTextColor = onSurfaceColor.copy(alpha = 0.7f).toArgb()
-                        valueTextSize = 9f
-                    }
-                    
-                    val barData = BarData(poopDataSet)
-                    chart.data = barData
-                    
-                    // Set labels for x-axis
-                    val dateFormat = SimpleDateFormat("MM/dd", Locale.getDefault())
-                    val labels = data.map { dateFormat.format(it.date) }
-                    chart.xAxis.valueFormatter = IndexAxisValueFormatter(labels)
-                    
-                    chart.invalidate()
                 }
+            }
+            
+            CartesianChartHost(
+                chart = rememberCartesianChart(
+                    rememberColumnCartesianLayer()
+                ),
+                modelProducer = modelProducer,
+                modifier = Modifier.height(200.dp)
             )
             
             Spacer(modifier = Modifier.height(8.dp))
             
             ChartLegend(
                 items = listOf(
-                    stringResource(R.string.chart_total_poops, data.sumOf { it.poopDiapers }),
-                    stringResource(R.string.chart_average_per_day, data.map { it.poopDiapers }.average())
+                    stringResource(R.string.chart_total_diapers, data.sumOf { it.totalDiapers }),
+                    stringResource(R.string.chart_avg_daily_diapers, data.map { it.totalDiapers }.average())
                 )
             )
         }

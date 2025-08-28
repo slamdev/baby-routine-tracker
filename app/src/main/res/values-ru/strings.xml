@@ -502,8 +502,10 @@
     <string name="chart_sleep_title_emoji">😴 Часы сна в день</string>
     <string name="chart_feeding_title_emoji">🍼 Кормления в день</string>
     <string name="chart_feeding_subtitle">Количество кормлений в день</string>
+    <string name="chart_subtitle_feeding_count">Количество кормлений в день</string>
     <string name="chart_diaper_title_emoji">💩 Покаки в день</string>
     <string name="chart_diaper_subtitle">Количество грязных подгузников в день</string>
+    <string name="chart_subtitle_diaper_count">Количество грязных подгузников в день</string>
     <string name="chart_no_sleep_data">Нет данных о сне</string>
     <string name="chart_no_feeding_data">Нет данных о кормлении</string>
     <string name="chart_no_diaper_data">Нет данных о покаках</string>
@@ -513,6 +515,12 @@
     <string name="chart_total_sessions">🔢 Всего сессий: %d</string>
     <string name="chart_average_per_day">📊 Среднее: %.1f в день</string>
     <string name="chart_total_poops">💩 Всего: %d покак</string>
+    
+    <!-- Chart Statistics -->
+    <string name="chart_total_feedings">🍼 Всего кормлений: %d</string>
+    <string name="chart_avg_daily_feedings">📊 Среднее в день: %.1f</string>
+    <string name="chart_total_diapers">💩 Всего подгузников: %d</string>
+    <string name="chart_avg_daily_diapers">📊 Среднее в день: %.1f</string>
     
     <!-- Feeding Time Picker -->
     <string name="edit_feeding_start_time_title">Изменить время начала кормления</string>
