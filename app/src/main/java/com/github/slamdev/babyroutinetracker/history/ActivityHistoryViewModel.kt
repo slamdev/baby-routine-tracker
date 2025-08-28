@@ -4,6 +4,7 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.slamdev.babyroutinetracker.R
 import com.github.slamdev.babyroutinetracker.model.Activity
 import com.github.slamdev.babyroutinetracker.model.ActivityType
 import com.github.slamdev.babyroutinetracker.model.OptionalUiState
@@ -108,7 +109,7 @@ class ActivityHistoryViewModel(application: Application) : AndroidViewModel(appl
                 Log.e(TAG, "Unexpected error in activities listener", e)
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    errorMessage = "Unexpected error: ${e.message}"
+                    errorMessage = getApplication<Application>().getString(R.string.error_unexpected_error, e.message ?: "Unknown error")
                 )
             }
         }
@@ -267,7 +268,7 @@ class ActivityHistoryViewModel(application: Application) : AndroidViewModel(appl
             } catch (e: Exception) {
                 Log.e(TAG, "Unexpected error updating activity", e)
                 _uiState.value = _uiState.value.copy(
-                    errorMessage = "Unexpected error: ${e.message}"
+                    errorMessage = getApplication<Application>().getString(R.string.error_unexpected_error, e.message ?: "Unknown error")
                 )
             }
         }
@@ -321,7 +322,7 @@ class ActivityHistoryViewModel(application: Application) : AndroidViewModel(appl
             } catch (e: Exception) {
                 Log.e(TAG, "Unexpected error deleting activity", e)
                 _uiState.value = _uiState.value.copy(
-                    errorMessage = "Unexpected error: ${e.message}"
+                    errorMessage = getApplication<Application>().getString(R.string.error_unexpected_error, e.message ?: "Unknown error")
                 )
             }
         }
