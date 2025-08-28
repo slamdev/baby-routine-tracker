@@ -639,11 +639,9 @@
     <string name="notification_gave_bottle">gave a bottle (%dml)</string>
     <string name="notification_logged_feeding">logged a feeding</string>
     <string name="notification_changed_diaper">changed a diaper</string>
-    <string name="notification_new_activity_title">%s - New Activity</string>
     <string name="notification_partner_activity_body">%1$s %2$s</string>
     
     <!-- Service layer messages -->
-    <string name="error_no_ongoing_breast_feeding_to_update">No ongoing breast feeding to update</string>
     <string name="error_failed_to_update_feeding">Failed to update feeding</string>
     <string name="error_please_sign_in_to_view_preferences">Please sign in to view preferences</string>
     <string name="error_no_permission_to_view_preferences">You don\'t have permission to view these preferences</string>
@@ -654,5 +652,25 @@
     <string name="error_failed_to_delete_activity">Failed to delete activity</string>
     <string name="error_failed_to_update_sleep_activity">Failed to update sleep activity</string>
     <string name="error_unable_to_connect_to_server">Unable to connect to server. Check your internet connection</string>
+    
+    <!-- Additional missing strings -->
+    <string name="duration_unknown">Duration unknown</string>
+    <string name="delete_confirmation_text">DELETE</string>
+    
+    <!-- Notification activity strings -->
+    <string name="notification_activity_started_sleep">started sleep</string>
+    <string name="notification_activity_ended_sleep">ended sleep</string>
+    <string name="notification_activity_started_breast_feeding">started breast feeding</string>
+    <string name="notification_activity_finished_breast_feeding">finished breast feeding</string>
+    <string name="notification_activity_gave_bottle">gave a bottle (%dml)</string>
+    <string name="notification_activity_logged_feeding">logged a feeding</string>
+    <string name="notification_activity_changed_diaper">changed a diaper</string>
+    <string name="notification_title_new_activity">%s - New Activity</string>
+    <string name="notification_body_activity">%1$s %2$s</string>
+    
+    <!-- Preview/Demo strings (only used in preview functions) -->
+    <string name="preview_error_network">Unable to connect to server. Check your internet connection.</string>
+    <string name="preview_error_permission">You don\'t have permission to view activities for this baby.</string>
+    <string name="preview_error_database_setup">Database is being set up. Please try again in a few minutes.</string>
 
 </resources>

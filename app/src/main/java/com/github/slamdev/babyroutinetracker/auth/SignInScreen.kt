@@ -126,7 +126,7 @@ fun SignInScreen(
                     // Google icon would go here - for now using a placeholder
                     Icon(
                         painter = painterResource(id = android.R.drawable.ic_dialog_email),
-                        contentDescription = "Google",
+                        contentDescription = stringResource(R.string.content_desc_google),
                         modifier = Modifier.size(20.dp),
                         tint = Color.Unspecified
                     )

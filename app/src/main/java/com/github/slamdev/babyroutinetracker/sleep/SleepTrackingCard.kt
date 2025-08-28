@@ -63,7 +63,7 @@ fun SleepTrackingCard(
                     else -> "${minutes}m"
                 }
             } else {
-                "Duration unknown"
+                stringResource(R.string.duration_unknown)
             }
 
             val timeAgo = TimeUtils.formatTimeAgo(

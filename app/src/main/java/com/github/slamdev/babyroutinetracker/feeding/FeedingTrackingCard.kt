@@ -137,7 +137,7 @@ fun FeedingTrackingCard(
                             Spacer(modifier = Modifier.width(4.dp))
                             Icon(
                                 imageVector = Icons.Default.Edit,
-                                contentDescription = "Edit last feeding",
+                                contentDescription = stringResource(R.string.content_desc_edit_last_feeding),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                                 modifier = Modifier.size(12.dp)
                             )
@@ -335,7 +335,7 @@ private fun BreastMilkFeedingSection(
             ) {
                 Icon(
                     imageVector = Icons.Default.Edit,
-                    contentDescription = "Edit start time",
+                    contentDescription = stringResource(R.string.content_desc_edit_start_time),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                     modifier = Modifier.size(14.dp)
                 )
@@ -384,7 +384,7 @@ private fun BreastMilkFeedingSection(
                 if (isOngoing) {
                     Icon(
                         imageVector = Icons.Default.Check,
-                        contentDescription = "Stop Breast Feeding",
+                        contentDescription = stringResource(R.string.content_desc_stop_breast_feeding),
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
@@ -396,7 +396,7 @@ private fun BreastMilkFeedingSection(
                 } else {
                     Icon(
                         imageVector = Icons.Default.PlayArrow,
-                        contentDescription = "Start Breast Feeding",
+                        contentDescription = stringResource(R.string.content_desc_start_breast_feeding),
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
@@ -439,7 +439,7 @@ private fun BottleFeedingSection(
         ) {
             Icon(
                 imageVector = Icons.Default.Add,
-                contentDescription = "Log Bottle Feeding",
+                contentDescription = stringResource(R.string.content_desc_log_bottle_feeding),
                 modifier = Modifier.size(16.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))

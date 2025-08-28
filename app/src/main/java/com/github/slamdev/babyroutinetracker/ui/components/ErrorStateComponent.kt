@@ -50,7 +50,7 @@ fun ErrorStateComponent(
             if (showIcon) {
                 Icon(
                     imageVector = Icons.Default.Warning,
-                    contentDescription = "Error",
+                    contentDescription = stringResource(R.string.content_desc_error),
                     tint = MaterialTheme.colorScheme.onErrorContainer,
                     modifier = Modifier.size(32.dp)
                 )
@@ -83,7 +83,7 @@ fun ErrorStateComponent(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Info,
-                                contentDescription = "Suggestions",
+                                contentDescription = stringResource(R.string.content_desc_suggestions),
                                 tint = MaterialTheme.colorScheme.onErrorContainer,
                                 modifier = Modifier.size(16.dp)
                             )
@@ -178,7 +178,7 @@ fun CompactErrorDisplay(
         ) {
             Icon(
                 imageVector = Icons.Default.Warning,
-                contentDescription = "Error",
+                contentDescription = stringResource(R.string.content_desc_error),
                 tint = MaterialTheme.colorScheme.error,
                 modifier = Modifier.size(16.dp)
             )
@@ -204,7 +204,7 @@ fun CompactErrorDisplay(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Refresh,
-                            contentDescription = "Retry",
+                            contentDescription = stringResource(R.string.content_desc_retry),
                             tint = MaterialTheme.colorScheme.error,
                             modifier = Modifier.size(16.dp)
                         )
@@ -238,7 +238,7 @@ private fun ErrorStateComponentPreview() {
         ) {
             // Network error with suggestions
             ErrorStateComponent(
-                errorMessage = "Unable to connect to server. Please check your internet connection.",
+                errorMessage = stringResource(R.string.preview_error_network),
                 onRetry = { },
                 onDismiss = { },
                 exception = Exception("UNAVAILABLE: network connection lost"),
@@ -247,7 +247,7 @@ private fun ErrorStateComponentPreview() {
             
             // Permission error without retry
             ErrorStateComponent(
-                errorMessage = "You don't have permission to view this baby's activities.",
+                errorMessage = stringResource(R.string.preview_error_permission),
                 onDismiss = { },
                 exception = Exception("PERMISSION_DENIED: access denied"),
                 operation = "baby profile access"
@@ -255,7 +255,7 @@ private fun ErrorStateComponentPreview() {
             
             // Compact error display
             CompactErrorDisplay(
-                errorMessage = "Database is being set up. Please try again in a few minutes.",
+                errorMessage = stringResource(R.string.preview_error_database_setup),
                 onRetry = { },
                 onDismiss = { },
                 exception = Exception("FAILED_PRECONDITION: index not ready"),

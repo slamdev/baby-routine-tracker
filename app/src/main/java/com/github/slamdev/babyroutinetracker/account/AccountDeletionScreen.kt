@@ -293,7 +293,7 @@ fun AccountDeletionScreen(
                         showFinalConfirmation = false
                         viewModel.deleteAccount()
                     },
-                    enabled = confirmationText == "DELETE" && !uiState.isLoading,
+                    enabled = confirmationText == stringResource(R.string.delete_confirmation_text) && !uiState.isLoading,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.error
                     )
