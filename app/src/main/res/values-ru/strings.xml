@@ -573,11 +573,6 @@
     <string name="content_desc_delete_account">Удалить аккаунт</string>
     <string name="content_desc_sign_out">Выйти</string>
 
-    <!-- Coming Soon -->
-    <string name="coming_soon_short">Скоро</string>
-    <string name="feature_data_visualization">Визуализация данных</string>
-    <string name="feature_ai_sleep_plans">ИИ планы сна</string>
-
     <!-- Default Values -->
     <string name="default_user_name">Пользователь</string>
     <string name="default_baby_name">Малыш</string>
@@ -585,5 +580,29 @@
 
     <!-- Share Intent -->
     <string name="share_invitation_title">Поделиться приглашением</string>
+    
+    <!-- Chart Component Titles -->
+    <string name="chart_sleep_title_emoji">😴 Часы сна в день</string>
+    <string name="chart_feeding_title_emoji">🍼 Кормления в день</string>
+    <string name="chart_feeding_subtitle">Количество кормлений в день</string>
+    <string name="chart_diaper_title_emoji">💩 Какашки в день</string>
+    <string name="chart_diaper_subtitle">Количество грязных подгузников в день</string>
+    <string name="chart_no_sleep_data">Нет данных о сне</string>
+    <string name="chart_no_feeding_data">Нет данных о кормлении</string>
+    <string name="chart_no_diaper_data">Нет данных о какашках</string>
+    
+    <!-- Feeding Time Picker -->
+    <string name="edit_feeding_start_time_title">Изменить время начала кормления</string>
+    
+    <!-- Partner Notification Activity Descriptions -->
+    <string name="notification_activity_started_sleep">начал спать</string>
+    <string name="notification_activity_ended_sleep">закончил спать</string>
+    <string name="notification_activity_started_breast_feeding">начал грудное кормление</string>
+    <string name="notification_activity_finished_breast_feeding">закончил грудное кормление</string>
+    <string name="notification_activity_gave_bottle">дал бутылочку (%d мл)</string>
+    <string name="notification_activity_logged_feeding">записал кормление</string>
+    <string name="notification_activity_changed_diaper">поменял подгузник</string>
+    <string name="notification_title_new_activity">%s - Новая активность</string>
+    <string name="notification_body_activity">%1$s %2$s</string>
 
 </resources>

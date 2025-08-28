@@ -239,7 +239,7 @@ fun FeedingTrackingCard(
     if (showTimePickerDialog) {
         uiState.ongoingBreastFeeding?.let { ongoingFeeding ->
             TimePickerDialog(
-                title = "Edit Feeding Start Time",
+                title = stringResource(R.string.edit_feeding_start_time_title),
                 initialTime = ongoingFeeding.startTime.toDate(),
                 onTimeSelected = { newTime ->
                     viewModel.updateBreastFeedingStartTime(newTime)

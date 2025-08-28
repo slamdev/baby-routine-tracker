@@ -264,7 +264,7 @@ fun InvitePartnerScreen(
                             onClick = { viewModel.clearError() }
                         ) {
                             Text(
-                                "Dismiss",
+                                stringResource(R.string.action_dismiss),
                                 color = MaterialTheme.colorScheme.onErrorContainer
                             )
                         }

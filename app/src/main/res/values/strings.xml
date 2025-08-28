@@ -604,22 +604,6 @@
     <string name="content_desc_language_settings">Language Settings</string>
     <string name="content_desc_delete_account">Delete Account</string>
     <string name="content_desc_sign_out">Sign Out</string>
-    <string name="content_desc_back">Back</string>
-    <string name="content_desc_share">Share</string>
-    <string name="content_desc_edit_last_feeding">Edit last feeding</string>
-    <string name="content_desc_edit_start_time">Edit start time</string>
-    <string name="content_desc_stop_breast_feeding">Stop Breast Feeding</string>
-    <string name="content_desc_start_breast_feeding">Start Breast Feeding</string>
-    <string name="content_desc_log_bottle_feeding">Log Bottle Feeding</string>
-    <string name="content_desc_google">Google</string>
-    <string name="content_desc_error">Error</string>
-    <string name="content_desc_suggestions">Suggestions</string>
-    <string name="content_desc_retry">Retry</string>
-
-    <!-- Coming Soon -->
-    <string name="coming_soon_short">Coming Soon</string>
-    <string name="feature_data_visualization">Data Visualization</string>
-    <string name="feature_ai_sleep_plans">AI Sleep Plans</string>
 
     <!-- Default Values -->
     <string name="default_user_name">User</string>
@@ -628,5 +612,29 @@
 
     <!-- Share Intent -->
     <string name="share_invitation_title">Share Invitation</string>
+    
+    <!-- Chart Component Titles -->
+    <string name="chart_sleep_title_emoji">😴 Daily Sleep Hours</string>
+    <string name="chart_feeding_title_emoji">🍼 Daily Feedings</string>
+    <string name="chart_feeding_subtitle">Number of feedings per day</string>
+    <string name="chart_diaper_title_emoji">💩 Daily Poops</string>
+    <string name="chart_diaper_subtitle">Number of poop diapers per day</string>
+    <string name="chart_no_sleep_data">No sleep data available</string>
+    <string name="chart_no_feeding_data">No feeding data available</string>
+    <string name="chart_no_diaper_data">No poop data available</string>
+    
+    <!-- Feeding Time Picker -->
+    <string name="edit_feeding_start_time_title">Edit Feeding Start Time</string>
+    
+    <!-- Partner Notification Activity Descriptions -->
+    <string name="notification_activity_started_sleep">started sleep</string>
+    <string name="notification_activity_ended_sleep">ended sleep</string>
+    <string name="notification_activity_started_breast_feeding">started breast feeding</string>
+    <string name="notification_activity_finished_breast_feeding">finished breast feeding</string>
+    <string name="notification_activity_gave_bottle">gave a bottle (%dml)</string>
+    <string name="notification_activity_logged_feeding">logged a feeding</string>
+    <string name="notification_activity_changed_diaper">changed a diaper</string>
+    <string name="notification_title_new_activity">%s - New Activity</string>
+    <string name="notification_body_activity">%1$s %2$s</string>
 
 </resources>

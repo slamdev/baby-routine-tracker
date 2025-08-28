@@ -41,12 +41,12 @@ fun SleepChart(
     val outlineColor = MaterialTheme.colorScheme.outline
     
     ChartContainer(
-        title = "😴 Daily Sleep Hours",
+        title = stringResource(R.string.chart_sleep_title_emoji),
         subtitle = stringResource(R.string.chart_subtitle_sleep_time),
         modifier = modifier
     ) {
         if (data.isEmpty()) {
-            EmptyChartState("No sleep data available")
+            EmptyChartState(stringResource(R.string.chart_no_sleep_data))
         } else {
             AndroidView(
                 modifier = Modifier.height(200.dp),
@@ -132,12 +132,12 @@ fun FeedingChart(
     val outlineColor = MaterialTheme.colorScheme.outline
     
     ChartContainer(
-        title = "🍼 Daily Feedings",
-        subtitle = "Number of feedings per day",
+        title = stringResource(R.string.chart_feeding_title_emoji),
+        subtitle = stringResource(R.string.chart_feeding_subtitle),
         modifier = modifier
     ) {
         if (data.isEmpty()) {
-            EmptyChartState("No feeding data available")
+            EmptyChartState(stringResource(R.string.chart_no_feeding_data))
         } else {
             AndroidView(
                 modifier = Modifier.height(200.dp),
@@ -243,12 +243,12 @@ fun DiaperChart(
     val outlineColor = MaterialTheme.colorScheme.outline
     
     ChartContainer(
-        title = "💩 Daily Poops",
-        subtitle = "Number of poop diapers per day",
+        title = stringResource(R.string.chart_diaper_title_emoji),
+        subtitle = stringResource(R.string.chart_diaper_subtitle),
         modifier = modifier
     ) {
         if (data.isEmpty()) {
-            EmptyChartState("No poop data available")
+            EmptyChartState(stringResource(R.string.chart_no_diaper_data))
         } else {
             AndroidView(
                 modifier = Modifier.height(200.dp),

@@ -1,6 +1,8 @@
 package com.github.slamdev.babyroutinetracker.service
 
+import android.content.Context
 import android.util.Log
+import com.github.slamdev.babyroutinetracker.R
 import com.github.slamdev.babyroutinetracker.model.Activity
 import com.github.slamdev.babyroutinetracker.model.ActivityType
 import com.github.slamdev.babyroutinetracker.model.Baby
@@ -30,7 +32,7 @@ class PartnerNotificationService {
     /**
      * Send notification to partners when an activity is logged
      */
-    suspend fun notifyPartnersOfActivity(activity: Activity, baby: Baby) {
+    suspend fun notifyPartnersOfActivity(activity: Activity, baby: Baby, context: Context? = null) {
         try {
             val currentUser = auth.currentUser
             if (currentUser == null) {
@@ -80,7 +82,11 @@ class PartnerNotificationService {
             }
 
             // Create notification payload
-            val notificationData = createNotificationPayload(activity, baby, senderName)
+            val notificationData = if (context != null) {
+                createNotificationPayload(activity, baby, senderName, context)
+            } else {
+                createFallbackNotificationPayload(activity, baby, senderName)
+            }
             
             // Send notifications via Firebase Functions
             sendNotificationsViaCloudFunction(tokensToNotify, notificationData)
@@ -96,6 +102,61 @@ class PartnerNotificationService {
      * Create notification payload based on activity type
      */
     private fun createNotificationPayload(
+        activity: Activity, 
+        baby: Baby, 
+        senderName: String,
+        context: Context
+    ): Map<String, Any> {
+        val activityTypeDisplay = when (activity.type) {
+            ActivityType.SLEEP -> if (activity.isOngoing()) 
+                context.getString(R.string.notification_activity_started_sleep) 
+            else 
+                context.getString(R.string.notification_activity_ended_sleep)
+            ActivityType.FEEDING -> when (activity.feedingType) {
+                "breast_milk" -> if (activity.isOngoing()) 
+                    context.getString(R.string.notification_activity_started_breast_feeding) 
+                else 
+                    context.getString(R.string.notification_activity_finished_breast_feeding)
+                "bottle" -> context.getString(R.string.notification_activity_gave_bottle, activity.amount.toInt())
+                else -> context.getString(R.string.notification_activity_logged_feeding)
+            }
+            ActivityType.DIAPER -> context.getString(R.string.notification_activity_changed_diaper)
+        }
+
+        val title = context.getString(R.string.notification_title_new_activity, baby.name)
+        val body = context.getString(R.string.notification_body_activity, senderName, activityTypeDisplay)
+        
+        // Add duration for completed activities
+        val bodyWithDetails = if (!activity.isOngoing() && activity.getDurationMinutes() != null) {
+            val duration = activity.getDurationMinutes()!!
+            val durationText = if (duration >= 60) {
+                "${duration / 60}h ${duration % 60}m"
+            } else {
+                "${duration}m"
+            }
+            "$body (${durationText})"
+        } else {
+            body
+        }
+
+        return mapOf(
+            "title" to title,
+            "body" to bodyWithDetails,
+            "babyId" to baby.id,
+            "babyName" to baby.name,
+            "activityType" to activity.type.displayName,
+            "activityId" to activity.id,
+            "partnerName" to senderName,
+            "timestamp" to System.currentTimeMillis().toString(),
+            "icon" to getActivityIcon(activity.type)
+        )
+    }
+
+    /**
+     * Create notification payload with fallback strings (when Context is not available)
+     * This method uses hardcoded English strings as fallback
+     */
+    private fun createFallbackNotificationPayload(
         activity: Activity, 
         baby: Baby, 
         senderName: String
@@ -183,7 +244,7 @@ class PartnerNotificationService {
     /**
      * Test notification functionality
      */
-    suspend fun sendTestNotification(babyId: String): Result<String> {
+    suspend fun sendTestNotification(babyId: String, context: Context? = null): Result<String> {
         return try {
             val currentUser = auth.currentUser
             if (currentUser == null) {
@@ -196,12 +257,21 @@ class PartnerNotificationService {
                 return Result.failure(Exception("No partners found to notify"))
             }
 
-            val testData = mapOf(
-                "title" to "Test Notification",
-                "body" to "This is a test notification from Baby Routine Tracker",
-                "babyId" to babyId,
-                "timestamp" to System.currentTimeMillis().toString()
-            )
+            val testData = if (context != null) {
+                mapOf(
+                    "title" to context.getString(R.string.notification_test_title),
+                    "body" to context.getString(R.string.notification_test_body),
+                    "babyId" to babyId,
+                    "timestamp" to System.currentTimeMillis().toString()
+                )
+            } else {
+                mapOf(
+                    "title" to "Test Notification",
+                    "body" to "This is a test notification from Baby Routine Tracker",
+                    "babyId" to babyId,
+                    "timestamp" to System.currentTimeMillis().toString()
+                )
+            }
 
             sendNotificationsViaCloudFunction(partnerTokens, testData)
             Result.success("Test notification sent to ${partnerTokens.size} partners")
