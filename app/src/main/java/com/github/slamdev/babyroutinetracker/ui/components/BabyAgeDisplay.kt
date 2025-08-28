@@ -8,6 +8,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
+import com.github.slamdev.babyroutinetracker.R
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.slamdev.babyroutinetracker.model.Baby
@@ -50,7 +52,7 @@ fun BabyAgeDisplay(
                 if (baby.dueDate != null && showDetails) {
                     Icon(
                         imageVector = Icons.Default.Info,
-                        contentDescription = "Age info",
+                        contentDescription = stringResource(R.string.content_desc_age_info),
                         tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                         modifier = Modifier.size(16.dp)
                     )
@@ -61,7 +63,7 @@ fun BabyAgeDisplay(
             baby.getFormattedAdjustedAge()?.let { adjustedAge ->
                 if (showDetails) {
                     Text(
-                        text = "Corrected: $adjustedAge",
+                        text = stringResource(R.string.corrected_age_format, adjustedAge),
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                     )
@@ -72,7 +74,7 @@ fun BabyAgeDisplay(
             if (baby.wasBornEarly() && showDetails) {
                 baby.getGestationWeeks()?.let { weeks ->
                     Text(
-                        text = "Born at ~$weeks weeks gestation",
+                        text = stringResource(R.string.gestation_weeks_format, weeks),
                         fontSize = 10.sp,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                     )
@@ -103,7 +105,7 @@ fun CompactBabyAgeDisplay(
         
         baby.getFormattedAdjustedAge()?.let { adjustedAge ->
             Text(
-                text = "Corrected: $adjustedAge",
+                text = stringResource(R.string.corrected_age_format, adjustedAge),
                 fontSize = 10.sp,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
             )

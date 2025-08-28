@@ -68,7 +68,7 @@ fun TimePickerDialog(
                 // Current time display
                 val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
                 Text(
-                    text = "Current: ${formatter.format(initialTime)}",
+                    text = stringResource(R.string.current_time_format, formatter.format(initialTime)),
                     fontSize = 14.sp,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                 )

@@ -54,7 +54,7 @@ data class ActivityCardContent(
     val lastActivityNotes: String? = null, // Optional notes to display
     
     // Fallback text when no activity exists
-    val noActivityText: String = "No recent activity"
+    val noActivityText: String = stringResource(R.string.no_recent_activity)
 )
 
 /**
@@ -370,9 +370,9 @@ private fun ActivityCardContentDisplay(
                 // Activity time
                 content.lastActivityTime?.let { activityTime ->
                     val timeText = if (config.isImmediateActivity) {
-                        "at ${formatTime(activityTime)}"
+                        stringResource(R.string.activity_card_at_time, formatTime(activityTime))
                     } else {
-                        "Ended at ${formatTime(activityTime)}"
+                        stringResource(R.string.activity_card_ended_at, formatTime(activityTime))
                     }
                     Text(
                         text = timeText,
@@ -403,7 +403,7 @@ private fun ActivityCardContentDisplay(
         // No activity state
         else -> {
             Text(
-                text = content.noActivityText,
+                text = stringResource(R.string.no_recent_activity),
                 fontSize = 14.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                 textAlign = TextAlign.Center,
@@ -430,7 +430,7 @@ fun SuccessContentDisplay(
         // Success icon
         Icon(
             imageVector = Icons.Default.Check,
-            contentDescription = "Success",
+            contentDescription = stringResource(R.string.content_desc_success),
             tint = MaterialTheme.colorScheme.extended.success,
             modifier = Modifier.size(32.dp)
         )

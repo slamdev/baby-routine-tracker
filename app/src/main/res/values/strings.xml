@@ -501,4 +501,11 @@
     
     <!-- Share invitation message -->
     <string name="share_invitation_message">You\'re invited to track %1$s\'s routine! Use code: %2$s in the Baby Routine Tracker app.</string>
+    
+    <!-- Newly externalized strings -->
+    <string name="no_recent_activity">No recent activity</string>
+    <string name="activity_card_at_time">at %s</string>
+    <string name="activity_card_ended_at">Ended at %s</string>
+    <string name="content_desc_success">Success</string>
+    <string name="content_desc_age_info">Age info</string>
 </resources>

@@ -1,6 +1,67 @@
 <resources>
     <!-- App Basic -->
     <string name="app_name">Трекер режима малыша</string>
+
+    <!-- Authentication -->
+    <string name="auth_sign_in_with_google">Войти через Google</string>
+    <string name="auth_welcome_message">Добро пожаловать в Трекер режима малыша</string>
+    <string name="auth_sign_in_description">Отслеживайте сон, кормления и подгузники малыша вместе с партнером.</string>
+    <string name="data_security_message">Ваши данные защищены и синхронизированы между устройствами</string>
+
+    <!-- Activity Types -->
+    <string name="activity_sleep">Сон</string>
+    <string name="activity_breast">Грудь</string>
+    <string name="activity_bottle">Бутылочка</string>
+    <string name="activity_poop">Стул</string>
+    <string name="activity_feeding">Кормление</string>
+    <string name="activity_breast_feeding">Грудное кормление</string>
+    <string name="activity_bottle_feeding">Кормление из бутылочки</string>
+    <string name="activity_diaper">Подгузник</string>
+
+    <!-- Newly externalized -->
+    <string name="no_recent_activity">Нет недавней активности</string>
+    <string name="activity_card_at_time">в %s</string>
+    <string name="activity_card_ended_at">Завершено в %s</string>
+    <string name="content_desc_success">Успешно</string>
+    <string name="content_desc_age_info">Информация о возрасте</string>
+
+    <!-- Activity Card Actions -->
+    <string name="activity_card_log_format">Записать %s</string>
+    <string name="activity_card_stop_format">Остановить %s</string>
+    <string name="activity_card_start_format">Начать %s</string>
+    <string name="activity_card_loading">Загрузка…</string>
+    <string name="activity_card_started_at">Начато в %s</string>
+
+    <!-- Common Actions -->
+    <string name="action_save">Сохранить</string>
+    <string name="action_cancel">Отмена</string>
+    <string name="action_delete">Удалить</string>
+    <string name="action_edit">Редактировать</string>
+    <string name="action_confirm">Подтвердить</string>
+    <string name="action_retry">Повторить</string>
+    <string name="action_close">Закрыть</string>
+    <string name="action_back">Назад</string>
+
+    <!-- Success -->
+    <string name="activity_logged_successfully">Активность успешно сохранена!</string>
+
+    <!-- Time -->
+    <string name="time_ago_now">сейчас</string>
+    <string name="time_ago_minutes">%dм назад</string>
+    <string name="time_ago_hours">%dч назад</string>
+    <string name="time_ago_hours_minutes">%1$dч %2$dм назад</string>
+    <string name="time_ago_days">%dд назад</string>
+    <string name="time_ago_weeks">%dн назад</string>
+
+    <!-- Age -->
+    <string name="corrected_age_format">Скорректировано: %1$s</string>
+    <string name="gestation_weeks_format">Родился на ~%1$d неделе гестации</string>
+
+    <!-- Placeholders for other required strings (to be completed) -->
+    <string name="placeholder_todo">Нужно перевести остальные строки</string>
+</resources><resources>
+    <!-- App Basic -->
+    <string name="app_name">Трекер режима малыша</string>
     
     <!-- Authentication -->
     <string name="auth_sign_in_with_google">Войти через Google</string>
