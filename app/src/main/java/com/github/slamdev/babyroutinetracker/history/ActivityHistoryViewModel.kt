@@ -109,7 +109,7 @@ class ActivityHistoryViewModel(application: Application) : AndroidViewModel(appl
                 Log.e(TAG, "Unexpected error in activities listener", e)
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    errorMessage = getApplication<Application>().getString(R.string.error_unexpected_error, e.message ?: "Unknown error")
+                    errorMessage = getApplication<Application>().getString(R.string.error_unexpected_error, e.message ?: getApplication<Application>().getString(R.string.unknown_error))
                 )
             }
         }
@@ -268,7 +268,7 @@ class ActivityHistoryViewModel(application: Application) : AndroidViewModel(appl
             } catch (e: Exception) {
                 Log.e(TAG, "Unexpected error updating activity", e)
                 _uiState.value = _uiState.value.copy(
-                    errorMessage = getApplication<Application>().getString(R.string.error_unexpected_error, e.message ?: "Unknown error")
+                    errorMessage = getApplication<Application>().getString(R.string.error_unexpected_error, e.message ?: getApplication<Application>().getString(R.string.unknown_error))
                 )
             }
         }
@@ -322,7 +322,7 @@ class ActivityHistoryViewModel(application: Application) : AndroidViewModel(appl
             } catch (e: Exception) {
                 Log.e(TAG, "Unexpected error deleting activity", e)
                 _uiState.value = _uiState.value.copy(
-                    errorMessage = getApplication<Application>().getString(R.string.error_unexpected_error, e.message ?: "Unknown error")
+                    errorMessage = getApplication<Application>().getString(R.string.error_unexpected_error, e.message ?: getApplication<Application>().getString(R.string.unknown_error))
                 )
             }
         }

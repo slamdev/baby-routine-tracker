@@ -424,6 +424,7 @@
     <string name="enter_6_character_code">Enter 6-character code</string>
     <string name="date_format_pattern">MMMM d, yyyy</string>
     <string name="warning_icon">Warning</string>
+    <string name="unknown_error">Unknown error</string>
     
     <!-- Content descriptions -->
     <string name="content_desc_go_back">Go back</string>

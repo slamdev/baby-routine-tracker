@@ -144,7 +144,7 @@ class DataVisualizationViewModel(
                     Log.d(TAG, "Data loaded successfully: ${sleepData.size} sleep days, ${feedingData.size} feeding days, ${diaperData.size} diaper days")
                 } else {
                     val error = sleepResult.exceptionOrNull() ?: feedingResult.exceptionOrNull() ?: diaperResult.exceptionOrNull()
-                    ErrorUtils.logError(TAG, "load activity data for visualization", error ?: Exception("Unknown error"), mapOf("babyId" to babyId, "dateRange" to _uiState.value.selectedDateRange.name))
+                    ErrorUtils.logError(TAG, "load activity data for visualization", error ?: Exception(messageProvider.getUnknownErrorMessage()), mapOf("babyId" to babyId, "dateRange" to _uiState.value.selectedDateRange.name))
                     
                     val userMessage = error?.let { 
                         ErrorUtils.getFirebaseErrorMessage(it, "view baby activities", "activity data") 

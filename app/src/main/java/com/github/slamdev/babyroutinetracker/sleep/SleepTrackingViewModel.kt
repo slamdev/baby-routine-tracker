@@ -367,7 +367,7 @@ class SleepTrackingViewModel(application: Application) : AndroidViewModel(applic
                 Log.e(TAG, "Unexpected error updating sleep activity", e)
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    errorMessage = messageProvider.getUnexpectedErrorMessage(e.message ?: "Unknown error")
+                    errorMessage = messageProvider.getUnexpectedErrorMessage(e.message ?: messageProvider.getUnknownErrorMessage())
                 )
             }
         }

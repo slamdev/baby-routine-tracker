@@ -96,6 +96,9 @@ class LocalizedMessageProvider(private val context: Context) {
     fun getUnexpectedErrorMessage(errorMessage: String): String = 
         context.getString(R.string.error_unexpected_error, errorMessage)
 
+    fun getUnknownErrorMessage(): String = 
+        context.getString(R.string.unknown_error)
+
     // Test notification status messages  
     fun getSendingTestNotificationMessage(): String = 
         context.getString(R.string.status_sending_test_notification)
