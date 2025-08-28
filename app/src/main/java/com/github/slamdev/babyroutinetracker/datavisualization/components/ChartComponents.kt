@@ -112,8 +112,8 @@ fun FeedingChart(
             LaunchedEffect(data) {
                 modelProducer.runTransaction {
                     columnSeries {
-                        series(data.map { it.breastFeedings })
-                        series(data.map { it.bottleFeedings })
+                        // Combine breast and bottle feedings into single data stream
+                        series(data.map { it.breastFeedings + it.bottleFeedings })
                     }
                 }
             }
