@@ -90,6 +90,7 @@ class InvitationViewModel : ViewModel() {
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         baby = baby,
+                        // TODO: Replace with localized string via resources (R.string.profile_created_successfully)
                         successMessage = "Baby profile created successfully!"
                     )
                     // Real-time listener will automatically update the babies list
@@ -110,6 +111,7 @@ class InvitationViewModel : ViewModel() {
         val targetBabyId = babyId ?: _uiState.value.selectedBabyId
         if (targetBabyId.isEmpty()) {
             _uiState.value = _uiState.value.copy(
+                // TODO: Localize using R.string.please_select_baby_profile once context injection added
                 errorMessage = "Please select a baby profile first"
             )
             return
@@ -127,6 +129,7 @@ class InvitationViewModel : ViewModel() {
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         invitation = invitation,
+                        // TODO: Localize (R.string.invitation_created_successfully)
                         successMessage = "Invitation created successfully!"
                     )
                 }
@@ -145,6 +148,7 @@ class InvitationViewModel : ViewModel() {
     fun acceptInvitation(invitationCode: String) {
         if (invitationCode.isEmpty()) {
             _uiState.value = _uiState.value.copy(
+                // TODO: Localize (R.string.please_enter_invitation_code)
                 errorMessage = "Please enter an invitation code"
             )
             return
@@ -162,6 +166,7 @@ class InvitationViewModel : ViewModel() {
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         baby = baby,
+                        // TODO: Localize formatted success message (R.string.join_invitation_success)
                         successMessage = "Successfully joined ${baby.name}'s profile!"
                     )
                     // Real-time listener will automatically update the babies list
@@ -253,6 +258,7 @@ class InvitationViewModel : ViewModel() {
             } else {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
+                    // TODO: Localize (R.string.error_baby_profile_not_found)
                     errorMessage = "Baby profile not found"
                 )
             }
@@ -282,6 +288,7 @@ class InvitationViewModel : ViewModel() {
                         isLoading = false,
                         baby = baby,
                         editingBaby = null,
+                        // TODO: Localize (R.string.profile_updated_successfully)
                         successMessage = "Baby profile updated successfully!"
                     )
                     // Real-time listener will automatically update the babies list

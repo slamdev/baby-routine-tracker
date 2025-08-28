@@ -268,6 +268,7 @@ class FeedingTrackingViewModel : ViewModel() {
                         Log.i(TAG, "Bottle feeding logged successfully: ${activity.id}")
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
+                            // TODO: Localize success message (add resource)
                             successMessage = "Bottle feeding logged successfully!"
                         )
                     },
@@ -383,6 +384,7 @@ class FeedingTrackingViewModel : ViewModel() {
                     Log.i(TAG, "Feeding activity updated successfully: ${it.id}")
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
+                        // TODO: Localize success message (add resource)
                         successMessage = "Feeding updated successfully!"
                     )
                 },

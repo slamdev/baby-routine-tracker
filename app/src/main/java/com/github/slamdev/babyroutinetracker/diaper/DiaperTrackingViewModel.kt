@@ -111,6 +111,7 @@ class DiaperTrackingViewModel : ViewModel() {
                         Log.i(TAG, "Poop logged successfully: ${activity.id}")
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
+                            // TODO: Localize success message (R.string.activity_logged_successfully or specific)
                             successMessage = "Poop logged successfully!"
                         )
                     },
@@ -171,6 +172,7 @@ class DiaperTrackingViewModel : ViewModel() {
                         Log.i(TAG, "Diaper activity updated successfully: ${updatedActivity.id}")
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
+                            // TODO: Localize success message (add specific string resource)
                             successMessage = "Diaper activity updated successfully!"
                         )
                     },

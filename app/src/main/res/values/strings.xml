@@ -508,4 +508,18 @@
     <string name="activity_card_ended_at">Ended at %s</string>
     <string name="content_desc_success">Success</string>
     <string name="content_desc_age_info">Age info</string>
+
+    <!-- Join invitation help steps (internationalized) -->
+    <string name="join_invitation_help_step1">Your partner generates an invitation code from their app</string>
+    <string name="join_invitation_help_step2">They share the 6-character code with you</string>
+    <string name="join_invitation_help_step3">Enter the code here to join the baby profile</string>
+    <string name="join_invitation_help_step4">Both of you can then log and view activities together</string>
+
+    <!-- Notification fallback titles/bodies -->
+    <string name="notification_default_title">Baby Activity Update</string>
+    <string name="notification_default_body">Your partner logged a new activity</string>
+
+    <!-- Test notification strings -->
+    <string name="notification_test_title">Test Notification</string>
+    <string name="notification_test_body">This is a test notification from Baby Routine Tracker</string>
 </resources>

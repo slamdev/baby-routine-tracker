@@ -1,10 +1,5 @@
 package com.github.slamdev.babyroutinetracker.invitation
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -15,7 +10,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -245,11 +239,11 @@ fun JoinInvitationScreen(
                     )
                     
                     listOf(
-                        "Your partner generates an invitation code from their app",
-                        "They share the 6-character code with you",
-                        "Enter the code here to join the baby profile",
-                        "Both of you can then log and view activities together"
-                    ).forEach { instruction ->
+                        R.string.join_invitation_help_step1,
+                        R.string.join_invitation_help_step2,
+                        R.string.join_invitation_help_step3,
+                        R.string.join_invitation_help_step4
+                    ).forEach { instructionRes ->
                         Row(
                             modifier = Modifier.fillMaxWidth()
                         ) {
@@ -259,7 +253,7 @@ fun JoinInvitationScreen(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Text(
-                                text = instruction,
+                                text = stringResource(id = instructionRes),
                                 fontSize = 14.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.weight(1f)

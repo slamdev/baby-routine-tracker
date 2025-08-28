@@ -301,6 +301,7 @@ class SleepTrackingViewModel : ViewModel() {
                         Log.i(TAG, "Sleep start time updated successfully: ${updatedActivity.id}")
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
+                            // TODO: Localize success message (add resource)
                             successMessage = "Start time updated successfully!"
                         )
                     },
@@ -347,6 +348,7 @@ class SleepTrackingViewModel : ViewModel() {
                         Log.i(TAG, "Sleep activity updated successfully: ${updatedActivity.id}")
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
+                            // TODO: Localize success message (add resource)
                             successMessage = "Sleep activity updated successfully!"
                         )
                     },

@@ -54,8 +54,8 @@ class PushNotificationService : FirebaseMessagingService() {
             Log.d(TAG, "Message notification body: ${notification.body}")
             Log.d(TAG, "Showing notification with title: ${notification.title}")
             showNotification(
-                title = notification.title ?: "Baby Activity Update",
-                body = notification.body ?: "Your partner logged a new activity",
+                title = notification.title ?: getString(R.string.notification_default_title),
+                body = notification.body ?: getString(R.string.notification_default_body),
                 data = remoteMessage.data
             )
         }
@@ -137,8 +137,8 @@ class PushNotificationService : FirebaseMessagingService() {
         
         // Check if we have meaningful data (not null and not empty)
         if (!activityType.isNullOrBlank() && !babyName.isNullOrBlank() && !partnerName.isNullOrBlank()) {
-            val title = "New $activityType Activity"
-            val body = "$partnerName logged a $activityType activity for $babyName"
+            val title = getString(R.string.notification_new_activity_title, activityType)
+            val body = getString(R.string.notification_baby_activity_title, babyName)
             
             Log.d(TAG, "Showing data-based notification: $title - $body")
             showNotification(title, body, data)

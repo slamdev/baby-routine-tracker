@@ -402,4 +402,18 @@
     <string name="notification_new_activity_title">Новая активность: %s</string>
     <string name="notification_baby_activity_title">%s - Новая активность</string>
     <string name="share_invitation_message">Вас приглашают отслеживать режим %1$s! Используйте код: %2$s в приложении Трекер режима малыша.</string>
+    
+    <!-- Join invitation help steps (internationalized) -->
+    <string name="join_invitation_help_step1">Ваш партнер генерирует код приглашения в своем приложении</string>
+    <string name="join_invitation_help_step2">Он делится с вами 6-символьным кодом</string>
+    <string name="join_invitation_help_step3">Введите код здесь, чтобы присоединиться к профилю ребенка</string>
+    <string name="join_invitation_help_step4">Вы оба сможете записывать и просматривать активности вместе</string>
+
+    <!-- Notification fallback titles/bodies -->
+    <string name="notification_default_title">Обновление активности малыша</string>
+    <string name="notification_default_body">Ваш партнер записал новую активность</string>
+
+    <!-- Test notification strings -->
+    <string name="notification_test_title">Тестовое уведомление</string>
+    <string name="notification_test_body">Это тестовое уведомление из приложения Трекер режима малыша</string>
 </resources>
