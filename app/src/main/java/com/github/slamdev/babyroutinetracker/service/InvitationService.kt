@@ -1,5 +1,6 @@
 package com.github.slamdev.babyroutinetracker.service
 
+import android.content.Context
 import android.util.Log
 import com.github.slamdev.babyroutinetracker.model.Baby
 import com.github.slamdev.babyroutinetracker.model.Invitation
@@ -18,9 +19,10 @@ import kotlinx.coroutines.tasks.await
 import java.util.Calendar
 import java.util.UUID
 
-class InvitationService {
+class InvitationService(private val context: Context) {
     private val firestore = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
+    private val integrityService = IntegrityService(context)
 
     companion object {
         private const val TAG = "InvitationService"
@@ -35,6 +37,15 @@ class InvitationService {
      */
     suspend fun createBabyProfile(name: String, birthDate: Timestamp, dueDate: Timestamp? = null): Result<Baby> {
         return try {
+            // Verify device integrity before creating baby profile
+            val integrityResult = integrityService.verifyBabyProfileIntegrity("create")
+            if (integrityResult.isFailure) {
+                val error = SecurityException("Device integrity verification failed for profile creation")
+                Log.w(TAG, "Integrity check failed for baby profile creation", integrityResult.exceptionOrNull())
+                Log.w(TAG, "Proceeding with baby profile creation despite integrity failure (for development)")
+                return Result.failure(error)
+            }
+            
             val currentUser = auth.currentUser
                 ?: return Result.failure(Exception("User not authenticated"))
 

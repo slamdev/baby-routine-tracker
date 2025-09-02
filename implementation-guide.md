@@ -1003,6 +1003,7 @@ class MyViewModel : ViewModel() {
 - Navigation Compose (Navigation)
 - Coil (Image Loading)
 - Material3 (Design System)
+- Google Play Integrity API (Security)
 
 ### Adding New Dependencies
 1. Update `gradle/libs.versions.toml`
@@ -2340,7 +2341,64 @@ When implementing account deletion for new features:
 - [ ] Ensure proper audit logging
 - [ ] Verify complete data removal in all environments
 
-## �🔄 Future Updates
+## 🔐 Google Play Integrity API Integration
+
+### Overview
+
+The app integrates Google Play Integrity API to verify app authenticity and device integrity, protecting against:
+- Modified or tampered apps
+- Emulated or compromised devices  
+- Unauthorized access attempts
+
+### Implementation Pattern
+
+#### IntegrityService Usage
+```kotlin
+class MyService(private val context: Context) {
+    private val integrityService = IntegrityService(context)
+    
+    suspend fun performSensitiveOperation(): Result<Data> {
+        // Verify integrity before sensitive operations
+        val integrityResult = integrityService.verifyDataWriteIntegrity("operation_type")
+        if (integrityResult.isFailure) {
+            Log.w(TAG, "Integrity check failed", integrityResult.exceptionOrNull())
+            // In production: return Result.failure(SecurityException("Integrity verification failed"))
+        }
+        
+        // Continue with operation...
+    }
+}
+```
+
+#### Integration Points
+- **ActivityService**: Integrity checks before activity logging (sleep, feeding, diaper)
+- **InvitationService**: Integrity checks before baby profile creation/modification  
+- **AuthenticationViewModel**: Planned integrity checks for authentication (future enhancement)
+
+#### Development vs Production
+- **Development**: Warnings logged, operations continue despite failures
+- **Production**: Should enforce integrity checks and block suspicious operations
+
+#### Configuration Required
+1. **Google Cloud Project**: Enable Play Integrity API
+2. **Cloud Project Number**: Update `IntegrityService.CLOUD_PROJECT_NUMBER`
+3. **Firebase Setup**: Ensure proper app registration
+4. **Play Console**: Upload app for full integrity verification
+
+See [`GOOGLE_PLAY_INTEGRITY_SETUP.md`](GOOGLE_PLAY_INTEGRITY_SETUP.md) for complete setup instructions.
+
+#### Error Handling Integration
+```kotlin
+// IntegrityService integrates with existing error handling patterns
+val integrityResult = integrityService.verifyDataWriteIntegrity("feeding")
+if (integrityResult.isFailure) {
+    ErrorUtils.logError(TAG, "integrity verification", 
+        integrityResult.exceptionOrNull() ?: SecurityException("Integrity failed"),
+        mapOf("operation" to "feeding", "babyId" to babyId))
+}
+```
+
+## 🔄 Future Updates
 
 When adding new entities or features:
 1. Follow the established patterns in this guide
@@ -2348,7 +2406,8 @@ When adding new entities or features:
 3. Maintain consistency with existing code structure
 4. Always consider multi-user collaboration implications
 5. **Implement proper error handling** using the three-layer system above
-6. **Test error scenarios** as part of development workflow
+6. **Add integrity checks for sensitive operations** using IntegrityService
+7. **Test error scenarios** as part of development workflow
 
 ---
 

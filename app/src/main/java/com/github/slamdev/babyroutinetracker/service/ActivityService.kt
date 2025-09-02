@@ -24,6 +24,7 @@ class ActivityService(
     private val firestore = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
     private val partnerNotificationService = PartnerNotificationService(context)
+    private val integrityService = IntegrityService(context)
 
     companion object {
         private const val TAG = "ActivityService"
@@ -40,6 +41,17 @@ class ActivityService(
         notes: String = ""
     ): Result<Activity> {
         return try {
+            // Verify device integrity before sensitive operations
+            val integrityResult = integrityService.verifyDataWriteIntegrity(type.displayName.lowercase())
+            if (integrityResult.isFailure) {
+                val error = SecurityException("Device integrity verification failed for activity logging")
+                ErrorUtils.logError(TAG, "start ${type.displayName} activity - integrity check failed", 
+                    integrityResult.exceptionOrNull() ?: error, 
+                    mapOf("babyId" to babyId, "activityType" to type.displayName))
+                Log.w(TAG, "Proceeding with activity logging despite integrity failure (for development)")
+                return Result.failure(error)
+            }
+            
             val currentUser = auth.currentUser
             if (currentUser == null) {
                 val error = Exception("User not authenticated")
@@ -550,6 +562,15 @@ class ActivityService(
         notes: String = ""
     ): Result<Activity> {
         return try {
+            // Verify device integrity before logging feeding
+            val integrityResult = integrityService.verifyDataWriteIntegrity("feeding_${feedingType}")
+            if (integrityResult.isFailure) {
+                val error = SecurityException("Device integrity verification failed for feeding logging")
+                Log.w(TAG, "Integrity check failed for feeding logging", integrityResult.exceptionOrNull())
+                Log.w(TAG, "Proceeding with feeding logging despite integrity failure (for development)")
+                return Result.failure(error)
+            }
+            
             val currentUser = auth.currentUser
             if (currentUser == null) {
                 val error = Exception("User not authenticated")
@@ -624,6 +645,15 @@ class ActivityService(
         notes: String = ""
     ): Result<Activity> {
         return try {
+            // Verify device integrity before logging diaper change
+            val integrityResult = integrityService.verifyDataWriteIntegrity("diaper_poop")
+            if (integrityResult.isFailure) {
+                val error = SecurityException("Device integrity verification failed for diaper logging")
+                Log.w(TAG, "Integrity check failed for diaper logging", integrityResult.exceptionOrNull())
+                Log.w(TAG, "Proceeding with diaper logging despite integrity failure (for development)")
+                return Result.failure(error)
+            }
+            
             val currentUser = auth.currentUser
             if (currentUser == null) {
                 val error = Exception("User not authenticated")

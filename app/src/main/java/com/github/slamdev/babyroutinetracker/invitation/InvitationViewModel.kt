@@ -32,7 +32,7 @@ data class InvitationUiState(
 )
 
 class InvitationViewModel(application: Application) : AndroidViewModel(application) {
-    private val invitationService = InvitationService()
+    private val invitationService = InvitationService(application)
     private val messageProvider = LocalizedMessageProvider(application)
     
     private val _uiState = MutableStateFlow(InvitationUiState())
