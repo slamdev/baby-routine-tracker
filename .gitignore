@@ -4,6 +4,9 @@ keystore.properties
 *.jks
 *.keystore
 
+# gcloud key
+google-play-service-account.json
+
 # Gradle files
 .gradle/
 build/

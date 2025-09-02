@@ -1,0 +1,99 @@
+name: Android CI/CD - Internal Testing Release
+
+on:
+  push:
+    branches: [ main ]
+
+env:
+  # Android build configuration
+  GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4096m -Dorg.gradle.daemon=false -Dkotlin.incremental=false"
+  
+jobs:
+
+  build-and-deploy:
+    name: Build and Deploy to Internal Testing
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch full history for version code calculation
+        
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'adopt'
+        
+    - name: Setup Gradle
+      uses: gradle/gradle-build-action@v3
+      with:
+        gradle-home-cache-cleanup: true
+        
+    - name: Calculate version code
+      id: version
+      run: |
+        # Use number of commits as version code for automatic increment
+        VERSION_CODE=$(($(git rev-list --count HEAD) + 100))
+        echo "VERSION_CODE=$VERSION_CODE" >> $GITHUB_OUTPUT
+        echo "Calculated version code: $VERSION_CODE"
+        
+        # Get current version name from build.gradle
+        VERSION_NAME=$(grep "versionName" app/build.gradle | head -1 | sed 's/.*"\(.*\)".*/\1/')
+        echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_OUTPUT
+        echo "Version name: $VERSION_NAME"
+        
+    - name: Create keystore file
+      run: |
+        # Create keystore file from base64 encoded secret
+        echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > release-key.keystore
+        
+    - name: Create keystore.properties
+      run: |
+        # Create keystore.properties file with secrets
+        cat > keystore.properties << EOF
+        KEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}
+        KEY_ALIAS=${{ secrets.KEY_ALIAS }}
+        KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}
+        EOF
+        
+    - name: Create google-services.json
+      run: |
+        # Create google-services.json from secret
+        echo "${{ secrets.GOOGLE_SERVICES_JSON }}" > app/google-services.json
+        
+    - name: Build release AAB
+      run: |
+        ./gradlew bundleRelease \
+          -PversionCode=${{ steps.version.outputs.VERSION_CODE }} \
+          --stacktrace
+          
+    - name: Create Google Play service account JSON
+      run: |
+        # Create service account JSON from secret
+        echo "${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}" > google-play-service-account.json
+        
+    - name: Deploy to Google Play Internal Testing
+      uses: r0adkll/upload-google-play@v1.1.3
+      with:
+        serviceAccountJson: google-play-service-account.json
+        packageName: com.github.slamdev.babyroutinetracker
+        releaseFiles: app/build/outputs/bundle/release/app-release.aab
+        track: internal
+        status: completed
+        inAppUpdatePriority: 2
+        userFraction: 1.0
+        releaseNotes: |
+          Automated release from commit ${{ github.sha }}
+          
+          Version: ${{ steps.version.outputs.VERSION_NAME }} (Build ${{ steps.version.outputs.VERSION_CODE }})
+          Commit: ${{ github.sha }}
+          
+    - name: Cleanup sensitive files
+      if: always()
+      run: |
+        rm -f release-key.keystore
+        rm -f keystore.properties  
+        rm -f app/google-services.json
+        rm -f google-play-service-account.json
