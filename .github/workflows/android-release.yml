@@ -83,13 +83,7 @@ jobs:
         track: internal
         status: completed
         inAppUpdatePriority: 2
-        userFraction: 1.0
-        releaseNotes: |
-          Automated release from commit ${{ github.sha }}
-          
-          Version: ${{ steps.version.outputs.VERSION_NAME }} (Build ${{ steps.version.outputs.VERSION_CODE }})
-          Commit: ${{ github.sha }}
-          
+
     - name: Cleanup sensitive files
       if: always()
       run: |
