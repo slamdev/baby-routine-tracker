@@ -13,6 +13,7 @@ initializeApp();
  */
 exports.sendPartnerNotifications = onCall({
   region: 'europe-west1',
+  enforceAppCheck: true,
   cors: true
 }, async (request) => {
   // Verify user is authenticated
