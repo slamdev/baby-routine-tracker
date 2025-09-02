@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="192" height="192" viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle with Gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#E3F2FD;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#BBDEFB;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Baby Icon -->
+    <linearGradient id="babyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFB74D;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF9800;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Tracking Elements -->
+    <linearGradient id="trackGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4FC3F7;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2196F3;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Main Background -->
+  <rect width="192" height="192" rx="48" fill="url(#bgGradient)" />
+  
+  <!-- Central Baby Icon -->
+  <g transform="translate(96, 96)">
+    <!-- Baby Head (Circle) -->
+    <circle cx="0" cy="-10" r="28" fill="url(#babyGradient)" />
+    
+    <!-- Baby Body (Oval) -->
+    <ellipse cx="0" cy="25" rx="20" ry="25" fill="url(#babyGradient)" />
+    
+    <!-- Baby Eyes -->
+    <circle cx="-8" cy="-15" r="3" fill="#2C3E50" />
+    <circle cx="8" cy="-15" r="3" fill="#2C3E50" />
+    
+    <!-- Baby Smile -->
+    <path d="M -8 -5 Q 0 2 8 -5" stroke="#2C3E50" stroke-width="2" fill="none" stroke-linecap="round" />
+  </g>
+  
+  <!-- Activity Tracking Icons Around Baby -->
+  
+  <!-- Sleep Icon (Top Left) -->
+  <g transform="translate(60, 60)">
+    <circle cx="0" cy="0" r="16" fill="url(#trackGradient)" opacity="0.8" />
+    <!-- Moon -->
+    <path d="M -6 -8 Q -3 -10 0 -8 Q -3 -5 -6 -8 Z" fill="white" />
+    <!-- Stars -->
+    <circle cx="4" cy="-6" r="1.5" fill="white" />
+    <circle cx="6" cy="2" r="1" fill="white" />
+  </g>
+  
+  <!-- Feeding Icon (Top Right) -->
+  <g transform="translate(132, 60)">
+    <circle cx="0" cy="0" r="16" fill="#FF9800" opacity="0.8" />
+    <!-- Bottle -->
+    <rect x="-4" y="-8" width="8" height="12" rx="2" fill="white" />
+    <rect x="-2" y="-10" width="4" height="3" rx="1" fill="white" />
+    <!-- Milk Level -->
+    <rect x="-3" y="0" width="6" height="3" fill="#E8F4FD" />
+  </g>
+  
+  <!-- Chart/Progress Icon (Bottom Left) -->
+  <g transform="translate(60, 132)">
+    <circle cx="0" cy="0" r="16" fill="#4CAF50" opacity="0.8" />
+    <!-- Mini Chart Bars -->
+    <rect x="-6" y="-2" width="2" height="6" fill="white" />
+    <rect x="-2" y="-5" width="2" height="9" fill="white" />
+    <rect x="2" y="-3" width="2" height="7" fill="white" />
+    <rect x="6" y="-6" width="2" height="10" fill="white" />
+  </g>
+  
+  <!-- Clock/Time Icon (Bottom Right) -->
+  <g transform="translate(132, 132)">
+    <circle cx="0" cy="0" r="16" fill="#9C27B0" opacity="0.8" />
+    <!-- Clock Face -->
+    <circle cx="0" cy="0" r="8" stroke="white" stroke-width="1.5" fill="none" />
+    <!-- Clock Hands -->
+    <line x1="0" y1="0" x2="0" y2="-5" stroke="white" stroke-width="2" stroke-linecap="round" />
+    <line x1="0" y1="0" x2="3" y2="0" stroke="white" stroke-width="1.5" stroke-linecap="round" />
+    <!-- Center Dot -->
+    <circle cx="0" cy="0" r="1" fill="white" />
+  </g>
+  
+  <!-- Connection Lines (Subtle) -->
+  <g opacity="0.3" stroke="#2196F3" stroke-width="1" fill="none">
+    <line x1="76" y1="76" x2="96" y2="86" />
+    <line x1="116" y1="76" x2="96" y2="86" />
+    <line x1="96" y1="106" x2="76" y2="116" />
+    <line x1="96" y1="106" x2="116" y2="116" />
+  </g>
+</svg>
