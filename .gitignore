@@ -1,3 +1,9 @@
+# Release signing
+release-key.keystore
+keystore.properties
+*.jks
+*.keystore
+
 # Gradle files
 .gradle/
 build/

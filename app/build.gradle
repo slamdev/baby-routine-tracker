@@ -6,6 +6,10 @@ plugins {
     id 'kotlin-kapt'
 }
 
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
     namespace 'com.github.slamdev.babyroutinetracker'
     compileSdk 36
@@ -15,15 +19,54 @@ android {
         minSdk 35
         targetSdk 36
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        
+        // Enable vector drawables support for older API levels (though we target 35+)
+        vectorDrawables.useSupportLibrary = true
+        
+        // Enable multidex support if needed
+        multiDexEnabled false
+    }
+
+    signingConfigs {
+        release {
+            // For security, store signing information in keystore.properties or environment variables
+            storeFile file('../release-key.keystore')
+            storePassword System.getenv('KEYSTORE_PASSWORD') ?: keystoreProperties['KEYSTORE_PASSWORD']
+            keyAlias System.getenv('KEY_ALIAS') ?: keystoreProperties['KEY_ALIAS']
+            keyPassword System.getenv('KEY_PASSWORD') ?: keystoreProperties['KEY_PASSWORD']
+            
+            // Enable V2 and V3 signature schemes for better security and performance
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
     }
 
     buildTypes {
-        release {
+        debug {
+            debuggable true
             minifyEnabled false
+            shrinkResources false
+            // Using same Firebase project for debug and release builds
+            // applicationIdSuffix ".debug" // Removed to use same Firebase configuration
+        }
+        
+        release {
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+            
+            // Disable debugging and logging for production
+            debuggable false
+            
+            // Optimize for size and performance
+            zipAlignEnabled true
+            
+            // Set release version name suffix for tracking
+            versionNameSuffix ""
         }
     }
     compileOptions {
