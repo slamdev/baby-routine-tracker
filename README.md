@@ -138,3 +138,5 @@ For issues and feature requests, please use the GitHub issue tracker.
 ---
 
 **🎯 Ready to deploy?** Follow the [CI Pipeline Setup Guide](./CI_PIPELINE_SETUP.md) to get automatic deployments to Google Play Console!
+
+
